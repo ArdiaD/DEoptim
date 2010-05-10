@@ -538,6 +538,9 @@ void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
 {
 	int  i, k, i_urn1, i_urn2;
 	int  ia_urn1[MAXPOP] = {0};      //urn holding all indices
+
+	GetRNGstate();
+	  
 	k = i_NP;
 	i_urn1 = 0;
 	i_urn2 = 0;
@@ -553,4 +556,7 @@ void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
 	   i_urn2 = i_urn2 + 1;            //next position in urn2
 	   i_urn1 = (int)(unif_rand() * k);    //choose a random index
 	}
+
+	PutRNGstate();
+	
 }

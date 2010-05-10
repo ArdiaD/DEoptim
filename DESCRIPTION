@@ -1,11 +1,11 @@
 Package: DEoptim
-Version: 2.0-0
+Version: 2.0-1
 Title: Optimization by Differential Evolution
 Author: David Ardia and Katharine Mullen
 Maintainer: Katharine Mullen <katharine.mullen@nist.gov>
 Description: This package provides the DEoptim function which performs
         optimization by Differential Evolution.
 License: GPL (>= 2)
-Packaged: 2009-10-01 15:50:11 UTC; kmullen
+Packaged: 2009-10-06 14:57:51 UTC; kmullen
 Repository: CRAN
-Date/Publication: 2009-10-01 19:53:32
+Date/Publication: 2009-10-07 06:38:08
