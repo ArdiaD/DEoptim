@@ -1,0 +1,28 @@
+citEntry(entry = "Manual",
+	 title = "DEoptim package: Differential Evolution Optimization in R",
+	 author = personList(as.person("David Ardia")),
+         year = "2006",
+	 note = "version 1.1-7",
+	 url = "http://CRAN.R-project.org/",
+	 textVersion =
+         paste("David Ardia (2006) DEoptim package: Differential Evolution Optimization in R.",
+               "version 1.1-7."),
+         header = "to cite the DEoptim package use:"
+)
+
+citEntry(entry = "Book",
+         title = "Differential Evolution - A Practical Approach to Global Optimization",
+         author = personList(as.person("Kenneth V. Price"),
+                             as.person("Rainer M. Storn"),
+                             as.person("Jouni A. Lampinen")),
+         publisher = "Springer",
+         series = "Natural Computing",
+         month = "January",
+         year = "2006",
+         note = "ISBN number: 3540209506",
+         textVersion =
+         paste("Kenneth V. Price, Rainer M. Storn and Jouni A. Lampinen (2006)",
+               "Differential Evolution - A Practical Approach to Global Optimization.",
+               "Springer. ISBN number: 3540209506"),
+         header = "to cite the Differential Evolution algorithm use:"
+)

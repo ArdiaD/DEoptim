@@ -138,24 +138,18 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   \code{Inf} in your function's output.
 }
 \references{
-  some useful URLs:
+  Differential Evolution homepage :
 
-  Rainer Storn homepage: \url{http://www.icsi.berkeley.edu/~storn}
+  \url{http://www.icsi.berkeley.edu/~storn/code.html}
 
-  Lampine research paper series: \url{http://www2.lut.fi/~jlampine/debiblio.htm}
-
-  some useful books and articles:
+  Some useful books:
   
-  Price, K., Storn, R. and J. Lampingen (2005) \emph{Differential Evolution
-    - A Practical Approach to Global Optimization over Continuous Spaces}.
-  Springer.
-
-  Storn, R. and Price, K. (1995) Differential Evolution - a Simple and Efficient
-  Adaptive Scheme for Global Optimization over Continuous Spaces.
-  \emph{Technical Report TR-95-012}.
+  Price, K. V., Storn, R. M. and Lampinen J. A. (2005) \emph{Differential Evolution
+    - A Practical Approach to Global Optimization}.
+  Springer. ISBN 3540209506.
 
   Nocedal, J. and Wright, S. J. (1999) \emph{Numerical Optimization}.
-  Springer.
+  Springer. ISBN 0387987932.
 }
 
 \author{David Ardia \email{david.ardia@unifr.ch} for the \R-port;
