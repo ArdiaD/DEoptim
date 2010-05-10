@@ -1,8 +1,14 @@
-"DEoptim" <-
-function(FUN, lower, upper, control = list(), ...) {
-  ## Differential Evolution Optimization
-  ## David Ardia -- 2005-08-14
+'.onLoad' <- function(lib, pkg){
+  cat("\nDEoptim package")
+  cat("\nDifferential Evolution algorithm")
+  cat("\nAuthor and maintainer : David Ardia <david.ardia@unifr.ch>\n")
+}
 
+
+## Differential Evolution Optimization
+## David Ardia -- 2005-12-27
+'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {
+  
   if (missing(FUN))
     stop("'FUN' is missing") 
   FUN <- match.fun(FUN)
@@ -21,35 +27,30 @@ function(FUN, lower, upper, control = list(), ...) {
   d <- length(lower)
   con <- list(VTR = 1.e-6, itermax = 200,
               NP = 50, F = 0.8, CR = 0.5, strategy = 7,
-              refresh = 10)
+              refresh = 10, digits = 4)
   con[names(control)] <- control
   
   if (con$itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n")
     con$itermax <- 200
   }
-
   if (con$NP < 1) {
     warning("'NP' < 1; set to default value 50\n")
     con$NP <- 50
   }
-  NP = con$NP
-  
+  NP <- con$NP
   if (con$F < 0 | con$F > 2) {
     warning("'F' not in [0,2]; set to default value 0.8\n")
     con$F <- 0.8
   }
-
   if (con$CR < 0 | con$CR > 1) {
     warning("'CR' not in [0,1]; set to default value 0.5\n")
     con$CR <- 0.5
   }
-  
   if (con$strategy < 1 | con$strategy > 10) {
     warning("'strategy' not in {1,...,10}; set to default value 7\n")
     con$strategy <- 7
   }
-  
   con$refresh <- floor(con$refresh)
   if (con$refresh > con$itermax)
     con$refresh <- 0
@@ -60,15 +61,11 @@ function(FUN, lower, upper, control = list(), ...) {
   
   fn.checkBoundaries <- function(x, lower, upper) {
     r <- apply(rbind(lower, x), 2, max)
-    r <- apply(rbind(upper, r), 2, min)
-    r 
+    apply(rbind(upper, r), 2, min) 
   }
   
-  ##
   ## Initialize population and some arrays
-  ##
-
-  pop = matrix(rep.int(lower, NP), nrow = NP, byrow = TRUE) +
+  pop <- matrix(rep.int(lower, NP), nrow = NP, byrow = TRUE) +
     matrix(runif(NP * d), nrow = NP) *
       matrix(rep.int(upper - lower, NP), nrow = NP, byrow = TRUE)
   
@@ -76,23 +73,18 @@ function(FUN, lower, upper, control = list(), ...) {
   val <- rep.int(0,NP) ## create and reset the "cost array"
   bestmem <- bestmemit <- rep.int(0,d) ## best population member ever and iteration
 
-  ##
   ## Evaluate the best member after initialization
-  ##
-
   nfeval <- NP ## number of function evaluations
   val <- apply(pop, 1, FUN, ...)
   bestval <- bestvalit <- min(val)
   ibest <- match(bestvalit, val)
-  bestmem <- bestmemit <- pop[ibest,]
-  
-  ##
+  bestmem <- pop[ibest,]
+  bestmemit <- matrix(bestmem, nrow = 1)
+ 
   ## DE - optimization
   ##
   ## popold is the population which has to compete. It is
   ## static through one iteration. pop is the newly emerging population.
-  ##
-  
   pm1 <- pm2 <- pm3 <- pm4 <- pm5 <- fn.zeros(NP,d) ## initialize population matrix 1 - 5
   bm <- ui <- mui <- mpo <- fn.zeros(NP,d)
   rot <- seq(from = 0, by = 1, to = (NP-1))## rotating index array (size NP)
@@ -103,7 +95,7 @@ function(FUN, lower, upper, control = list(), ...) {
   ind <- fn.zeros(4,4)
 
   iter <- 1
-  while (iter <= con$itermax & bestval > con$VTR) {     
+  while (iter <= con$itermax & bestval > con$VTR){
     popold <- pop ## save old population
     
     ind <- sample(1:4) ## index pointer array
@@ -124,7 +116,7 @@ function(FUN, lower, upper, control = list(), ...) {
     pm4 <- popold[a4,] 
     pm5 <- popold[a5,] 
     
-    bm <- matrix(rep(bestmemit, NP), nrow = NP, byrow = TRUE) ## population filled with
+    bm <- matrix(rep(bestmemit[iter,], NP), nrow = NP, byrow = TRUE) ## population filled with
     ## the best member of the last iteration
       
     mui <- matrix(runif(NP * d), nrow = NP) < con$CR ## all random numbers < CR are 1, 0 otherwise
@@ -177,24 +169,80 @@ function(FUN, lower, upper, control = list(), ...) {
     ichange <- tempval <= val
     val[ichange] <- tempval[ichange]
     pop[ichange,] <- ui[ichange,]
-    bestval <- bestvalit <- min(val)
-    ibest <- match(bestvalit, val)
-    bestmem <- bestmemit <- pop[ibest,]
+    bestval <- min(val)
+    bestvalit <- c(bestvalit, bestval)
+    ibest <- match(bestval, val)
+    bestmem <- pop[ibest,]
+    bestmemit <- rbind(bestmemit, bestmem)
     
-    if (con$refresh > 0 & (iter %% con$refresh) == 0) { 
+    if (con$refresh > 0 & iter %% con$refresh == 0)
       cat("iteration: ", iter,
-          "bestmem: " , bestmem,
-          "bestval: ", bestval, "\n")
-    }
+          "best member: " , round(bestmem, con$digits),
+          "best value: ", round(bestval, con$digits), "\n")
     iter <- iter + 1
   }
 
-  ##
-  ## Outputs
-  ##
+  if (!is.null(names(lower)))
+    nam <- names(lower)
+  else if (!is.null(names(upper)) & is.null(names(lower)))
+    nam <- names(upper)
+  else
+    nam <- paste("par", 1:length(lower), sep = "")
   
-  r <- list(bestmem, bestval, nfeval)
-  names(r) <- c("bestmem", "bestval", "nfeval")
+  names(lower) <- names(upper) <- names(bestmem) <- nam
+  dimnames(bestmemit) <- list(1:iter, nam)
+  r <- list()
+  attr(r, "optim") <- list(bestmem = bestmem, bestval = bestval, nfeval = nfeval,
+                           iter = iter)
+  attr(r, "member") <- list(lower = lower, upper = upper,
+                            bestvalit = bestvalit, bestmemit = bestmemit)
+  attr(r, "class") <- "DEoptim"
   return(r)
 }
+
+'summary.DEoptim' <- function(object, ...){
+  digits <- max(5, getOption('digits') - 2)
+  z <- attr(object, "optim")
+  cat("\n***** summary of DEoptim object *****",
+      "\nbest member: ", round(z$bestmem, digits),
+      "\nbest value: ", round(z$bestval, digits),
+      "\nafter: ", round(z$iter), " iterations",
+      "\nfunction evaluated: ", round(z$nfeval), " times",
+      "\n*************************************\n")
+  invisible(z)
+}
+
+'plot.DEoptim' <- function(x, plot.type = c("bestmemit","bestvalit"), ...){
+  z <- attr(x, "member")
+  n <- length(z$bestvalit)
+  plot.type <- plot.type[1]
+  if (plot.type == "bestmemit"){
+    npar <- length(z$lower)
+    nam <- names(z$lower)
+    if (npar == 1){
+      plot(1:n, z$bestmemit,
+           xlab = "iteration", ylab = "value", main = nam, ...)
+      abline(h = c(z$lower, z$upper), col = 'red')
+    }
+    else if (npar == 2){
+      plot(z$bestmemit[,1], z$bestmemit[,2],
+           xlab = nam[1], ylab = nam[2], ...)
+      abline(h = c(z$lower[1], z$upper[1]), col = 'red')
+      abline(v = c(z$lower[2], z$upper[2]), col = 'red')
+    }
+    else{
+      par(mfrow = c(npar,1))
+      for (i in 1:npar){
+        plot(1:n, z$bestmemit[,i],
+             xlab = "iteration", ylab = "value", main = nam[i], ...)
+        abline(h = c(z$lower[i], z$upper[i]), col = 'red')
+      }
+    }
+  }
+  else
+    plot(1:n, z$bestvalit,
+         xlab = "iteration", ylab = "function value",
+         main = "convergence plot", ...)
+}
+
 

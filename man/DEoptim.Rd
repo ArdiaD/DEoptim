@@ -54,10 +54,16 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   }
 }
 \value{
-  A list with components:
-    \item{bestmem}{The best set of parameters found.}
-    \item{bestval}{The value of \code{FUN} corresponding to \code{bestmem}.}
-    \item{nfeval}{Number of function evaluations.}
+  A list of class \code{DEoptim} with the attributes \code{optim} and
+  \code{member} containing the following elements:
+  \item{\code{optim$bestmem}}{The best set of parameters found.}
+  \item{\code{optim$bestval}}{The value of \code{FUN} corresponding to \code{bestmem}.}
+  \item{\code{optim$nfeval}}{Number of function evaluations.}
+  \item{\code{optim$iter}}{Number of procedure iterations.}
+  \item{\code{member$lower}}{The lower boundary.}
+  \item{\code{member$upper}}{The upper boundary.}
+  \item{\code{member$bestvalit}}{The best value at each iteration.}
+  \item{\code{member$bestmemit}}{The best member at each iteration.}
 }
 \note{
   \code{DEoptim} is a R-vectorized variant of the Differential Evolution algorithm
@@ -72,7 +78,7 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   likely to occur but generally takes longer, i.e. \code{DEoptim} is getting 
   more robust (there is always a convergence speed/robustness tradeoff).
 
-  \code{DEoptim} is much more sensitive to the choice of \code{F} than it is to 
+  \code{DEoptim} is much more sensitive to the choice of \code{F} than it is to
   the choice of \code{CR}. \code{CR} is more like a fine tuning element. High 
   values of \code{CR} like \code{CR=1} give faster convergence if convergence
   occurs. Sometimes, however, you have to go down as much as \code{CR=0} to 
@@ -107,24 +113,26 @@ DEoptim(FUN, lower, upper, control = list(), ...)
 
 \references{
   \url{http://www.icsi.berkeley.edu/~storn}
-
+  
   \url{http://www2.lut.fi/~jlampine/debiblio.htm}
   
   Nocedal, J. and Wright, S. J. (1999) \emph{Numerical Optimization}.
   Springer.
-
+  
   Price, K., Storn, R. and J. Lampingen (2005) \emph{Differential Evolution
-  - A Practical Approach to Global Optimization over Continuous Spaces}.
+    - A Practical Approach to Global Optimization over Continuous Spaces}.
   Springer.
-
+  
   Storn, R. and Price, K. (1995) Differential Evolution - a Simple and Efficient
   Adaptive Scheme for Global Optimization over Continuous Spaces.
   \emph{Technical Report TR-95-012}.
 }
 
-\author{David Ardia}
+\author{D. Ardia <\email{david.ardia@unifr.ch}> for the R-port;
+  R. Storn <\email{storn@icsi.berkeley.edu}> for the Differential Evolution algorithm.}
 
-\seealso{\code{\link{nlm}}, \code{\link{optim}}, \code{\link{constrOptim}}}
+\seealso{\code{\link{DEoptim-methods}} for methods on DEoptim object;
+  \code{\link{optim}} or \code{\link{constrOptim}} for constrained optimization.}
 
 \examples{
   ## Rosenbrock Banana function

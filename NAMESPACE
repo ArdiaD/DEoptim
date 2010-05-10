@@ -1,0 +1,4 @@
+export(DEoptim)
+
+S3method(summary,DEoptim)
+S3method(plot,DEoptim)

@@ -1,10 +1,12 @@
 Package: DEoptim
-Version: 1.1-2
-Date: 2005-08-20
+Version: 1.1-5
+Date: 2006-01-03
 Title: Differential Evolution Optimization
 Author: David Ardia <david.ardia@unifr.ch>
 Maintainer: David Ardia <david.ardia@unifr.ch>
+Depends: R (>= 2.2.0)
 Description: This package provides the DEoptim function which performs
   Differential Evolution Optimization (evolutionary algorithm).
-License: GPL
-Packaged: Wed Oct  5 15:36:36 2005; David Ardia
+License: GPL version 2 or newer
+URL: http://perso.unifr.ch/david.ardia
+Packaged: Sun Jan  8 23:07:50 2006; Ardia David
