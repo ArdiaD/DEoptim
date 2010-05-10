@@ -11,56 +11,54 @@
   invisible(object)
 }
 
-'plot.DEoptim' <- function(x, plot.type = c("bestmemit",
-                           "bestvalit", "storepop"), ...) {
-  z <- x$member
-  niter <- length(z$bestvalit)
-  npar <- length(z$lower)
-  nam <- names(z$lower)
-  nstorepop <- length(z$storepop)
-  if (plot.type[1] == "bestmemit") {
-    plot.new()
-	par(mfrow = c(min(3, npar), 1))
-	for (i in 1:npar){
-	  if (i %% 4 == 0) {
-	    cat("new plot\n")
-		devAskNewPage(ask = TRUE)
-		par(mfrow = c(3, 1))
-	  }
-      plot(1:niter, z$bestmemit[, i],
-	  xlim = c(1, niter), las = 1,
-      xlab = "iteration", ylab = "value", main = nam[i], ...)
-      abline(h = c(z$lower[i], z$upper[i]), col = 'red')
+plot.DEoptim <- function (x, plot.type = c("bestmemit", "bestvalit",
+"storepop"), ...) {
+    z <- x$member
+    niter <- length(z$bestvalit)
+    npar <- length(z$lower)
+    nam <- names(z$lower)
+    nstorepop <- length(z$storepop)
+    if (identical(plot.type[1], "bestmemit")) {
+        plot.new()
+        par(mfrow = c(min(3, npar), 1))
+        for (i in 1:npar) {
+            if (identical(i%%4, 0)) {
+                cat("new plot\n")
+                devAskNewPage(ask = TRUE)
+            }
+            plot(1:niter, z$bestmemit[, i], xlim = c(1, niter),
+                las = 1, xlab = "iteration", ylab = "value",
+                main = nam[i], ...)
+            abline(h = c(z$lower[i], z$upper[i]), col = "red")
+        }
     }
-  }
-  else if (plot.type[1] == "bestvalit") {
-    plot(1:niter, z$bestvalit,
-    xlim = c(1, niter), las = 1,
-    xlab = "iteration", ylab = "function value",
-    main = "convergence plot", ...)
-  }
-  else if (plot.type[1] == "storepop" && nstorepop > 0) {
-	plot.new()
-	par(mfrow = c(min(3, npar), 1))
-	for (i in 1:npar) {
-      if (i %% 4 == 0) {
-	    cat("new plot\n")
-		devAskNewPage(ask = TRUE)
-		par(mfrow = c(3, 1))
-	  }
-      tmp <- NULL
-      for (j in 1:nstorepop) {
-        tmp <- cbind(tmp, z$storepop[[j]][, i])
-      }
-      matplot(t(tmp), col = 'black', pch = 20, 
-      xlim = c(0, niter), las = 1,
-      xlab = "iteration", ylab = "value", main = nam[i], ...)
-      abline(h = c(z$lower[i], z$upper[i]), col = 'red')
-      par(new = FALSE)
+    else if (identical(plot.type[1], "bestvalit")) {
+        plot(1:niter, z$bestvalit, xlim = c(1, niter), las = 1,
+            xlab = "iteration", ylab = "function value", main =
+"convergence plot",
+            ...)
     }
-  }
-  else {
-    warning("'type' does not correspond to any type", immediate. = TRUE)
-  }
+    else if (identical(plot.type[1], "storepop") && nstorepop > 0) {
+        plot.new()
+        par(mfrow = c(min(3, npar), 1))
+        for (i in 1:npar) {
+            if (identical(i%%4, 0)) {
+                cat("new plot\n")
+                devAskNewPage(ask = TRUE)
+            }
+            tmp <- NULL
+            for (j in 1:nstorepop) {
+                tmp <- cbind(tmp, z$storepop[[j]][, i])
+            }
+            matplot(t(tmp), col = "black", pch = 20, las = 1, xlab =
+"stored population", ylab = "value",
+                main = nam[i], ...)
+            abline(h = c(z$lower[i], z$upper[i]), col = "red")
+            par(new = FALSE)
+        }
+    }
+    else {
+        warning("'plot.type' does not correspond to any plotting type",
+immediate. = TRUE)
+    }
 }
-

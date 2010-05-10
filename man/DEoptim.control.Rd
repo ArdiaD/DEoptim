@@ -3,11 +3,11 @@
 \title{Control various aspects of the DEoptim implementation}
 \description{
   Allow the user to set some characteristics of the 
-  Differential Evolution optimization algorithm implemented
+  differential evolution optimization algorithm implemented
   in \code{DEoptim}.
 }
 \usage{
-DEoptim.control(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
+DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
    storepopfreq = 1)
@@ -17,7 +17,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
       will stop if either the maximum number of iterations \code{itermax}
       is reached or the best parameter vector \code{bestmem} has found a value
       \code{fn(bestmem) <= VTR}. Default to \code{-Inf}.}
-  \item{strategy}{Defines the Differential Evolution
+  \item{strategy}{Defines the differential evolution
     strategy used in the optimization procedure:\cr
      \code{1}: DE / rand / 1 / bin (classical strategy)\cr
      \code{2}: DE / local-to-best / 1 / bin \cr
@@ -27,26 +27,32 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
      any value not above:
      variation to DE / rand / 1 / bin: either-or-algorithm.
     }
-    \item{bs}{Enables best of parent and child selection if \code{TRUE} or
-      DEoptim standard trial vs. target selection if \code{FALSE}.
-      Default is \code{TRUE}.}
-    \item{NP}{Number of population members. Default to \code{50}.
-      Cannot be set larger than 2000.}
+    \item{bs}{If \code{FALSE} then every mutant will be tested against a
+      member in the previous generation, and the best value will proceed
+      into the next generation (this is standard trial vs. target
+      selection).   If \code{TRUE} then the old generation and \code{NP}
+      mutants will be sorted by their associated objective function
+      values, and the best \code{NP} vectors will proceed into the next
+      generation (best of parent and child selection).}
+    \item{NP}{Number of population members. Defaults to \code{50}.  For
+      many problems it is best to set
+      \code{NP} to be at least 10 times the length
+      of the parameter vector.  }
     \item{itermax}{The maximum iteration (population generation) allowed.
       Default is \code{200}.}
     \item{CR}{Crossover probability from interval [0,1]. Default
-      to \code{0.5}.}
+      to \code{0.9}.}
     \item{F}{Stepsize from interval [0,2]. Default to \code{0.8}.}
     \item{trace}{Printing of progress occurs? Default to \code{TRUE}.}
     \item{initialpop}{An initial population used as a starting
-      population in the optimization procedure. Maybe useful to speed up
+      population in the optimization procedure. May be useful to speed up
       the convergence. Default to \code{NULL}.}
     \item{storepopfrom}{From which population should the following
       intermediate populations be stored in memory. Default to
       \code{itermax+1}, i.e., no intermediate population is stored.}
     \item{storepopfreq}{The frequency of populations'
       storage. Default to \code{1}, i.e. every intermediate population
-      is memorized.}
+      is stored.}
   }
   \value{
     A \code{list} with components:

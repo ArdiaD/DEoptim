@@ -1,4 +1,4 @@
-DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
+DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
                             storepopfreq = 1) {
@@ -9,10 +9,6 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
   if (NP < 1) {
     warning("'NP' < 1; set to default value 50\n", immediate. = TRUE)
     NP <- 50
-  }
-  if (NP > 2000) {
-    warning("'NP' > 2000; set to upper limit 2000\n", immediate. = TRUE)
-    NP <- 2000
   }
   if (F < 0 | F > 2) {
     warning("'F' not in [0,2]; set to default value 0.8\n", immediate. = TRUE)
@@ -27,7 +23,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = TRUE, NP = 50,
             immediate. = TRUE)
     strategy <- 2
   }
-  
+    
   bs <- (bs > 0)
 
   trace <- (trace > 0)
@@ -45,8 +41,8 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   fn1  <- function(par) fn(par, ...)
   if (length(lower) != length(upper))
     stop("'lower' and 'upper' are not of same length")
-  if(length(lower) > 20)
-    stop("Current implementation cannot minimize functions of > 20 parameters.")
+  if(length(lower) > 200)
+    stop("Current implementation cannot minimize functions of > 200 parameters.")
   if (!is.vector(lower))
     lower <- as.vector(lower)
   if (!is.vector(upper))
@@ -70,7 +66,9 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
 
   ctrl <- do.call(DEoptim.control, as.list(control))
   ctrl$npar <- length(lower)
-
+  
+  if (ctrl$NP < 10*length(lower)) 
+    warning("For many problems it is best to set 'NP' (in 'control') to be at least ten times the length of the parameter vector. \n", immediate. = TRUE)
   if (!is.null(ctrl$initialpop)) {
     ctrl$specinitialpop <- TRUE
     if(!identical(as.numeric(dim(ctrl$initialpop)), c(ctrl$NP, ctrl$npar)))
@@ -84,6 +82,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
+  
   outC <- .Call("DEoptimC", lower, upper, fn1, ctrl, new.env(),
                PACKAGE = "DEoptim")
   ##
@@ -114,6 +113,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   names(lower) <- names(upper) <- nam
   bestmemit <- matrix(outC$bestmemit, nrow = iter, 
                       ncol = ctrl$npar, byrow = TRUE)
+
   dimnames(bestmemit) <- list(1:iter, nam)
   bestvalit <- as.numeric(outC$bestvalit[1:iter])
   pop <- matrix(outC$pop, nrow = ctrl$NP, ncol = ctrl$npar,

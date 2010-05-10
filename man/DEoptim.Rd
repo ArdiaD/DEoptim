@@ -3,7 +3,7 @@
 \title{Differential Evolution Optimization}
 \concept{minimization}
 \description{
-  Performs evolutionary optimization via the Differential Evolution algorithm.
+  Performs evolutionary global optimization via the differential evolution algorithm.
 }
 \usage{
 DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
@@ -19,10 +19,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   \item{...}{Further arguments to be passed to \code{fn}.}
 }
 \details{
-  \code{DEoptim} performs minimization of \code{fn}.  Note that
-  \code{fn} must be minimized with respect to 20 or fewer parameters;
-  this is a limitation of the implementation and may
-  be eliminated in the future at the request of users.  
+  \code{DEoptim} performs minimization of \code{fn}. 
 
   The \code{control} argument is a list; see the help file for
   \code{\link{DEoptim.control}} for details.
@@ -46,11 +43,11 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   \code{storepop}: a list containing the intermediate populations.\cr
 }
 \note{
-  \code{DEoptim} calls C code similar to the MS Visual C++ v5.0
-  implementation of the Differential Evolution algorithm distributed
-  with the book \emph{Differential Evolution -- A Practical Approach to
-  Global Optimization} by Price, K.V., Storn, R.M., Lampinen J.A,
-  Springer-Verlag, 2005, and found on-line at
+  \code{DEoptim} calls C code that is in many respects similar to the MS
+  Visual C++ v5.0 implementation of the differential evolution algorithm
+  distributed with the book \emph{Differential Evolution -- A Practical
+  Approach to Global Optimization} by Price, K.V., Storn, R.M., Lampinen
+  J.A, Springer-Verlag, 2005, and found on-line at
   \url{http://www.icsi.berkeley.edu/~storn/DeWin.zip}.
 
   If you experience misconvergence in the optimization process you usually
@@ -76,9 +73,9 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   \preformatted{
     fn <- function(x)\{
       if (x[1] + x[2]^2 < 2)\{
-	r <- Inf
+        r <- Inf
       else\{
-	...
+        ...
       \}
       return(r)
     \}
@@ -94,8 +91,12 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
 \references{
-  Differential Evolution homepage:
+  Differential evolution homepage:
   \url{http://www.icsi.berkeley.edu/~storn/code.html}
+  
+  Storn, R. and Price, K. (1997). Differential Evolution -- A Simple and
+  Efficient Heuristic for Global Optimization over Continuous Spaces,
+  \emph{Journal of Global Optimization}, 11:4, 341-359.  
 
   Price, K.V., Storn, R.M., Lampinen J.A. (2005).
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.

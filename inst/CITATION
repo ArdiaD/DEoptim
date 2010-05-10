@@ -3,13 +3,13 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
 
 citEntry(entry = "Manual",
-	 title = "{DEoptim:} Differential Evolution Optimization in {R}",
-	 author = personList(as.person("David Ardia"), 
+     title = "{DEoptim:} Differential Evolution Optimization in {R}",
+     author = personList(as.person("David Ardia"), 
                              as.person("Katharine Mullen")),
          year = year,
-	 note = vers,
-	 url = "http://CRAN.R-project.org/package=DEoptim",
-	 textVersion =
+     note = vers,
+     url = "http://CRAN.R-project.org/package=DEoptim",
+     textVersion =
          paste("David Ardia and Katharine Mullen (", year,"). ",
                "DEoptim: Differential Evolution Optimization in R. ", vers, ". ",
                "URL http://CRAN.R-project.org/package=DEoptim", sep=""),

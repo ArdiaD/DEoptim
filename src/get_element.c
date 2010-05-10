@@ -7,9 +7,9 @@ SEXP getListElement(SEXP list, char *str)
    int i;
 
    for (i = 0; i < length(list); i++)
-	   if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
-         elmt = VECTOR_ELT(list, i);
-         break;
-	   }
+     if (strcmp(CHAR(STRING_ELT(names, i)), str) == 0) {
+       elmt = VECTOR_ELT(list, i);
+       break;
+     }
    return elmt;
 }
