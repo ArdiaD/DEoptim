@@ -1,13 +1,14 @@
 DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
-                            storepopfreq = 1) {
+                            storepopfreq = 1, checkWinner = FALSE,
+                            avWinner = TRUE) {
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
   }
-  if (NP < 1) {
-    warning("'NP' < 1; set to default value 50\n", immediate. = TRUE)
+  if (NP < 4) {
+    warning("'NP' < 4; set to default value 50\n", immediate. = TRUE)
     NP <- 50
   }
   if (F < 0 | F > 2) {
@@ -34,7 +35,8 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
 
   list(VTR = VTR, strategy = strategy, NP = NP, itermax = itermax, CR
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
-       storepopfrom = storepopfrom, storepopfreq = storepopfreq)
+       storepopfrom = storepopfrom, storepopfreq = storepopfreq,
+       checkWinner = checkWinner, avWinner = avWinner)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
@@ -66,7 +68,10 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
 
   ctrl <- do.call(DEoptim.control, as.list(control))
   ctrl$npar <- length(lower)
-  
+  if (ctrl$NP < 4) {
+    warning("'NP' < 4; set to default value 50\n", immediate. = TRUE)
+    ctrl$NP <- 50
+  }
   if (ctrl$NP < 10*length(lower)) 
     warning("For many problems it is best to set 'NP' (in 'control') to be at least ten times the length of the parameter vector. \n", immediate. = TRUE)
   if (!is.null(ctrl$initialpop)) {

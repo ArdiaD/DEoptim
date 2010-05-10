@@ -24,7 +24,7 @@ double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env)
  
    UNPROTECT(3);	
   
-   if(!R_FINITE(f_result))
+   if(ISNAN(f_result))
      error("NaN value of objective function! \nPerhaps adjust the bounds.");
    
    return(f_result); 

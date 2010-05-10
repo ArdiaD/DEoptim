@@ -1,10 +1,18 @@
+Changes in version 2.0-4
+  o added check to prevent the C code being called with NP<4, thanks to Joshua 
+    Ulrich.  
+  o fixed bug introduced in version 2.0-3 that made the objective function 
+    values associated with the winning population members incorrect
+  o added new options checkWinner and avWinner to the 'control' arguement. 
+
 Changes in version 2.0-3
   o Re-write of much of the underlying C code.  Now dynamically allocate 
-    storage, so can maximize on parameter vectors of arbitrary size, in a 
+    storage, so can optimize on parameter vectors of arbitrary size, in a 
     population of arbitrary size.  Changed the documentation to reflect the
     new lack of limitations.    
   o Stop with an error right away if a NaN objective function value occurs.
   o Default value of CR changed to .9 from .5.     
+  o Added reference and minor changes to documentation.   
 
 Changes in version 2.0-2
   o The maximum number of parameters that can be optimized (set
