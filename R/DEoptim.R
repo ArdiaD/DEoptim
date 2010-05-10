@@ -257,19 +257,20 @@
   invisible(z)
 }
 
-'plot.DEoptim' <- function(x, plot.type = c("bestmemit","bestvalit"), ...){
+'plot.DEoptim' <- function(x, plot.type = c("bestmemit","bestvalit","storepop"), ...){
+  plot.type <- plot.type[1]
   z <- x$member
   n <- length(z$bestvalit)
-  plot.type <- plot.type[1]
-  if (plot.type == "bestmemit"){
-    npar <- length(z$lower)
-    nam <- names(z$lower)
-    if (npar == 1){
+  npar <- length(z$lower)
+  nam <- names(z$lower)
+  k <- length(z$storepop)
+  if (plot.type == "bestmemit") {
+    if (npar == 1) {
       plot(1:n, z$bestmemit,
            xlab = "iteration", ylab = "value", main = nam, ...)
       abline(h = c(z$lower, z$upper), col = 'red')
     }
-    else if (npar == 2){
+    else if (npar == 2) {
       plot(z$bestmemit[,1], z$bestmemit[,2],
            xlab = nam[1], ylab = nam[2], ...)
       abline(h = c(z$lower[1], z$upper[1]), col = 'red')
@@ -284,10 +285,39 @@
       }
     }
   }
-  else
+  else if (plot.type == "bestvalit") {
     plot(1:n, z$bestvalit,
          xlab = "iteration", ylab = "function value",
          main = "convergence plot", ...)
+  }
+  else if (plot.type == "storepop" & k>0) {
+    the.col <- gray(k:1/k)
+    if (npar == 1) {
+      for (i in 1:k) {
+        plot(rep(i/k, nrow(z$storepop[[i]])),
+             z$storepop[[i]], xlim = c(0,1), ylim = c(z$lower, z$upper), 
+             las=1, pch=20, col=the.col[i], xlab = nam[1], ylab = "", main = "")
+        par(new=TRUE)
+      }
+    }
+    else {
+      if (npar>2)
+        par(mfrow=c(npar-1,npar-1))
+      for (i in 1:k) {
+        for (j in 1:(npar-1)) {
+          for (l in (j+1):npar) {
+            par(mfg=c(j,l-1))
+            plot(z$storepop[[i]][,c(j,l)], col=the.col[i], las=1, pch=20,
+                 xlim = c(z$lower[j],z$upper[j]), ylim = c(z$lower[l],z$upper[l]),
+                 xlab = nam[j], ylab = nam[l], main = "", ...)
+            par(new = TRUE)
+          }
+        }
+      }
+    }
+    par(new = FALSE)
+  }
+  else {
+    warning("'plot.type' does not correspond to any type", immediate. = TRUE)
+  }
 }
-
-

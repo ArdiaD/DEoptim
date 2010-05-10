@@ -140,12 +140,13 @@ DEoptim(FUN, lower, upper, control = list(), ...)
 
   Some useful books:
   
-  Price, K. V., Storn, R. M. and Lampinen J. A. (2005) \emph{Differential Evolution
-    - A Practical Approach to Global Optimization}.
-  Springer. ISBN 3540209506.
+  Price, K.V., Storn, R.M., Lampinen J.A. (2005).
+  \emph{Differential Evolution - A Practical Approach to Global Optimization}.
+  Springer-Verlag. ISBN 3540209506.
 
-  Nocedal, J. and Wright, S. J. (1999) \emph{Numerical Optimization}.
-  Springer. ISBN 0387987932.
+  Nocedal, J. and Wright, S.J. (1999).
+  \emph{Numerical Optimization}.
+  Springer-Verlag. ISBN 0387987932.
 }
 
 \author{David Ardia \email{david.ardia@unifr.ch} for the \R-port;

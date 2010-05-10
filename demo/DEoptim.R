@@ -76,8 +76,7 @@ demo.DEoptim <- function(){
   tstr <- paste(tstr, "\nSearch space [-50,50].\n", sep = "")
   print.comments(tstr)
   print(Wild)
-  windows()
-  plot(Wild, -50, 50, n = 1000, 
+  plot(Wild, -50, 50, n = 1000,
        main = "DEoptim minimizing 'Wild function'")
   if (wait()) stop(str.stop) else demo.4()
 

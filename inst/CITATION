@@ -1,17 +1,18 @@
-desc <- packageDescription("DEoptim")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
-vers <- paste("R package version", desc$Version)
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("DEoptim")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- paste("R package version", meta$Version)
 
 citEntry(entry = "Manual",
-	 title = "DEoptim package: Differential Evolution Optimization in R",
+	 title = "{DEoptim:} Differential Evolution Optimization in {R}",
 	 author = personList(as.person("David Ardia")),
          year = year,
 	 note = vers,
-	 url = "http://CRAN.R-project.org/",
+	 url = "http://CRAN.R-project.org/package=DEoptim",
 	 textVersion =
-         paste("David Ardia (", year,"). DEoptim package: Differential
-         Evolution Optimization in R. ", vers, ".", sep=""),
-         header = "to cite the DEoptim package use:"
+         paste("David Ardia (", year,"). ",
+               "DEoptim: Differential Evolution Optimization in R. ", vers, ". ",
+               "URL http://CRAN.R-project.org/package=DEoptim", sep=""),
+         header = "to cite the 'DEoptim' package use:"
 )
 
 citEntry(entry = "Book",
@@ -19,14 +20,14 @@ citEntry(entry = "Book",
          author = personList(as.person("Kenneth V. Price"),
                              as.person("Rainer M. Storn"),
                              as.person("Jouni A. Lampinen")),
-         publisher = "Springer",
+         publisher = "Springer-Verlag",
          series = "Natural Computing",
          month = "January",
          year = "2006",
          note = "ISBN number: 3540209506",
          textVersion =
-         paste("Kenneth V. Price, Rainer M. Storn and Jouni A. Lampinen (2006)",
+         paste("Kenneth V. Price, Rainer M. Storn and Jouni A. Lampinen (2006).",
                "Differential Evolution - A Practical Approach to Global Optimization.",
-               "Springer. ISBN number: 3540209506."),
+               "Springer-Verlag. ISBN 3540209506."),
          header = "to cite the Differential Evolution algorithm use:"
 )
