@@ -5,7 +5,7 @@
 ##}
 
 ## Differential Evolution Optimization
-## David Ardia -- 20060910
+## David Ardia -- 20060912
 'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {  
   if (missing(FUN))
     stop("'FUN' is missing") 
@@ -18,7 +18,7 @@
   if (!is.vector(lower))
     lower <- as.vector(lower)
   if (!is.vector(upper))
-    XVmax <- as.vector(upper)
+    upper <- as.vector(upper)
   if (any(lower > upper))
     stop("'lower' > 'upper'")
   if (any(lower == "Inf"))
@@ -142,12 +142,13 @@
     pm2 <- popold[a2,]
     pm3 <- popold[a3,] 
     pm4 <- popold[a4,] 
-    pm5 <- popold[a5,] 
+    pm5 <- popold[a5,]
     
     bm <- matrix(rep.int(bestmemit[iter,], NP), nrow = NP, byrow = TRUE) ## population filled with
     ## the best member of the last iteration
       
     mui <- matrix(runif(NP * d), nrow = NP) < con$CR ## all random numbers < CR are 1, 0 otherwise
+    mpo <- mui < 0.5 
       
     if (con$strategy == 1) { ## best / 1
       ui <- bm + con$F * (pm1 - pm2) ## differential variation
@@ -178,7 +179,7 @@
     tempval <- apply(ui, 1, FUN, ...) ## check cost of competitor
     if (any(is.nan(tempval)))
       stop ("'your function returns 'NaN'; modify it or change 'lower' or 'upper' boundaries")
-    if (any(is.na(val)))
+    if (any(is.na(tempval)))
       stop ("your function returns 'NA'; modify it or change 'lower' or 'upper' boundaries")
     ichange <- tempval <= val
     val[ichange] <- tempval[ichange]
@@ -188,7 +189,7 @@
     ibest <- match(bestval, val)
     bestmem <- pop[ibest,]
     bestmemit <- rbind(bestmemit, bestmem)
-    
+   
     if (con$refresh > 0 & iter %% con$refresh == 0)
       cat("iteration: ", iter,
           "best member: " , round(bestmem, con$digits),

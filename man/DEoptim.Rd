@@ -174,6 +174,8 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     main = "DEoptim minimizing 'Wild function'")
   DEoptim(Wild, lower = -50, upper = 50,
       control = list(NP = 50, refresh = 1))
+  DEoptim(Wild, lower = -50, upper = 50, 
+      control = list(NP = 50, refresh = 1, digits = 8))
 }
 \keyword{nonlinear}
 \keyword{optimize}

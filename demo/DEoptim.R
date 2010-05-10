@@ -26,8 +26,6 @@ demo.DEoptim <- function(){
   }
 
   'demo.2' <- function(){
-    lower <- c(-10,-10)
-    upper <- -lower
     r <- DEoptim(Rosenbrock, rep(-10,2), rep(10,2), 
                  control = list(NP = 100, refresh = 1))
     summary(r)
@@ -49,6 +47,11 @@ demo.DEoptim <- function(){
     plot(r, plot.type = "bestvalit", type = 'l')
   }
 
+  'demo.5' <- function(){
+    r <- DEoptim(Wild, lower = -50, upper = 50,
+                 control = list(NP = 50, refresh = 1, digits = 8))
+  }
+
   str.stop <- "end of the demo"
   tstr <- "\nRun the optimization process for the 'Rosenbrock'"
   tstr <- paste(tstr, "\nBanana function. Search space [-10,10]^2.\n", sep = "")
@@ -68,7 +71,6 @@ demo.DEoptim <- function(){
   print.comments(tstr)
   print(demo.3)
   if (wait()) stop(str.stop) else demo.3()
-  if (wait()) stop(str.stop)
   
   tstr <- "\nRun the optimization process for the 'Wild' function."
   tstr <- paste(tstr, "\nSearch space [-50,50].\n", sep = "")
@@ -78,6 +80,10 @@ demo.DEoptim <- function(){
   plot(Wild, -50, 50, n = 1000, 
        main = "DEoptim minimizing 'Wild function'")
   if (wait()) stop(str.stop) else demo.4()
+
+  tstr <- "\nIncrease the number of printed digits"
+  print.comments(tstr)
+  if (wait()) stop(str.stop) else demo.5()
   
   cat("\n",str.stop,"\n")
 }
