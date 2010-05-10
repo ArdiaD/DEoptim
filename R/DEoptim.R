@@ -1,7 +1,7 @@
 "DEoptim" <-
 function(FUN, lower, upper, control = list(), ...) {
   ## Differential Evolution Optimization
-  ## David Ardia -- 2005-08-08
+  ## David Ardia -- 2005-08-14
 
   if (missing(FUN))
     stop("'FUN' is missing") 
@@ -35,7 +35,7 @@ function(FUN, lower, upper, control = list(), ...) {
   }
   NP = con$NP
   
-  if (con$F < 0 | con$F > 1) {
+  if (con$F < 0 | con$F > 2) {
     warning("'F' not in [0,2]; set to default value 0.8\n")
     con$F <- 0.8
   }
@@ -46,7 +46,7 @@ function(FUN, lower, upper, control = list(), ...) {
   }
   
   if (con$strategy < 1 | con$strategy > 10) {
-    warning("'strategy' not in {1,...,10}; set to defaul value 7\n")
+    warning("'strategy' not in {1,...,10}; set to default value 7\n")
     con$strategy <- 7
   }
   

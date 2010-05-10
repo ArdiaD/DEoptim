@@ -143,8 +143,8 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     control = list(NP = 50, itermax = 200, F = 1.5, 
     CR = 0.2, refresh = 1))
   DEoptim(Rosenbrock, lower, upper,
-    control = list(NP = 50, itermax = 200, F = 1.5, 
-    CR = 0.2, refresh = 1))
+    control = list(NP = 80, itermax = 400, F = 1.2,
+    CR = 0.7, refresh = 1))
 
   ## 'Wild' function, global minimum at about -15.81515
   Wild <- function(x)
