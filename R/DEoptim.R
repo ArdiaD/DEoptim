@@ -4,9 +4,8 @@
   cat("\nAuthor and maintainer : David Ardia <david.ardia@unifr.ch>\n")
 }
 
-
 ## Differential Evolution Optimization
-## David Ardia -- 2005-12-27
+## David Ardia -- 20060630
 'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {
   
   if (missing(FUN))
@@ -25,30 +24,30 @@
     stop("'lower' > 'upper'")
   
   d <- length(lower)
-  con <- list(VTR = 1.e-6, itermax = 200,
+  con <- list(VTR = -Inf, itermax = 200,
               NP = 50, F = 0.8, CR = 0.5, strategy = 7,
               refresh = 10, digits = 4)
   con[names(control)] <- control
   
   if (con$itermax <= 0) {
-    warning("'itermax' <= 0; set to default value 200\n")
+    warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     con$itermax <- 200
   }
   if (con$NP < 1) {
-    warning("'NP' < 1; set to default value 50\n")
+    warning("'NP' < 1; set to default value 50\n", immediate. = TRUE)
     con$NP <- 50
   }
   NP <- con$NP
   if (con$F < 0 | con$F > 2) {
-    warning("'F' not in [0,2]; set to default value 0.8\n")
+    warning("'F' not in [0,2]; set to default value 0.8\n", immediate. = TRUE)
     con$F <- 0.8
   }
   if (con$CR < 0 | con$CR > 1) {
-    warning("'CR' not in [0,1]; set to default value 0.5\n")
+    warning("'CR' not in [0,1]; set to default value 0.5\n", immediate. = TRUE)
     con$CR <- 0.5
   }
   if (con$strategy < 1 | con$strategy > 10) {
-    warning("'strategy' not in {1,...,10}; set to default value 7\n")
+    warning("'strategy' not in {1,...,10}; set to default value 7\n", immediate. = TRUE)
     con$strategy <- 7
   }
   con$refresh <- floor(con$refresh)
@@ -197,18 +196,21 @@
   attr(r, "member") <- list(lower = lower, upper = upper,
                             bestvalit = bestvalit, bestmemit = bestmemit)
   attr(r, "class") <- "DEoptim"
+  
   return(r)
 }
 
 'summary.DEoptim' <- function(object, ...){
   digits <- max(5, getOption('digits') - 2)
   z <- attr(object, "optim")
+  
   cat("\n***** summary of DEoptim object *****",
       "\nbest member: ", round(z$bestmem, digits),
       "\nbest value: ", round(z$bestval, digits),
       "\nafter: ", round(z$iter), " iterations",
       "\nfunction evaluated: ", round(z$nfeval), " times",
       "\n*************************************\n")
+  
   invisible(z)
 }
 

@@ -11,22 +11,22 @@ DEoptim(FUN, lower, upper, control = list(), ...)
 \arguments{
   \item{FUN}{A function to be minimized, with first argument the vector
     of parameters over which minimization is to take place. It should
-    return a scalar result.}
+    return a scalar result. \code{NA} values are not allowed.}
   \item{lower, upper}{Bounds on the variables.}
   \item{control}{A list of control parameters. See *Details*.}
   \item{...}{Further arguments to be passed to \code{FUN}.}
 }
 \details{
   \code{DEoptim} performs minimization of \code{FUN}.
-  
-  The \code{control} argument is a list that can supply any of 
+
+  The \code{control} argument is a list that can supply any of
   the following components:
-  
+
   \describe{
-    \item{\code{VTR}}{The value to be reached. The optimization process 
+    \item{\code{VTR}}{The value to be reached. The optimization process
       will stop if either the maximum number of iterations \code{itermax}
       is reached or the best parameter vector \code{bestmem} has found a value
-      \code{FUN(bestmem) <= VTR}. Defaults to \code{10e-6}.}
+      \code{FUN(bestmem) <= VTR}. Defaults to \code{-Inf}.}
     \item{\code{itermax}}{The maximum iteration (population generation) allowed.
       Defaults is \code{200}.}
     \item{\code{NP}}{Number of population members. Defaults to \code{50}.}
@@ -47,60 +47,65 @@ DEoptim(FUN, lower, upper, control = list(), ...)
         \item{\code{9}}{best/2/binomial}
         \item{\code{10}}{rand/2/binomial}
       }
+      
       Experiments suggest that binomial likes to have a slightly larger \code{CR}
       than exponential. By default \code{strategy} is \code{7}.}
+
     \item{\code{refresh}}{The frequency of reports. Defaults to
       every \code{10} iterations.}
   }
 }
 \value{
-  A list of class \code{DEoptim} with the attributes \code{optim} and
-  \code{member} containing the following elements:
-  \item{\code{optim$bestmem}}{The best set of parameters found.}
-  \item{\code{optim$bestval}}{The value of \code{FUN} corresponding to \code{bestmem}.}
-  \item{\code{optim$nfeval}}{Number of function evaluations.}
-  \item{\code{optim$iter}}{Number of procedure iterations.}
-  \item{\code{member$lower}}{The lower boundary.}
-  \item{\code{member$upper}}{The upper boundary.}
-  \item{\code{member$bestvalit}}{The best value at each iteration.}
-  \item{\code{member$bestmemit}}{The best member at each iteration.}
+  A list of class \code{DEoptim} with the attributes \code{optim} and \code{member}.\cr
+
+  \code{attr(,"optim")} contains the followings:\cr
+  \code{bestmem}: the best set of parameters found.\cr
+  \code{bestval}: the value of \code{FUN} corresponding to \code{bestmem}.\cr
+  \code{nfeval}: number of function evaluations.\cr
+  \code{iter}: number of procedure iterations.\cr
+
+  \code{attr(,"member")} contains the followings:\cr
+  \code{lower}: the lower boundary.\cr
+  \code{upper}: the upper boundary.\cr
+  \code{bestvalit}: the best value at each iteration.\cr
+  \code{bestmemit}: the best member at each iteration.\cr
 }
 \note{
-  \code{DEoptim} is a R-vectorized variant of the Differential Evolution algorithm
-  initialy developed by R. Storn \email{storn@icsi.berkeley.edu},
+  \code{DEoptim} is a \R-vectorized variant of the Differential Evolution algorithm
+  initialy developed by Rainer Storn \email{storn@icsi.berkeley.edu},
   International Computer Science Institute (ICSI), 1947 Center Street, Suite 600,
-  Berkeley, CA 94704. \url{http://http.icsi.berkeley.edu/~storn}.
-
-  If you experience misconvergence in the optimization process you usually 
-  have to increase the value for \code{NP}, but often you only have to adjust 
-  \code{F} to be a little lower or higher than \code{0.8}. If you increase 
-  \code{NP} and simultaneously lower \code{F} a little, convergence is more 
-  likely to occur but generally takes longer, i.e. \code{DEoptim} is getting 
+  Berkeley, CA 94704.
+  
+  If you experience misconvergence in the optimization process you usually
+  have to increase the value for \code{NP}, but often you only have to adjust
+  \code{F} to be a little lower or higher than \code{0.8}. If you increase
+  \code{NP} and simultaneously lower \code{F} a little, convergence is more
+  likely to occur but generally takes longer, i.e. \code{DEoptim} is getting
   more robust (there is always a convergence speed/robustness tradeoff).
 
   \code{DEoptim} is much more sensitive to the choice of \code{F} than it is to
-  the choice of \code{CR}. \code{CR} is more like a fine tuning element. High 
+  the choice of \code{CR}. \code{CR} is more like a fine tuning element. High
   values of \code{CR} like \code{CR=1} give faster convergence if convergence
-  occurs. Sometimes, however, you have to go down as much as \code{CR=0} to 
-  make \code{DEoptim} robust enough for a particular problem. 
-  
-  If you choose binomial crossover like, rand/1/binomial, \code{CR} is usually 
-  higher than in the exponential crossover variant (in this example 
-  rand/1/exponential). Still, \code{F} and \code{CR} are both generally in 
-  the range [0.5,1] for most problems we have encountered. Keep in mind that 
-  different problems usually require different settings for \code{NP}, \code{F} 
-  and \code{CR}. 
-  
-  If you still get misconvergence you might want to try a different method. 
-  We mostly use rand/1/... or best/2/... (for the latter \code{F=0.5} is the 
-  standard choice). The crossover method is not so important although Ken Price 
-  claims that binomial is never worse than exponential. In case of misconvergence 
-  also check your choice of objective function. There might be a better one to 
-  describe your problem. Any knowledge that you have about the problem should be 
-  worked into the objective function. A good objective function can make all 
+  occurs. Sometimes, however, you have to go down as much as \code{CR=0} to
+  make \code{DEoptim} robust enough for a particular problem.
+
+  If you choose binomial crossover like, rand/1/binomial, \code{CR} is usually
+  higher than in the exponential crossover variant (in this example
+  rand/1/exponential). Still, \code{F} and \code{CR} are both generally in
+  the range [0.5,1] for most problems we have encountered. Keep in mind that
+  different problems usually require different settings for \code{NP}, \code{F}
+  and \code{CR}.
+
+  If you still get misconvergence you might want to try a different method.
+  We mostly use rand/1/... or best/2/... (for the latter \code{F=0.5} is the
+  standard choice). The crossover method is not so important although Ken Price
+  claims that binomial is never worse than exponential. In case of misconvergence
+  also check your choice of objective function. There might be a better one to
+  describe your problem. Any knowledge that you have about the problem should be
+  worked into the objective function. A good objective function can make all
   the difference.
 
-  The R-adaptation \code{DEoptim} has properties which differ from the 
+  The \R-adaptation \code{DEoptim} has properties which differ from the
   original DE version:
   \describe{
     \item{1.}{The random selection of vectors is performed by shuffling the
@@ -109,37 +114,62 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     \item{2.}{Due to the vectorized expressions \code{DEoptim} executes fairly fast.}
     \item{3.}{The parameters are constrained within boundaries.}
   }
-}
+  
+  To perform a maximization (instead of minimization) of a given
+  function, simply define a new function which is the opposite of the
+  function to maximize and apply \code{DEoptim} to it.
+  
+  To integrate additional constraints on the parameters \code{x} of
+  \code{FUN(x)}, for instance \code{x[1] + x[2]^2 < 2}, integrate the
+  constraint within the function to optimize, for instance: 
+  \preformatted{
+    FUN <- function(x)\{
+      if (x[1] + x[2]^2 < 2)\{
+	r <- Inf
+      else\{
+	...
+      \}
+      return(r)
+    \}
+  }
 
+  Note that \code{DEoptim} does not support \code{NA} values for
+  flexibility. I suggest that you replace eventual \code{NA} values by
+  \code{Inf} in your function's output.
+}
 \references{
-  \url{http://www.icsi.berkeley.edu/~storn}
-  
-  \url{http://www2.lut.fi/~jlampine/debiblio.htm}
-  
-  Nocedal, J. and Wright, S. J. (1999) \emph{Numerical Optimization}.
-  Springer.
+  some useful URLs:
+
+  Rainer Storn homepage: \url{http://www.icsi.berkeley.edu/~storn}
+
+  Lampine research paper series: \url{http://www2.lut.fi/~jlampine/debiblio.htm}
+
+  some useful books and articles:
   
   Price, K., Storn, R. and J. Lampingen (2005) \emph{Differential Evolution
     - A Practical Approach to Global Optimization over Continuous Spaces}.
   Springer.
-  
+
   Storn, R. and Price, K. (1995) Differential Evolution - a Simple and Efficient
   Adaptive Scheme for Global Optimization over Continuous Spaces.
   \emph{Technical Report TR-95-012}.
+
+  Nocedal, J. and Wright, S. J. (1999) \emph{Numerical Optimization}.
+  Springer.
 }
 
-\author{D. Ardia <\email{david.ardia@unifr.ch}> for the R-port;
-  R. Storn <\email{storn@icsi.berkeley.edu}> for the Differential Evolution algorithm.}
+\author{David Ardia \email{david.ardia@unifr.ch} for the \R-port;
+  Rainer Storn \email{storn@icsi.berkeley.edu} for the Differential Evolution algorithm.}
 
-\seealso{\code{\link{DEoptim-methods}} for methods on DEoptim object;
+\seealso{\code{\link{DEoptim-methods}} for methods on \code{DEoptim} object;
   \code{\link{optim}} or \code{\link{constrOptim}} for constrained optimization.}
 
 \examples{
   ## Rosenbrock Banana function
   Rosenbrock <- function(x){
-  x1 <- x[1]
-  x2 <- x[2]
-  100 * (x2 - x1 * x1)^2 + (1 - x1)^2
+    x1 <- x[1]
+    x2 <- x[2]
+    100 * (x2 - x1 * x1)^2 + (1 - x1)^2
   }
 
   lower <- c(-10,-10)
