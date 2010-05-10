@@ -36,6 +36,11 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     \item{\code{initial}}{An initial population used as a starting
       population in the optimization procedure. Maybe useful to speed up
       the convergence. Defaults to \code{NULL}.}
+    \item{\code{storepopfrom}}{From which population should the following
+      intermediate populations be stored in memory. Default to
+      \code{itermax+1}, i.e., no intermediate population is stored.}
+    \item{\code{storepopfreq}}{The frequency of populations'
+      storage. Default to \code{1}, i.e. every intermediate population is memorized.}
     \item{\code{strategy}}{Defines the binomial DE-strategy used in the
       optimization procedure:
       \describe{
@@ -47,7 +52,7 @@ DEoptim(FUN, lower, upper, control = list(), ...)
       }
       
       By default \code{strategy} is \code{2}. See references below for details.}
-
+    
     \item{\code{refresh}}{The frequency of reports. Default to
       every \code{10} iterations.}
     \item{\code{digits}}{The number of digits to print when printing numeric values at each
@@ -69,6 +74,7 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   \code{bestvalit}: the best value of \code{FUN} at each iteration.\cr
   \code{bestmemit}: the best member at each iteration.\cr
   \code{pop}: the population generated at the last iteration.\cr
+  \code{storepop}: a list containing the intermediate populations.\cr
 }
 \note{
   \code{DEoptim} is a \R-vectorized variant of the Differential Evolution algorithm
@@ -124,6 +130,8 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   Note that \code{DEoptim} stops if any \code{NA} or \code{NaN} value is
   obtained. You have to redefine your function to handle these values
   (for instance, set \code{NA} to \code{Inf} in your objective function).
+  
+  Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
 \references{
   Differential Evolution homepage :

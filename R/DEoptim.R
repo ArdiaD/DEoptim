@@ -5,7 +5,7 @@
 ##}
 
 ## Differential Evolution Optimization
-## David Ardia -- 20060912
+## David Ardia -- 20081203
 'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {  
   if (missing(FUN))
     stop("'FUN' is missing") 
@@ -42,6 +42,7 @@
   d <- length(lower)
   con <- list(VTR = -Inf, itermax = 200,
               initial = NULL,
+              storepopfrom = NULL, storepopfreq = 1,
               NP = 50, F = 0.8, CR = 0.5, strategy = 2,
               refresh = 10, digits = 4)
   con[names(control)] <- control
@@ -69,29 +70,40 @@
   }
   con$refresh <- floor(con$refresh)
   if (con$refresh > con$itermax)
-    con$refresh <- 0
+    con$refresh <- 1
 
-  if (is.null(con$initial)){
+  if (is.null(con$initial)) {
     ## Initialize population and some arrays
     pop <- matrix(rep.int(lower, NP), nrow = NP, byrow = TRUE) +
       matrix(runif(NP * d), nrow = NP) *
         matrix(rep.int(upper - lower, NP), nrow = NP, byrow = TRUE)
   }
   else{
-    warning("'initial' population is set by the user")
+    warning("'initial' population is set by the user\n", immediate. = TRUE)
     if (!is.matrix(con$initial)){
-      warning("'initial' must be a matrix; set it to a matrix")
+      warning("'initial' must be a matrix; set it to a matrix\n", immediate. = TRUE)
       pop <- matrix(con$initial, nrow = NP, ncol = d)
     }
     else{
-      warning("'NP' determined by the number of rows of the 'initial' population")
+      warning("'NP' determined by the number of rows of the 'initial' population\n", immediate = TRUE)
       NP <- nrow(con$initial)
       pop <- con$initial
       if (d != ncol(pop))
-        warning ("modify the length of 'lower' and 'upper' to match the dimension of 'initial'")
+        warning ("modify the length of 'lower' and 'upper' to match the dimension of 'initial'\n", immediate = TRUE)
     }
   }
-      
+  
+  if (is.null(con$storepopfrom)) {
+    con$storepopfrom <- con$itermax+1
+  }
+
+  con$storepopfreq <- floor(con$storepopfreq)
+  if (con$storepopfreq > con$itermax)
+    con$storepopfreq <- 1
+  storepopiter <- 1
+  storepop <- list()
+
+  ## initialization
   popold <- fn.zeros(NP,d) ## toggle population
   val <- rep.int(0,NP) ## create and reset the "cost array"
   bestmem <- bestmemit <- rep.int(0,d) ## best population member ever and iteration
@@ -107,7 +119,7 @@
   bestval <- bestvalit <- min(val)
   ibest <- match(bestvalit, val)
   bestmem <- pop[ibest,]
-  bestmemit <- matrix(bestmem, nrow = 1)
+  bestmemit <- matrix(bestmem, nrow = 1)  
  
   ## DE - optimization
   ##
@@ -189,11 +201,19 @@
     ibest <- match(bestval, val)
     bestmem <- pop[ibest,]
     bestmemit <- rbind(bestmemit, bestmem)
-   
-    if (con$refresh > 0 & iter %% con$refresh == 0)
+
+    ## keeppop
+    if (iter >= con$storepopfrom & iter %% con$storepopfreq == 0){
+      storepop[[storepopiter]] <- pop
+      storepopiter <- storepopiter + 1
+    }
+
+    ## refresh output
+    if (con$refresh > 0 & iter %% con$refresh == 0) {      
       cat("iteration: ", iter,
           "best member: " , round(bestmem, con$digits),
           "best value: ", round(bestval, con$digits), "\n")
+    }
     iter <- iter + 1
   }
 
@@ -206,9 +226,18 @@
   
   names(lower) <- names(upper) <- names(bestmem) <- nam
   dimnames(bestmemit) <- list(1:iter, nam)
-  r <- list(optim = list(bestmem = bestmem, bestval = bestval, nfeval = nfeval, iter = iter),
-            member = list(lower = lower, upper = upper, bestvalit = bestvalit, bestmemit = bestmemit,
-              pop = pop))
+  r <- list(optim = list(
+              bestmem = bestmem,
+              bestval = bestval,
+              nfeval = nfeval,
+              iter = iter-1),
+            member = list(
+              lower = lower,
+              upper = upper,
+              bestvalit = bestvalit,
+              bestmemit = bestmemit,
+              pop = pop,
+              storepop = storepop))
   
   attr(r, "class") <- "DEoptim"
   return(r)
