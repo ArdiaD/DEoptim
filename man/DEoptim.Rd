@@ -11,7 +11,7 @@ DEoptim(FUN, lower, upper, control = list(), ...)
 \arguments{
   \item{FUN}{A function to be minimized, with first argument the vector
     of parameters over which minimization is to take place. It should
-    return a scalar result. \code{NA} values are not allowed.}
+    return a scalar result. \code{NA} and \code{NaN} values are not allowed.}
   \item{lower, upper}{Bounds on the variables.}
   \item{control}{A list of control parameters. See *Details*.}
   \item{...}{Further arguments to be passed to \code{FUN}.}
@@ -26,49 +26,49 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     \item{\code{VTR}}{The value to be reached. The optimization process
       will stop if either the maximum number of iterations \code{itermax}
       is reached or the best parameter vector \code{bestmem} has found a value
-      \code{FUN(bestmem) <= VTR}. Defaults to \code{-Inf}.}
+      \code{FUN(bestmem) <= VTR}. Default to \code{-Inf}.}
     \item{\code{itermax}}{The maximum iteration (population generation) allowed.
-      Defaults is \code{200}.}
-    \item{\code{NP}}{Number of population members. Defaults to \code{50}.}
-    \item{\code{F}}{Stepsize from interval [0,2]. Defaults to \code{0.8}.}
-    \item{\code{CR}}{Crossover probability from interval [0,1]. Defaults
+      Default is \code{200}.}
+    \item{\code{NP}}{Number of population members. Default to \code{50}.}
+    \item{\code{F}}{Stepsize from interval [0,2]. Default to \code{0.8}.}
+    \item{\code{CR}}{Crossover probability from interval [0,1]. Default
       to \code{0.5}.}
-    \item{\code{strategy}}{Defines the DE-strategy used in the
-      optimization process:
+    \item{\code{initial}}{An initial population used as a starting
+      population in the optimization procedure. Maybe useful to speed up
+      the convergence. Defaults to \code{NULL}.}
+    \item{\code{strategy}}{Defines the binomial DE-strategy used in the
+      optimization procedure:
       \describe{
-        \item{\code{1}}{best/1/exponential}
-        \item{\code{2}}{rand/1/exponential}
-        \item{\code{3}}{rand-to-best/1/exponential}
-        \item{\code{4}}{best/2/exponential}
-        \item{\code{5}}{rand/2/exponential}
-        \item{\code{6}}{best/1/binomial}
-        \item{\code{7}}{rand/1/binomial}
-        \item{\code{8}}{rand-to-best/1/binomial}
-        \item{\code{9}}{best/2/binomial}
-        \item{\code{10}}{rand/2/binomial}
+        \item{\code{1}}{best/1}
+        \item{\code{2}}{rand/1}
+        \item{\code{3}}{rand-to-best/1}
+        \item{\code{4}}{best/2}
+        \item{\code{5}}{rand/2}
       }
       
-      Experiments suggest that binomial likes to have a slightly larger \code{CR}
-      than exponential. By default \code{strategy} is \code{7}.}
+      By default \code{strategy} is \code{2}. See references below for details.}
 
-    \item{\code{refresh}}{The frequency of reports. Defaults to
+    \item{\code{refresh}}{The frequency of reports. Default to
       every \code{10} iterations.}
+    \item{\code{digits}}{The number of digits to print when printing numeric values at each
+      iteration. Default to 4.}
   }
 }
 \value{
-  A list of class \code{DEoptim} with the attributes \code{optim} and \code{member}.\cr
+  A list of lists of the class \code{DEoptim}.\cr
 
-  \code{attr(,"optim")} contains the followings:\cr
+  list \code{optim} contains the followings:\cr
   \code{bestmem}: the best set of parameters found.\cr
   \code{bestval}: the value of \code{FUN} corresponding to \code{bestmem}.\cr
   \code{nfeval}: number of function evaluations.\cr
   \code{iter}: number of procedure iterations.\cr
 
-  \code{attr(,"member")} contains the followings:\cr
+  list \code{member} contains the followings:\cr
   \code{lower}: the lower boundary.\cr
   \code{upper}: the upper boundary.\cr
-  \code{bestvalit}: the best value at each iteration.\cr
+  \code{bestvalit}: the best value of \code{FUN} at each iteration.\cr
   \code{bestmemit}: the best member at each iteration.\cr
+  \code{pop}: the population generated at the last iteration.\cr
 }
 \note{
   \code{DEoptim} is a \R-vectorized variant of the Differential Evolution algorithm
@@ -89,22 +89,6 @@ DEoptim(FUN, lower, upper, control = list(), ...)
   occurs. Sometimes, however, you have to go down as much as \code{CR=0} to
   make \code{DEoptim} robust enough for a particular problem.
 
-  If you choose binomial crossover like, rand/1/binomial, \code{CR} is usually
-  higher than in the exponential crossover variant (in this example
-  rand/1/exponential). Still, \code{F} and \code{CR} are both generally in
-  the range [0.5,1] for most problems we have encountered. Keep in mind that
-  different problems usually require different settings for \code{NP}, \code{F}
-  and \code{CR}.
-
-  If you still get misconvergence you might want to try a different method.
-  We mostly use rand/1/... or best/2/... (for the latter \code{F=0.5} is the
-  standard choice). The crossover method is not so important although Ken Price
-  claims that binomial is never worse than exponential. In case of misconvergence
-  also check your choice of objective function. There might be a better one to
-  describe your problem. Any knowledge that you have about the problem should be
-  worked into the objective function. A good objective function can make all
-  the difference.
-
   The \R-adaptation \code{DEoptim} has properties which differ from the
   original DE version:
   \describe{
@@ -113,6 +97,10 @@ DEoptim(FUN, lower, upper, control = list(), ...)
       term of the perturbation expression.}
     \item{2.}{Due to the vectorized expressions \code{DEoptim} executes fairly fast.}
     \item{3.}{The parameters are constrained within boundaries.}
+    \item{4.}{An initial population can be given as a starting point for
+      the DE-optimization. This may speed up the convergence if the
+      optimization procedure has to be run many times for sligthly
+      different data sets.}
   }
   
   To perform a maximization (instead of minimization) of a given
@@ -133,9 +121,9 @@ DEoptim(FUN, lower, upper, control = list(), ...)
     \}
   }
 
-  Note that \code{DEoptim} does not support \code{NA} values for
-  flexibility. I suggest that you replace eventual \code{NA} values by
-  \code{Inf} in your function's output.
+  Note that \code{DEoptim} stops if any \code{NA} or \code{NaN} value is
+  obtained. You have to redefine your function to handle these values
+  (for instance, set \code{NA} to \code{Inf} in your objective function).
 }
 \references{
   Differential Evolution homepage :

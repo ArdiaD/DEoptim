@@ -1,0 +1,22 @@
+new release:
+- The function DEoptim has the new argument 'initial', which is an initial or starting population.
+  You can therefore introduce a starting population in the optimization procedure. This can be useful
+  when the optimization has to be run many times on data sets which differ sligthly. Thanks to
+  Tarmo Leinonen for this nice suggestion.
+
+- The function DEoptim outputs now 'pop' in the 'member' list's element. This is the population obtained
+  at the last iteration which can be used as a starting population in DEoptim via the argument 'initial'.
+  
+- The function stops if any 'NA' or 'NaN' value is returned by the function 'FUN' to be optimized.
+
+- The function DEoptim does not handle exponential crossover anymore. This is so to simplify and
+  accelerate the optimization procedure. Thanks to Vladimir Eremeev for pointing out a 
+  bug with the exponential crossover.
+
+- The function DEoptim outputs a list of lists. This is more natural and in the same spirit 
+  of usual optimization functions. Thanks to Vladimir Eremeev for proposing this change.
+  
+- documentation for the 'digits'. Thanks to Eugene Demidenko for pointing out this.
+
+2007/02/02:
+- The documentation of DEoptim has been modified. Corrections of some references.

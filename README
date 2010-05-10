@@ -1,0 +1,6 @@
+DEoptim is a R-adaptation of the Differential Evolution optimization algorithm.
+It is still under development and is distributed without warranty.
+
+Further details can be found at http://www.icsi.berkeley.edu/~storn/code.html
+
+Thanks to report bugs or make suggestions to <david.ardia@unifr.ch>

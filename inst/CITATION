@@ -1,12 +1,16 @@
+desc <- packageDescription("DEoptim")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
+vers <- paste("R package version", desc$Version)
+
 citEntry(entry = "Manual",
 	 title = "DEoptim package: Differential Evolution Optimization in R",
 	 author = personList(as.person("David Ardia")),
-         year = "2006",
-	 note = "version 1.1-7",
+         year = year,
+	 note = vers,
 	 url = "http://CRAN.R-project.org/",
 	 textVersion =
-         paste("David Ardia (2006) DEoptim package: Differential Evolution Optimization in R.",
-               "version 1.1-7."),
+         paste("David Ardia (", year,"). DEoptim package: Differential
+         Evolution Optimization in R. ", vers, ".", sep=""),
          header = "to cite the DEoptim package use:"
 )
 
@@ -23,6 +27,6 @@ citEntry(entry = "Book",
          textVersion =
          paste("Kenneth V. Price, Rainer M. Storn and Jouni A. Lampinen (2006)",
                "Differential Evolution - A Practical Approach to Global Optimization.",
-               "Springer. ISBN number: 3540209506"),
+               "Springer. ISBN number: 3540209506."),
          header = "to cite the Differential Evolution algorithm use:"
 )

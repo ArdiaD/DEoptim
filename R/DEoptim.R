@@ -1,13 +1,12 @@
-'.onLoad' <- function(lib, pkg){
-  cat("\nDEoptim package")
-  cat("\nDifferential Evolution algorithm")
-  cat("\nAuthor and maintainer : David Ardia <david.ardia@unifr.ch>\n")
-}
+##'.onLoad' <- function(lib, pkg){
+##  cat("\nDEoptim package")
+##  cat("\nDifferential Evolution algorithm")
+##  cat("\nAuthor and maintainer : David Ardia <david.ardia@unifr.ch>\n")
+##}
 
 ## Differential Evolution Optimization
-## David Ardia -- 20060630
-'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {
-  
+## David Ardia -- 20060910
+'DEoptim' <- function(FUN, lower, upper, control = list(), ...) {  
   if (missing(FUN))
     stop("'FUN' is missing") 
   FUN <- match.fun(FUN)
@@ -22,10 +21,28 @@
     XVmax <- as.vector(upper)
   if (any(lower > upper))
     stop("'lower' > 'upper'")
+  if (any(lower == "Inf"))
+    warning("you set a component of 'lower' to 'Inf'. May imply 'NaN' results")
+  if (any(lower == "-Inf"))
+    warning("you set a component of 'lower' to '-Inf'. May imply 'NaN' results")
+  if (any(upper == "Inf"))
+    warning("you set a component of 'upper' to 'Inf'. May imply 'NaN' results")
+  if (any(upper == "-Inf"))
+    warning("you set a component of 'upper' to '-Inf'. May imply 'NaN' results")
+
+  ## Sub-functions
+  fn.zeros <- function(nr, nc)
+    matrix(rep.int(0, nr * nc), nrow = nr)
+  
+  fn.checkBoundaries <- function(x, lower, upper) {
+    r <- apply(rbind(lower, x), 2, max)
+    apply(rbind(upper, r), 2, min) 
+  }
   
   d <- length(lower)
   con <- list(VTR = -Inf, itermax = 200,
-              NP = 50, F = 0.8, CR = 0.5, strategy = 7,
+              initial = NULL,
+              NP = 50, F = 0.8, CR = 0.5, strategy = 2,
               refresh = 10, digits = 4)
   con[names(control)] <- control
   
@@ -46,28 +63,35 @@
     warning("'CR' not in [0,1]; set to default value 0.5\n", immediate. = TRUE)
     con$CR <- 0.5
   }
-  if (con$strategy < 1 | con$strategy > 10) {
-    warning("'strategy' not in {1,...,10}; set to default value 7\n", immediate. = TRUE)
-    con$strategy <- 7
+  if (con$strategy < 1 | con$strategy > 5) {
+    warning("'strategy' not in {1,...,5}; set to default value 2\n", immediate. = TRUE)
+    con$strategy <- 2
   }
   con$refresh <- floor(con$refresh)
   if (con$refresh > con$itermax)
     con$refresh <- 0
-  
-  ## Sub-functions
-  fn.zeros <- function(nr, nc)
-    matrix(rep.int(0, nr * nc), nrow = nr)
-  
-  fn.checkBoundaries <- function(x, lower, upper) {
-    r <- apply(rbind(lower, x), 2, max)
-    apply(rbind(upper, r), 2, min) 
+
+  if (is.null(con$initial)){
+    ## Initialize population and some arrays
+    pop <- matrix(rep.int(lower, NP), nrow = NP, byrow = TRUE) +
+      matrix(runif(NP * d), nrow = NP) *
+        matrix(rep.int(upper - lower, NP), nrow = NP, byrow = TRUE)
   }
-  
-  ## Initialize population and some arrays
-  pop <- matrix(rep.int(lower, NP), nrow = NP, byrow = TRUE) +
-    matrix(runif(NP * d), nrow = NP) *
-      matrix(rep.int(upper - lower, NP), nrow = NP, byrow = TRUE)
-  
+  else{
+    warning("'initial' population is set by the user")
+    if (!is.matrix(con$initial)){
+      warning("'initial' must be a matrix; set it to a matrix")
+      pop <- matrix(con$initial, nrow = NP, ncol = d)
+    }
+    else{
+      warning("'NP' determined by the number of rows of the 'initial' population")
+      NP <- nrow(con$initial)
+      pop <- con$initial
+      if (d != ncol(pop))
+        warning ("modify the length of 'lower' and 'upper' to match the dimension of 'initial'")
+    }
+  }
+      
   popold <- fn.zeros(NP,d) ## toggle population
   val <- rep.int(0,NP) ## create and reset the "cost array"
   bestmem <- bestmemit <- rep.int(0,d) ## best population member ever and iteration
@@ -75,6 +99,11 @@
   ## Evaluate the best member after initialization
   nfeval <- NP ## number of function evaluations
   val <- apply(pop, 1, FUN, ...)
+  if (any(is.nan(val)))
+    stop ("your function returns 'NaN'; modify it or change 'lower' or 'upper' boundaries")
+  if (any(is.na(val)))
+    stop ("your function returns 'NA'; modify it or change 'lower' or 'upper' boundaries")
+      
   bestval <- bestvalit <- min(val)
   ibest <- match(bestvalit, val)
   bestmem <- pop[ibest,]
@@ -94,7 +123,7 @@
   ind <- fn.zeros(4,4)
 
   iter <- 1
-  while (iter <= con$itermax & bestval > con$VTR){
+  while (iter <= con$itermax & bestval >= con$VTR){
     popold <- pop ## save old population
     
     ind <- sample(1:4) ## index pointer array
@@ -115,42 +144,24 @@
     pm4 <- popold[a4,] 
     pm5 <- popold[a5,] 
     
-    bm <- matrix(rep(bestmemit[iter,], NP), nrow = NP, byrow = TRUE) ## population filled with
+    bm <- matrix(rep.int(bestmemit[iter,], NP), nrow = NP, byrow = TRUE) ## population filled with
     ## the best member of the last iteration
       
     mui <- matrix(runif(NP * d), nrow = NP) < con$CR ## all random numbers < CR are 1, 0 otherwise
       
-    if (con$strategy > 5)
-      st <- con$strategy - 5 ## binomial crossover
-    else {
-      st <- con$strategy ## exponential crossover
-      mui <- sort(t(mui)) ## transpose, collect 1's in each column
-        
-      for (i in 1:NP) {
-        n <- floor(runif(1) * d)
-        if (n > 0) {
-          rtd <- (rotd + n) %% d
-          mui[,i] <- mui[rtd + 1,i] ## rotate column i by n 
-        }
-      }
-      mui <- t(mui) ## transpose back
-    }
-    
-    mpo <- mui < 0.5 
-
-    if (st == 1) { ## best / 1
+    if (con$strategy == 1) { ## best / 1
       ui <- bm + con$F * (pm1 - pm2) ## differential variation
       ui <- popold * mpo + ui * mui ## crossover
     }
-    else if (st == 2) { ## rand / 1
+    else if (con$strategy == 2) { ## rand / 1
       ui <- pm3 + con$F * (pm1 - pm2) ## differential variation
       ui <- popold * mpo + ui * mui ## crossover
     }
-    else if (st == 3) { ## rand-to-best / 1
+    else if (con$strategy == 3) { ## rand-to-best / 1
       ui <- popold + con$F * (bm - popold) + con$F * (pm1 - pm2) ## differential variation
       ui <- popold * mpo + ui * mui ## crossover
     }
-    else if (st == 4) { ## best / 2
+    else if (con$strategy == 4) { ## best / 2
       ui <- bm + con$F * (pm1 - pm2 + pm3 - pm4) ## differential variation
       ui <- popold * mpo + ui * mui ## crossover
     }
@@ -165,6 +176,10 @@
 
     nfeval <- nfeval + NP
     tempval <- apply(ui, 1, FUN, ...) ## check cost of competitor
+    if (any(is.nan(tempval)))
+      stop ("'your function returns 'NaN'; modify it or change 'lower' or 'upper' boundaries")
+    if (any(is.na(val)))
+      stop ("your function returns 'NA'; modify it or change 'lower' or 'upper' boundaries")
     ichange <- tempval <= val
     val[ichange] <- tempval[ichange]
     pop[ichange,] <- ui[ichange,]
@@ -190,32 +205,30 @@
   
   names(lower) <- names(upper) <- names(bestmem) <- nam
   dimnames(bestmemit) <- list(1:iter, nam)
-  r <- list()
-  attr(r, "optim") <- list(bestmem = bestmem, bestval = bestval, nfeval = nfeval,
-                           iter = iter)
-  attr(r, "member") <- list(lower = lower, upper = upper,
-                            bestvalit = bestvalit, bestmemit = bestmemit)
-  attr(r, "class") <- "DEoptim"
+  r <- list(optim = list(bestmem = bestmem, bestval = bestval, nfeval = nfeval, iter = iter),
+            member = list(lower = lower, upper = upper, bestvalit = bestvalit, bestmemit = bestmemit,
+              pop = pop))
   
+  attr(r, "class") <- "DEoptim"
   return(r)
 }
 
 'summary.DEoptim' <- function(object, ...){
   digits <- max(5, getOption('digits') - 2)
-  z <- attr(object, "optim")
+  z <- object$optim
   
   cat("\n***** summary of DEoptim object *****",
-      "\nbest member: ", round(z$bestmem, digits),
-      "\nbest value: ", round(z$bestval, digits),
-      "\nafter: ", round(z$iter), " iterations",
-      "\nfunction evaluated: ", round(z$nfeval), " times",
+      "\nbest member   : ", round(z$bestmem, digits),
+      "\nbest value    : ", round(z$bestval, digits),
+      "\nafter         : ", round(z$iter), "iterations",
+      "\nFUN evaluated : ", round(z$nfeval), "times",
       "\n*************************************\n")
   
   invisible(z)
 }
 
 'plot.DEoptim' <- function(x, plot.type = c("bestmemit","bestvalit"), ...){
-  z <- attr(x, "member")
+  z <- x$member
   n <- length(z$bestvalit)
   plot.type <- plot.type[1]
   if (plot.type == "bestmemit"){
