@@ -1,6 +1,31 @@
+Changes in version 2.0-0
+  o The R-based implementation of Differential Evolution has been
+    replaced with a C-based implementation similar to the MS Visual C++
+    v5.0 implementation accompanying the book `Differential Evolution -
+    A Practical Approach to Global Optimization',downloaded from
+    http://www.icsi.berkeley.edu/~storn/DeWin.zip.
+
+    The new C implementation is significantly faster. 
+
+  o The S3 method for plotting has been enhanced. It allows now to plot
+    the intermediate populations if provided.
+
+  o The package maintainer has been changed to Katharine Mullen,
+    <katharine.mullen@nist.gov>.
+
+  o A NAMESPACE has been added.
+
+  o Argument FUN for DEoptim is now called fn for compatibility with optim.
+
+  o demo file has been removed
+
+  o CITATION file modified
+
+
 Changes in version 1.3-3
 
   o CITATION file modified.
+
 
 Changes in Version 1.3-2
 
