@@ -92,16 +92,29 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
     \item{avWinner}{}
     with meanings as explained under \sQuote{Arguments}.
 }
+
+\seealso{
+  \code{\link{DEoptim}} and \code{\link{DEoptim-methods}}.
+}
 \references{
   Differential Evolution homepage:
   \url{http://www.icsi.berkeley.edu/~storn/code.html}
   
+  Storn, R. and Price, K. (1997). Differential Evolution -- A Simple and
+  Efficient Heuristic for Global Optimization over Continuous Spaces,
+  \emph{Journal of Global Optimization}, 11:4, 341-359.  
+
   Price, K.V., Storn, R.M., Lampinen J.A. (2005).
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.
   Springer-Verlag. ISBN 3540209506.
-}
-\seealso{
-  \code{\link{DEoptim}} and \code{\link{DEoptim-methods}}.
+
+  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (2009).
+  DEoptim: An R Package for Global Optimization by Differential Evolution.
+  \url{http://ssrn.com/abstract=1526466}
+
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).
+  Differential Evolution (DEoptim) for Non-Convex Portfolio Optimization.
+  \url{http://ssrn.com/abstract=1584905}
 }
 \note{
   Please cite the package in publications. Use \code{citation("DEoptim")}.

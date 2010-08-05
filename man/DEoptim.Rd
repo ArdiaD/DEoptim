@@ -101,11 +101,24 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   Price, K.V., Storn, R.M., Lampinen J.A. (2005).
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.
   Springer-Verlag. ISBN 3540209506.
+
+  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (2009).
+  DEoptim: An R Package for Global Optimization by Differential Evolution.
+  \url{http://ssrn.com/abstract=1526466}
+
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).
+  Differential Evolution (DEoptim) for Non-Convex Portfolio Optimization.
+  \url{http://ssrn.com/abstract=1584905}
 }
 \author{
   David Ardia \email{david.ardia@unifr.ch} and 
   Katharine Mullen \email{katharine.mullen@nist.gov}.
 }
+\note{%
+  Further details and examples of the \R package \code{DEoptim} can be found
+  in Mullen et al. (2009) and Ardia et al. (2010).
+}
+
 \seealso{
   \code{\link{DEoptim.control}} for control arguments,
   \code{\link{DEoptim-methods}} for methods on \code{DEoptim} objects,

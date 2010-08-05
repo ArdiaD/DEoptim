@@ -1,21 +1,51 @@
-meta <- packageDescription("DEoptim")
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("DEoptim")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
-vers <- paste("R package version", meta$Version)
+vers <- paste("version", meta$Version)
 
-citEntry(entry = "Manual",
-     title = "{DEoptim:} Differential Evolution Optimization in {R}",
+citHeader("To cite 'DEoptim' in publications use:")
+
+citEntry(entry = "manual",
+	 title = "The {DEoptim} Package: Differential Evolution Optimization in {R}",
      author = personList(as.person("David Ardia"), 
                              as.person("Katharine Mullen"), 
                              as.person("Brian G. Peterson"),
                              as.person("Joshua Ulrich")),
-         year = year,
-     note = vers,
-     url = "http://CRAN.R-project.org/package=DEoptim",
-     textVersion =
-         paste("David Ardia and Katharine Mullen (", year,"). ",
-               "DEoptim: Differential Evolution Optimization in R. ", vers, ". ",
-               "URL http://CRAN.R-project.org/package=DEoptim", sep=""),
-         header = "to cite the 'DEoptim' package use:"
+     year = year,
+	 note = vers,
+	 url = "http://CRAN.R-project.org/package=DEoptim",
+	 textVersion =
+         paste("Ardia, D., Mullen, K.M., et.al. (", year,"). ",
+               "The 'DEoptim' Package: Differential Evoluation Optimization in 'R'. ", vers, ".", sep = "")
+)
+
+citEntry(entry = "misc",
+	 title = "{DEoptim}: An {R} Package for Global Optimization by Differential Evolution",
+	 author = personList(person("Katharine","Mullen","M."),
+                         person("David","Ardia"),
+                         person("David","Gil","L."),
+                         person("Donald","Windover"),
+                         person("James","Cline")),
+         year = "2009",
+         url = "http://ssrn.com/abstract=1526466",
+	 textVersion =
+         paste("Mullen, K.M., Ardia, D., Gil, D.L., Windover, D., Cline, J. (2009).",
+               "'DEoptim': An 'R' Package for Global Optimization by Differential Evolution.",
+               "URL http://ssrn.com/abstract=1526466.")
+)
+
+citEntry(entry = "misc",
+	 title = "Differential Evoluation ({DEoptim}) for Non-Convex Portfolio Optimization",
+	 author = personList(person("David","Ardia"),
+                         person("Kris","Boudt"),
+                         person("Peter","Carl"),
+                         person("Katharine","Mullen","M."),
+                         person("Brian","Peterson","G.")),
+         year = "2010",
+         url = "http://ssrn.com/abstract=1584905",
+         textVersion = 
+         paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
+               "Differential Evoluation ('DEoptim') for Non-Convex Portfolio Optimization.",
+               "URL http://ssrn.com/abstract=1584905.")
 )
 
 citEntry(entry = "Book",

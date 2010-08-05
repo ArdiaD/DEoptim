@@ -43,8 +43,6 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   fn1  <- function(par) fn(par, ...)
   if (length(lower) != length(upper))
     stop("'lower' and 'upper' are not of same length")
-  if(length(lower) > 200)
-    stop("Current implementation cannot minimize functions of > 200 parameters.")
   if (!is.vector(lower))
     lower <- as.vector(lower)
   if (!is.vector(upper))

@@ -1,3 +1,7 @@
+Changes in version 2.0-5
+  o CITATION file modified, updated references. 
+  o Removed check on length of parameter vector (it was left over from versions
+    prior to 2.0-3, thanks to Jean-Luc Jannink.
 Changes in version 2.0-4
   o added check to prevent the C code being called with NP<4, thanks to Joshua 
     Ulrich.  
