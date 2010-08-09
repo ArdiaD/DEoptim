@@ -1,9 +1,10 @@
 #include <R.h>
 #include <Rdefines.h>
 
-//------objective function---------------------------------------
+/*------objective function---------------------------------------*/
 
-double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env)
+//double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env)
+double evaluate(double *param, int i_D, SEXP fcall, SEXP env)
 {
    int i;
    SEXP par;
@@ -15,7 +16,7 @@ double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env)
       NUMERIC_POINTER(par)[i] = param[i];
    }
    PROTECT(fn = lang2(fcall, par));
-      (*l_nfeval)++;  //increment function evaluation count
+      //(*l_nfeval)++;  /* increment function evaluation count */
   
    SETCADR(fn, par);
  

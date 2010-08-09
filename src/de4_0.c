@@ -2,6 +2,7 @@
 
 Implementation of DE based loosely on DE-Engine v4.0, Rainer Storn, 2004   
 by Katharine Mullen, 2009
+modified by Joshua Ulrich, 2010
 
 Storn's MS Visual C++ v5.0 was downloaded from 
 http://www.icsi.berkeley.edu/~storn/DeWin.zip
@@ -21,62 +22,34 @@ is likely a limitation of these functions.
 
 ***************************************************************/
 
-//------Include section----------------------------------------------
+/*------Include section----------------------------------------------*/
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
 #include <R.h>
 #include <Rdefines.h>
 
 SEXP getListElement(SEXP list, char *str);
-SEXP deoptim(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho);
+SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho);
 void devol(double VTR, double f_weight, double fcross, int i_bs_flag, 
            double *lower, double *upper, SEXP fcall, SEXP rho, int i_trace,
-	   int i_specinitialpop, double *initialpopv, int i_storepopfrom, 
-	   int i_storepopfreq, int i_check_winner, int i_av_winner);
+           int i_strategy, int i_D, int i_NP, int i_itermax,
+           double *initialpopv, int i_storepopfreq, int i_storepopfrom,
+           int i_specinitialpop, int i_check_winner, int i_av_winner,
+           double **gta_popP, double **gta_oldP, double **gta_newP, double *gt_bestP,
+           double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
+           double *t_bestitP, double *t_tmpP, double *tempP,
+           double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
+           int *gi_iter);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid);
-double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env);
+double evaluate(double *param, int i_D, SEXP fcall, SEXP env);
 
-//------Global variables--------------------------------------------
-// note: these global variables are not necessary - artifact of Storn DE implement
-// that should be removed in future 
 
-double VTR;               // value to reach
-int   gi_iter;            // generation counter
-int   gi_strategy;        // chooses DE-strategy
-long  gl_nfeval;          // number of function evaluations      
-int   gi_D;               // Dimension of parameter vector
-int   gi_NP;              // Number of population members
-int   gi_itermax;         // Maximum number of generations
-
-// Data structures for parameter vectors 
-double **gta_popP;  
-double **gta_oldP;  
-double **gta_newP;  
-double **gta_swapP; 
-double *gt_tmpP;
-double *gt_bestP; 
-
-// Data structures for objective function values 
-// associated with parameter vectors
-double *gta_popC;  
-double *gta_oldC;  
-double *gta_newC;  
-double *gta_swapC; 
-double gt_tmpC;
-double gt_bestC; 
-      
-double *gd_pop, *gd_storepop, *gd_bestmemit, *gd_bestvalit;
-
-//------General functions-----------------------------------------
+/*------General functions-----------------------------------------*/
 
 SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
 {
   int i, j;
-  int i_bs_flag, i_trace, i_storepopfrom, i_storepopfreq, i_specinitialpop, 
-    i_check_winner, i_av_winner;
-  double f_cross, f_weight;
+
+  /* External pointers to return to R */
   SEXP sexp_bestmem, sexp_bestval, sexp_nfeval, sexp_iter,
     out, out_names, sexp_pop, sexp_storepop, sexp_bestmemit, sexp_bestvalit;
 
@@ -85,59 +58,101 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   if (!isEnvironment(rho))
     error("rho is not an environment!");
 
-  //-----Initialization of annealing parameters-------------------------
-  VTR = (double)NUMERIC_VALUE(getListElement(control, "VTR"));
-  gi_strategy = (int)NUMERIC_VALUE(getListElement(control, "strategy"));
-  gi_itermax = (int)NUMERIC_VALUE(getListElement(control, "itermax"));
-  gl_nfeval = (long)NUMERIC_VALUE(getListElement(control, "nfeval"));
-  gi_D = (int)NUMERIC_VALUE(getListElement(control, "npar"));
-  gi_NP = (int)NUMERIC_VALUE(getListElement(control, "NP"));
-  i_storepopfrom = (int)NUMERIC_VALUE(getListElement(control, "storepopfrom"))-1;
-  i_storepopfreq = (int)NUMERIC_VALUE(getListElement(control, "storepopfreq"));
-  i_specinitialpop = (int)NUMERIC_VALUE(getListElement(control, "specinitialpop"));
+  /*-----Initialization of annealing parameters-------------------------*/
+  /* value to reach */
+  double VTR = NUMERIC_VALUE(getListElement(control, "VTR"));
+  /* chooses DE-strategy */
+  int i_strategy = INTEGER_VALUE(getListElement(control, "strategy"));
+  /* Maximum number of generations */
+  int i_itermax = INTEGER_VALUE(getListElement(control, "itermax"));
+  /* Dimension of parameter vector */
+  int i_D = INTEGER_VALUE(getListElement(control, "npar"));
+  /* Number of population members */
+  int i_NP = INTEGER_VALUE(getListElement(control, "NP"));
+  /* When to start storing populations */
+  int i_storepopfrom = INTEGER_VALUE(getListElement(control, "storepopfrom"))-1;
+  /* How often to store populations */
+  int i_storepopfreq = INTEGER_VALUE(getListElement(control, "storepopfreq"));
+  /* User-defined inital population */
+  int i_specinitialpop = INTEGER_VALUE(getListElement(control, "specinitialpop"));
+  double *initialpopv = NUMERIC_POINTER(getListElement(control, "initialpop"));
+  /* User-defined bounds */
+  double *f_lower = NUMERIC_POINTER(lower);
+  double *f_upper = NUMERIC_POINTER(upper);
+  /* stepsize */
+  double f_weight = NUMERIC_VALUE(getListElement(control, "F"));
+  /* crossover probability */
+  double f_cross = NUMERIC_VALUE(getListElement(control, "CR"));
+  /* Best of parent and child */
+  int i_bs_flag = NUMERIC_VALUE(getListElement(control, "bs"));
+  /* Print progress? */
+  int i_trace = NUMERIC_VALUE(getListElement(control, "trace"));
+  /* Re-evaluate best parameter vector? */
+  int i_check_winner = NUMERIC_VALUE(getListElement(control, "checkWinner"));
+  /* Average */
+  int i_av_winner = NUMERIC_VALUE(getListElement(control, "avWinner"));
 
-  double *initialpopv = (double *)NUMERIC_POINTER(getListElement(control, "initialpop"));
+  /* Data structures for parameter vectors */
+  double **gta_popP = (double **)R_alloc(i_NP*2,sizeof(double *));
+  for (int i = 0; i < (i_NP*2); i++) 
+    gta_popP[i] = (double *)R_alloc(i_D,sizeof(double));
 
-  double f_lower[gi_D];
-  double f_upper[gi_D];
+  double **gta_oldP = (double **)R_alloc(i_NP,sizeof(double *));
+  for (int i = 0; i < i_NP; i++) 
+    gta_oldP[i] = (double *)R_alloc(i_D,sizeof(double));
 
-  double *lowd = NUMERIC_POINTER(lower);
-  double *uppd = NUMERIC_POINTER(upper);
+  double **gta_newP = (double **)R_alloc(i_NP,sizeof(double *));
+  for (int i = 0; i < i_NP; i++) 
+    gta_newP[i] = (double *)R_alloc(i_D,sizeof(double));
+  
+  double *gt_bestP = (double *)R_alloc(1,sizeof(double) * i_D);
 
-  for (i = 0; i < gi_D; i++) {
-    f_lower[i] = (double)(lowd[i]);
-    f_upper[i] = (double)(uppd[i]);
-  }
+  /* Data structures for objective function values associated with
+   * parameter vectors */
+  double *gta_popC = (double *)R_alloc(i_NP*2,sizeof(double));
+  double *gta_oldC = (double *)R_alloc(i_NP,sizeof(double));
+  double *gta_newC = (double *)R_alloc(i_NP,sizeof(double));
+  double *gt_bestC = (double *)R_alloc(1,sizeof(double));
 
-  f_weight = NUMERIC_VALUE(getListElement(control, "F"));
-  f_cross = NUMERIC_VALUE(getListElement(control, "CR"));
-  i_bs_flag = NUMERIC_VALUE(getListElement(control, "bs"));
-  i_trace = NUMERIC_VALUE(getListElement(control, "trace"));
-  i_check_winner = NUMERIC_VALUE(getListElement(control, "checkWinner"));
-  i_av_winner = NUMERIC_VALUE(getListElement(control, "avWinner"));
+  double *t_bestitP = (double *)R_alloc(1,sizeof(double) * i_D);
+  double *t_tmpP = (double *)R_alloc(1,sizeof(double) * i_D);
+  double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
 
-  //---optimization--------------------------------------
+  int i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
+  double *gd_pop = (double *)R_alloc(i_NP*i_D,sizeof(double));
+  double *gd_storepop = (double *)R_alloc(i_NP,sizeof(double) * i_D * i_nstorepop);
+  double *gd_bestmemit = (double *)R_alloc(i_itermax*i_D,sizeof(double));
+  double *gd_bestvalit = (double *)R_alloc(i_itermax,sizeof(double));
+  int gi_iter = 0;
+
+  /*---optimization--------------------------------------*/
   devol(VTR, f_weight, f_cross, i_bs_flag, f_lower, f_upper, fn, rho, i_trace,
-	i_specinitialpop, initialpopv, i_storepopfrom, i_storepopfreq, 
-	i_check_winner, i_av_winner);
-  //---end optimization----------------------------------
+        i_strategy, i_D, i_NP, i_itermax,
+        initialpopv, i_storepopfrom, i_storepopfreq, 
+        i_specinitialpop, i_check_winner, i_av_winner,
+        gta_popP, gta_oldP, gta_newP, gt_bestP,
+        gta_popC, gta_oldC, gta_newC, gt_bestC,
+        t_bestitP, t_tmpP, tempP,
+        gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
+        &gi_iter);
+  /*---end optimization----------------------------------*/
 
-  PROTECT(sexp_bestmem = NEW_NUMERIC(gi_D));
-  for (i = 0; i < gi_D; i++) {
+  PROTECT(sexp_bestmem = NEW_NUMERIC(i_D));
+  for (i = 0; i < i_D; i++) {
     NUMERIC_POINTER(sexp_bestmem)[i] = gt_bestP[i];
   }
 
-  j = gi_NP * gi_D;
+  j = i_NP * i_D;
   PROTECT(sexp_pop = NEW_NUMERIC(j));
   for (i = 0; i < j; i++)
     NUMERIC_POINTER(sexp_pop)[i] = gd_pop[i];
-      
-  j =  ceil((gi_itermax - i_storepopfrom) / i_storepopfreq) * gi_NP * gi_D;
+
+  j =  i_nstorepop * i_NP * i_D;
   PROTECT(sexp_storepop = NEW_NUMERIC(j));
   for (i = 0; i < j; i++)
     NUMERIC_POINTER(sexp_storepop)[i] = gd_storepop[i];
 
-  j = gi_iter * gi_D;
+  j = gi_iter * i_D;
   PROTECT(sexp_bestmemit = NEW_NUMERIC(j));
   for (i = 0; i < j; i++) 
     NUMERIC_POINTER(sexp_bestmemit)[i] = gd_bestmemit[i];
@@ -147,10 +162,10 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
     NUMERIC_POINTER(sexp_bestvalit)[i] = gd_bestvalit[i];
 
   PROTECT(sexp_bestval = NEW_NUMERIC(1));
-  NUMERIC_POINTER(sexp_bestval)[0] = gt_bestC;
+  NUMERIC_POINTER(sexp_bestval)[0] = gt_bestC[0];
 
   PROTECT(sexp_nfeval = NEW_INTEGER(1));
-  INTEGER_POINTER(sexp_nfeval)[0] = (int)gl_nfeval;
+  INTEGER_POINTER(sexp_nfeval)[0] = 0;
 
   PROTECT(sexp_iter = NEW_INTEGER(1));
   INTEGER_POINTER(sexp_iter)[0] = gi_iter;
@@ -182,317 +197,285 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   return out;
 }
 
-void devol(double VTR, double f_weight, double f_cross, int i_bs_flag, double *lower,
-	   double *upper, SEXP fcall, SEXP rho, int trace, int i_specinitialpop,
-	   double *initialpopv, int i_storepopfrom, int i_storepopfreq, 
-	   int i_check_winner, int i_av_winner)
+void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
+           double *lower, double *upper, SEXP fcall, SEXP rho, int trace, 
+           int i_strategy, int i_D, int i_NP, int i_itermax,
+           double *initialpopv, int i_storepopfrom, int i_storepopfreq, 
+           int i_specinitialpop, int i_check_winner, int i_av_winner,
+           double **gta_popP, double **gta_oldP, double **gta_newP, double *gt_bestP,
+           double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
+           double *t_bestitP, double *t_tmpP, double *tempP,
+           double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
+           int *gi_iter)
 {
-#define URN_DEPTH  5   //4 + one index to avoid
 
-  int i, j, k, x;  // counting variables
-  int i_r1, i_r2, i_r3, i_r4;  // placeholders for random indexes
+#define URN_DEPTH  5   /* 4 + one index to avoid */
 
-  int i_itermax = gi_itermax;
+  int i, j, k, x;  /* counting variables */
+  int i_r1, i_r2, i_r3, i_r4;  /* placeholders for random indexes */
+
   int ia_urn2[URN_DEPTH];
   int i_nstorepop, i_xav;
-  i_nstorepop = ceil((gi_itermax - i_storepopfrom) / i_storepopfreq);
+  i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
   
-  int popcnt, bestacnt, same; //lazy cnters
+  int popcnt, bestacnt, same; /* lazy cnters */
 
   double *fa_minbound = lower;
   double *fa_maxbound = upper;
   double f_jitter, f_dither;
  
-  double *t_bestitP;
-  double *t_tmpP; 
-
   double t_bestitC;
   double t_tmpC, tmp_best; 
   
-  double p[gi_NP][gi_D];
-  double m[gi_D];
+  double p[i_NP][i_D];
+  double m[i_D];
+  double initialpop[i_NP][i_D];
   
-  // vars for sort 
-  int i_len;
-  int   done;
-  int   step, bound;
-  double *tempP;
+  /* vars for when i_bs_flag == 1 */
+  int i_len, done, step, bound;
   double tempC;
 
-  double besta[gi_itermax * gi_D];
-  double bestva[gi_itermax];
-  double storepop[i_nstorepop * gi_NP * gi_D];
-  double pop[gi_NP * gi_D];
-  double initialpop[gi_NP][gi_D];
-
-  gta_popP = (double **)R_alloc(gi_NP*2,sizeof(double *));
-  for (int i = 0; i < (gi_NP*2); i++) 
-    gta_popP[i] = (double *)R_alloc(gi_D,sizeof(double));
-  gta_oldP = (double **)R_alloc(gi_NP,sizeof(double *));
-  for (int i = 0; i < gi_NP; i++) 
-    gta_oldP[i] = (double *)R_alloc(gi_D,sizeof(double));
-  gta_newP = (double **)R_alloc(gi_NP,sizeof(double *));
-  for (int i = 0; i < gi_NP; i++) 
-    gta_newP[i] = (double *)R_alloc(gi_D,sizeof(double));
-  
-  gta_popC = (double *)R_alloc(gi_NP*2,sizeof(double));
-  gta_oldC = (double *)R_alloc(gi_NP,sizeof(double));
-  gta_newC = (double *)R_alloc(gi_NP,sizeof(double));
-  
-  gt_bestP = (double *)R_alloc(1,sizeof(double) * gi_D);
-  gt_tmpP = (double *)R_alloc(1,sizeof(double) * gi_D);
-  
-  t_bestitP = (double *)R_alloc(1,sizeof(double) * gi_D);
-  t_tmpP = (double *)R_alloc(1,sizeof(double) * gi_D);
-  tempP = (double *)R_alloc(1,sizeof(double) * gi_D);
-  
   GetRNGstate();
 
   gta_popP[0][0] = 0;
  
-  // initialize initial popuplation
-  for (int i = 0; i < gi_NP; i++) {
-    for (int j = 0; j < gi_D; j++) {
+  /* initialize initial popuplation */
+  for (int i = 0; i < i_NP; i++) {
+    for (int j = 0; j < i_D; j++) {
       initialpop[i][j] = 0.0;
     }
   }
 
-  // initialize best members
-  for (int i = 0; i <= gi_itermax * gi_D; i++)
-    besta[i] = 0.0;
+  /* initialize best members */
+  for (int i = 0; i <= i_itermax * i_D; i++)
+    gd_bestmemit[i] = 0.0;
 
-  // initialize best values
-  for (int i = 0; i <= gi_itermax; i++)
-    bestva[i] = 0.0;
+  /* initialize best values */
+  for (int i = 0; i <= i_itermax; i++)
+    gd_bestvalit[i] = 0.0;
 
-  // initialize best population
-  for (int i = 0; i < gi_NP * gi_D; i++)
-    pop[i] = 0.0;
+  /* initialize best population */
+  for (int i = 0; i < i_NP * i_D; i++)
+    gd_pop[i] = 0.0;
 
-  // initialize stored populations
+  /* initialize stored populations */
   if (i_nstorepop < 0)
     i_nstorepop = 0;
 
-  for (int i = 0; i < (i_nstorepop * gi_NP * gi_D); i++)
-    storepop[i] = 0.0;
+  for (int i = 0; i < (i_nstorepop * i_NP * i_D); i++)
+    gd_storepop[i] = 0.0;
       
-  // if initial population provided, initialize with values
+  /* if initial population provided, initialize with values */
   if (i_specinitialpop > 0) {
     k = 0;
     
-    for (j = 0; j < gi_D; j++) {
-      for (i = 0; i < gi_NP; i++) {
-	initialpop[i][j] = initialpopv[k];
-	k += 1;
+    for (j = 0; j < i_D; j++) {
+      for (i = 0; i < i_NP; i++) {
+        initialpop[i][j] = initialpopv[k];
+        k += 1;
       }
     }
   }
-  gl_nfeval = 0;  // number of function evaluations
-  
-  //------Initialization-----------------------------
-  
-  if (i_specinitialpop <= 0) { // random initial member
-    for (j = 0; j < gi_D; j++) 
-      gta_popP[0][j] = fa_minbound[j] +
-	unif_rand() * (fa_maxbound[j] - fa_minbound[j]);
-  }
-  else // or user-specified initial member
-    for (j = 0; j < gi_D; j++)
-      gta_popP[0][j] = initialpop[0][j];
- 
-  gta_popC[0] = evaluate(&gl_nfeval, gta_popP[0], gi_D, fcall, rho); 
-  
-  gt_bestC=gta_popC[0];
-  for (j = 0; j < gi_D; j++)  
-    gt_bestP[j]=gta_popP[0][j];
 
-  for (i = 1; i < gi_NP; i++) {
-    for (j = 0; j < gi_D; j++) {
-      if (i_specinitialpop <= 0) {
-	gta_popP[i][j] = fa_minbound[j] +
-	  unif_rand() * (fa_maxbound[j] - fa_minbound[j]);
+  /*------Initialization-----------------------------*/
+  for (i = 0; i < i_NP; i++) {
+    for (j = 0; j < i_D; j++) {
+      if (i_specinitialpop <= 0) { /* random initial member */
+        gta_popP[i][j] = fa_minbound[j] +
+        unif_rand() * (fa_maxbound[j] - fa_minbound[j]);
 
       }
-      else
-	gta_popP[i][j] = initialpop[i][j];
+      else /* or user-specified initial member */
+        gta_popP[i][j] = initialpop[i][j];
     } 
-    gta_popC[i] = evaluate(&gl_nfeval, gta_popP[i], gi_D, fcall, rho);
-   
-    if (gta_popC[i] <= gt_bestC) {
-      gt_bestC = gta_popC[i];
-      for (j = 0; j < gi_D; j++)  
-	gt_bestP[j]=gta_popP[i][j];
+    //gta_popC[i] = evaluate(&nfeval, gta_popP[i], i_D, fcall, rho);
+    gta_popC[i] = evaluate(gta_popP[i], i_D, fcall, rho);
+    gt_bestC[0] = gta_popC[0];
+
+    if (i == 0 || gta_popC[i] <= gt_bestC[0]) {
+      gt_bestC[0] = gta_popC[i];
+      for (j = 0; j < i_D; j++)  
+        gt_bestP[j]=gta_popP[i][j];
     }
   }
  
   
-  //---assign pointers to current ("old") population---
+  /*---assign pointers to current ("old") population---*/
   gta_oldP = gta_popP;
   gta_oldC = gta_popC;
   
-  //------Iteration loop--------------------------------------------
-  gi_iter = 0;
+  /*------Iteration loop--------------------------------------------*/
+  int i_iter = 0;
   popcnt = 0;
   bestacnt = 0;
   i_xav = 1;
   
-  // loop
-  while ((gi_iter < i_itermax) && (gt_bestC > VTR))
+  /* loop */
+  while ((i_iter < i_itermax) && (gt_bestC[0] > VTR))
     {
-      // store intermediate populations
-      if (gi_iter % i_storepopfreq == 0 && gi_iter >= i_storepopfrom) {
-	for (i = 0; i < gi_NP; i++) {
-	  for (j = 0; j < gi_D; j++) {
-	    storepop[popcnt] = gta_oldP[i][j];
+      /* store intermediate populations */
+      if (i_iter % i_storepopfreq == 0 && i_iter >= i_storepopfrom) {
+	for (i = 0; i < i_NP; i++) {
+	  for (j = 0; j < i_D; j++) {
+	    gd_storepop[popcnt] = gta_oldP[i][j];
 	    popcnt++;
 	  }
 	}
-       } // end store pop
+      } /* end store pop */
       
-      //store the best member
-      for(j = 0; j < gi_D; j++) {
-	besta[bestacnt] = gt_bestP[j];
+      /* store the best member */
+      for(j = 0; j < i_D; j++) {
+	gd_bestmemit[bestacnt] = gt_bestP[j];
 	bestacnt++;
       }
-      // store the best value
-      bestva[gi_iter] = gt_bestC;
+      /* store the best value */
+      gd_bestvalit[i_iter] = gt_bestC[0];
       
-      for (j = 0; j < gi_D; j++) 
-      	t_bestitP[j] = gt_bestP[j];
-      //t_bestitP = gt_bestP;
-      t_bestitC = gt_bestC;
+      for (j = 0; j < i_D; j++) 
+        t_bestitP[j] = gt_bestP[j];
+      /*t_bestitP = gt_bestP;*/
+      t_bestitC = gt_bestC[0];
       
-      gi_iter++;
+      i_iter++;
      
-      //----computer dithering factor -----------------
+      /*----computer dithering factor -----------------*/
       f_dither = f_weight + unif_rand() * (1.0 - f_weight);
 
-      //----start of loop through ensemble------------------------
-      for (i = 0; i < gi_NP; i++) {
+      /*----start of loop through ensemble------------------------*/
+      for (i = 0; i < i_NP; i++) {
 
-	//t_tmpP is the vector to mutate and eventually select
-	for (j = 0; j < gi_D; j++) 
+	/*t_tmpP is the vector to mutate and eventually select*/
+	for (j = 0; j < i_D; j++) 
 	  t_tmpP[j] = gta_oldP[i][j];
 	t_tmpC = gta_oldC[i];
 
-	permute(ia_urn2, URN_DEPTH, gi_NP, i); //Pick 4 random and distinct
+	permute(ia_urn2, URN_DEPTH, i_NP, i); /* Pick 4 random and distinct */
 
-	i_r1 = ia_urn2[1];  //population members
+	i_r1 = ia_urn2[1];  /* population members */
 	i_r2 = ia_urn2[2];
 	i_r3 = ia_urn2[3];
 	i_r4 = ia_urn2[4];
 	
-	//===Choice of strategy=======================================================
-	//---classical strategy DE/rand/1/bin-----------------------------------------
-	if (gi_strategy == 1) {
+	/*===Choice of strategy=======================================================*/
+	/*---classical strategy DE/rand/1/bin-----------------------------------------*/
+	if (i_strategy == 1) {
 	  
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
 	  do {
-	    // add fluctuation to random target
+	    /* add fluctuation to random target */
 	    t_tmpP[j] = gta_oldP[i_r1][j] +
 	      f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
 
-	    j = (j + 1) % gi_D;
+	    j = (j + 1) % i_D;
 	    k++;
-	  }while((unif_rand() < f_cross) && (k < gi_D));
+	  }while((unif_rand() < f_cross) && (k < i_D));
 
 	}
-	//---DE/local-to-best/1/bin---------------------------------------------------
-	else if (gi_strategy == 2) {
+	/*---DE/local-to-best/1/bin---------------------------------------------------*/
+	else if (i_strategy == 2) {
 	 
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
 	  do {
-	    // add fluctuation to random target
+	    /* add fluctuation to random target */
 	   
 	    t_tmpP[j] = t_tmpP[j] + 
 	      f_weight * (t_bestitP[j] - t_tmpP[j]) +
 	      f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
-	    j = (j + 1) % gi_D;
+	    j = (j + 1) % i_D;
 	    k++;
-	  }while((unif_rand() < f_cross) && (k < gi_D));
+	  }while((unif_rand() < f_cross) && (k < i_D));
 
 	}
-	//---DE/best/1/bin with jitter------------------------------------------------
-	else if (gi_strategy == 3) {
+	/*---DE/best/1/bin with jitter------------------------------------------------*/
+	else if (i_strategy == 3) {
 	 	  
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
 	  do {
-	    // add fluctuation to random target
+	    /* add fluctuation to random target */
 	    f_jitter = 0.0001 * unif_rand() + f_weight;
 	    t_tmpP[j] = t_bestitP[j] +
 	      f_jitter * (gta_oldP[i_r1][j] - gta_oldP[i_r2][j]);
 	    
-	    j = (j + 1) % gi_D;
+	    j = (j + 1) % i_D;
 	    k++;
-	  }while((unif_rand() < f_cross) && (k < gi_D));
+	  }while((unif_rand() < f_cross) && (k < i_D));
 
 	}
-	//---DE/rand/1/bin with per-vector-dither-------------------------------------
-	else if (gi_strategy == 4) {
+	/*---DE/rand/1/bin with per-vector-dither-------------------------------------*/
+	else if (i_strategy == 4) {
 		  
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
 	  do {
-	    // add fluctuation to random target
+	    /* add fluctuation to random target */
 	    t_tmpP[j] = gta_oldP[i_r1][j] +
 	      (f_weight + unif_rand()*(1.0 - f_weight))*
 	      (gta_oldP[i_r2][j]-gta_oldP[i_r3][j]);
 
-	    j = (j + 1) % gi_D;
+	    j = (j + 1) % i_D;
 	    k++;
-	  }while((unif_rand() < f_cross) && (k < gi_D));
+	  }while((unif_rand() < f_cross) && (k < i_D));
 
 	}
-	//---DE/rand/1/bin with per-generation-dither---------------------------------
-	else if (gi_strategy == 5) {
+	/*---DE/rand/1/bin with per-generation-dither---------------------------------*/
+	else if (i_strategy == 5) {
 	  
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
 	  do {
-	    // add fluctuation to random target
+	    /* add fluctuation to random target */
 	    t_tmpP[j] = gta_oldP[i_r1][j] +
 	      f_dither * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
 	    
-	    j = (j + 1) % gi_D;
+	    j = (j + 1) % i_D;
 	    k++;
-	  }while((unif_rand() < f_cross) && (k < gi_D));
+	  }while((unif_rand() < f_cross) && (k < i_D));
        
 	}
-	//---variation to DE/rand/1/bin: either-or-algorithm--------------------------
+	/*---DE/current-to-pbest/1 (JADE)-----------------------------------------------*/
+	else if (i_strategy == 6) {
+          /* Find the p-best solutions */
+          //pNP = max(round(p*NP), 2);              /* choose at least two best solutions */
+          //randindex = ceil(rand(1, NP) * pNP);    /* select from [1, 2, 3, ..., pNP] */
+          //randindex = max(1, randindex);          /* to avoid the problem that rand = 0 and thus ceil(rand) = 0 */
+          //pbest = pop(indBest(randindex),:);      /* randomly choose one of the top 100p% solutions */
+
+        }
+	/*---variation to DE/rand/1/bin: either-or-algorithm--------------------------*/
 	else {
 	  
-	  j = (int)(unif_rand() * gi_D); // random parameter
+	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
-	  if (unif_rand() < 0.5) { //differential mutation, Pmu = 0.5
+	  if (unif_rand() < 0.5) { /* differential mutation, Pmu = 0.5 */
 	    do {
-	      // add fluctuation to random target
+	      /* add fluctuation to random target */
 	      t_tmpP[j] = gta_oldP[i_r1][j] +
 		f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
 	      
-	      j = (j + 1) % gi_D;
+	      j = (j + 1) % i_D;
 	      k++;
-	    }while((unif_rand() < f_cross) && (k < gi_D));
+	    }while((unif_rand() < f_cross) && (k < i_D));
 	  }
 	  else {
-	    //recombination with K = 0.5*(F+1) -. F-K-Rule
+	    /* recombination with K = 0.5*(F+1) -. F-K-Rule */
 	    do {
-	      // add fluctuation to random target
+	      /* add fluctuation to random target */
 	      t_tmpP[j] = gta_oldP[i_r1][j] +
 		0.5 * (f_weight + 1.0) * (gta_oldP[i_r2][j]
 					  + gta_oldP[i_r3][j] - 2 * gta_oldP[i_r1][j]);
 	      
-	      j = (j + 1) % gi_D;
+	      j = (j + 1) % i_D;
 	      k++;
-	    }while((unif_rand() < f_cross) && (k < gi_D));
+	    }while((unif_rand() < f_cross) && (k < i_D));
 
 	  }
-	}//end if (gi_strategy ...
+	}/* end if (i_strategy ...*/
 	
-	//----boundary constraints, bounce-back method was not enforcing bounds correctly
-	for (j = 0; j < gi_D; j++) {
+	/*----boundary constraints, bounce-back method was not enforcing bounds correctly*/
+	for (j = 0; j < i_D; j++) {
 	  if (t_tmpP[j] < fa_minbound[j]) {
 	    t_tmpP[j] = fa_minbound[j] +
 	      unif_rand() * (fa_maxbound[j] - fa_minbound[j]);
@@ -503,113 +486,113 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag, double *l
 	  }
 	}
 
-	//------Trial mutation now in t_tmpP-----------------
-	// Evaluate mutant in t_tmpP[]
+	/*------Trial mutation now in t_tmpP-----------------*/
+	/* Evaluate mutant in t_tmpP[]*/
 
-	t_tmpC = evaluate(&gl_nfeval, t_tmpP, gi_D, fcall, rho); 
+	//t_tmpC = evaluate(&nfeval, t_tmpP, i_D, fcall, rho); 
+	t_tmpC = evaluate(t_tmpP, i_D, fcall, rho); 
 	
-	// note that i_bs_flag means that we will choose the 
-	//best NP vectors from the old and new population later 
+	/* note that i_bs_flag means that we will choose the
+	 *best NP vectors from the old and new population later*/
 	if (t_tmpC <= gta_oldC[i] || i_bs_flag) {
-	  // replace target with mutant
-	  for (j = 0; j < gi_D; j++) 
+	  /* replace target with mutant */
+	  for (j = 0; j < i_D; j++) 
 	    gta_newP[i][j]=t_tmpP[j];
 	  gta_newC[i]=t_tmpC;
-	  if (t_tmpC <= gt_bestC) {
-	    for (j = 0; j < gi_D; j++) 
+	  if (t_tmpC <= gt_bestC[0]) {
+	    for (j = 0; j < i_D; j++) 
 	      gt_bestP[j]=t_tmpP[j];
-	    gt_bestC=t_tmpC;
+	    gt_bestC[0]=t_tmpC;
 	  }
 	} 
 	else {
-	  for (j = 0; j < gi_D; j++) 
+	  for (j = 0; j < i_D; j++) 
 	    gta_newP[i][j]=gta_oldP[i][j];
 	  gta_newC[i]=gta_oldC[i];
 	  
 	}
-      } // End mutation loop through pop.
+      } /* End mutation loop through pop. */
      
      
-      if(i_bs_flag) { 
-	// examine old and new pop. and take the best NP members
-	// into next generation 
-	for (i = 0; i < gi_NP; i++) {
-	  for (j = 0; j < gi_D; j++) 
+      if(i_bs_flag) {
+	/* examine old and new pop. and take the best NP members
+	 * into next generation */
+	for (i = 0; i < i_NP; i++) {
+	  for (j = 0; j < i_D; j++) 
 	    gta_popP[i][j] = gta_oldP[i][j];
 	  gta_popC[i] = gta_oldC[i];
 	}
-	for (i = 0; i < gi_NP; i++) {
-	  for (j = 0; j < gi_D; j++) 
-	    gta_popP[gi_NP+i][j] = gta_newP[i][j];
-	  gta_popC[gi_NP+i] = gta_newC[i];
+	for (i = 0; i < i_NP; i++) {
+	  for (j = 0; j < i_D; j++) 
+	    gta_popP[i_NP+i][j] = gta_newP[i][j];
+	  gta_popC[i_NP+i] = gta_newC[i];
 	}
-	i_len = 2 * gi_NP;
-	step = i_len;  //array length
+	i_len = 2 * i_NP;
+	step = i_len;  /* array length */
 	while (step > 1) {
-	  step /= 2;	//halve the step size
+	  step /= 2;   /* halve the step size */
 	  do {
-	    done = TRUE;
+	    done = 1;
 	    bound  = i_len - step;
-	    for (j = 0; j < bound; j++) 
-	      {
+	    for (j = 0; j < bound; j++) {
 		i = j + step + 1;
-		if (gta_popC[j] > gta_popC[i-1]) 	
-		  {
-		    for (k = 0; k < gi_D; k++) 
+		if (gta_popC[j] > gta_popC[i-1]) {
+		    for (k = 0; k < i_D; k++) 
 		      tempP[k] = gta_popP[i-1][k];
 		    tempC = gta_popC[i-1];
-		    for (k = 0; k < gi_D; k++) 
+		    for (k = 0; k < i_D; k++) 
 		      gta_popP[i-1][k] = gta_popP[j][k];
 		    gta_popC[i-1] = gta_popC[j];
-		    for (k = 0; k < gi_D; k++) 
+		    for (k = 0; k < i_D; k++) 
 		      gta_popP[j][k] = tempP[k];
 		    gta_popC[j] = tempC;
-		      done = FALSE; 
-		      //if a swap has been made we are not finished yet
-		  }  // if
-	      }  // for
-	  } while (!done);   // while
-	} //while (step > 1)
-	// now the best NP are in first NP places in gta_pop, use them 
-	for (i = 0; i < gi_NP; i++) {
-	  for (j = 0; j < gi_D; j++) 
+		      done = 0; 
+		      /* if a swap has been made we are not finished yet */
+	        }  /* if */
+	    }  /* for */
+	  } while (!done);   /* while */
+	} /*while (step > 1) */
+	/* now the best NP are in first NP places in gta_pop, use them */
+	for (i = 0; i < i_NP; i++) {
+	  for (j = 0; j < i_D; j++) 
 	    gta_newP[i][j] = gta_popP[i][j];
 	  gta_newC[i] = gta_popC[i];
-	  
 	}
-	// make sure best is best of old and new gen.
-	if (gta_newC[0] <= gt_bestC) {
-	  for (j = 0; j < gi_D; j++) 
+	/* make sure best is best of old and new gen. */
+	if (gta_newC[0] <= gt_bestC[0]) {
+	  for (j = 0; j < i_D; j++) 
 	    gt_bestP[j]=gta_newP[i][j];
-	  gt_bestC=gta_newC[0];
+	  gt_bestC[0]=gta_newC[0];
 	}
-      }
-      // have selected NP mutants
-      // move on to next generation
-      for (i = 0; i < gi_NP; i++) {
-	for (j = 0; j < gi_D; j++) 
+      } /*i_bs_flag*/
+
+      /* have selected NP mutants
+       * move on to next generation */
+      for (i = 0; i < i_NP; i++) {
+	for (j = 0; j < i_D; j++) 
 	  gta_oldP[i][j] = gta_newP[i][j];
 	gta_oldC[i] = gta_newC[i];
       }
-      //check if the best stayed the same, if necessary
+      /* check if the best stayed the same, if necessary */
       if(i_check_winner)  {
 	same = 1;
-	for (j = 0; j < gi_D; j++)
+	for (j = 0; j < i_D; j++)
 	  if(t_bestitP[j] != gt_bestP[j]) {
 	    same = 0;
 	  }
-	if(same && gi_iter > 1)  {
+	if(same && i_iter > 1)  {
 	  i_xav++;
-	  //if re-evaluation of winner 
-	  tmp_best = evaluate(&gl_nfeval, gt_bestP, gi_D, fcall, rho);
+	  /* if re-evaluation of winner */
+	  //tmp_best = evaluate(&nfeval, gt_bestP, i_D, fcall, rho);
+	  tmp_best = evaluate(gt_bestP, i_D, fcall, rho);
 	 
-	  //possibly letting the winner be the average of all past
-	  //generations
+	  /* possibly letting the winner be the average of all past
+	   * generations */
 	  if(i_av_winner)
-	    gt_bestC = ((1/(double)i_xav) * gt_bestC) 
-	      + ((1/(double)i_xav) * tmp_best) + (bestva[gi_iter-1] * ((double)(i_xav - 2))/(double)i_xav);
+	    gt_bestC[0] = ((1/(double)i_xav) * gt_bestC[0]) 
+	      + ((1/(double)i_xav) * tmp_best) + (gd_bestvalit[i_iter-1] * ((double)(i_xav - 2))/(double)i_xav);
 	  else
-	    gt_bestC = tmp_best;
+	    gt_bestC[0] = tmp_best;
 	
 	}
 	else {
@@ -617,35 +600,31 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag, double *l
 	}
 	
       }
-      for (j = 0; j < gi_D; j++) 
+      for (j = 0; j < i_D; j++) 
 	t_bestitP[j] = gt_bestP[j];
-      t_bestitC = gt_bestC;
-      
+      t_bestitC = gt_bestC[0];
+
       if(trace > 0) {
-	Rprintf("Iteration: %d bestvalit: %f bestmemit:", gi_iter, gt_bestC);
-	for (j = 0; j < gi_D; j++)
+	Rprintf("Iteration: %d bestvalit: %f bestmemit:", i_iter, gt_bestC[0]);
+	for (j = 0; j < i_D; j++)
 	  Rprintf("%12.6f", gt_bestP[j]);
 	Rprintf("\n");
       }
-    } // end loop through generations
-  
-  // last population
+    } /* end loop through generations */
+
+  /* last population */
   k = 0;
-  for (i = 0; i < gi_NP; i++) {
-    for (j = 0; j < gi_D; j++) {
-      pop[k] = gta_oldP[i][j];      
+  for (i = 0; i < i_NP; i++) {
+    for (j = 0; j < i_D; j++) {
+      gd_pop[k] = gta_oldP[i][j];      
       k++;
     }
   }
 
-  // global assignment
-  gd_bestmemit = besta;
-  gd_bestvalit = bestva;
-  gd_pop = pop;
-  gd_storepop = storepop;
-  
+  *gi_iter = i_iter;
+
   PutRNGstate();
-    
+
 }
 
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
@@ -671,29 +650,26 @@ void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
  *********************************************************************/
 {
   int  i, k, i_urn1, i_urn2;
-  int  *ia_urn1;      //urn holding all indices
-  ia_urn1 = (int *)R_alloc(gi_NP,sizeof(int));
-  for(i = 0; i < gi_NP; i++)
-    ia_urn1[i] = 0;
+  int ia_urn1[i_NP];
   
   GetRNGstate();
-	  
+
   k = i_NP;
   i_urn1 = 0;
   i_urn2 = 0;
   for (i = 0; i < i_NP; i++)
-    ia_urn1[i] = i; //initialize urn1
+    ia_urn1[i] = i; /* initialize urn1 */
 
-  i_urn1 = i_avoid;                  //get rid of the index to be avoided and place it in position 0.
-  while (k > i_NP - i_urn2_depth)     //i_urn2_depth is the amount of indices wanted (must be <= NP)
+  i_urn1 = i_avoid;                      /* get rid of the index to be avoided and place it in position 0. */
+  while (k > i_NP - i_urn2_depth)        /* i_urn2_depth is the amount of indices wanted (must be <= NP) */
     {
-      ia_urn2[i_urn2] = ia_urn1[i_urn1];      //move it into urn2
-      ia_urn1[i_urn1] = ia_urn1[k-1]; //move highest index to fill gap
-      k = k - 1;                        //reduce number of accessible indices
-      i_urn2 = i_urn2 + 1;            //next position in urn2
-      i_urn1 = (int)(unif_rand() * k);    //choose a random index
+      ia_urn2[i_urn2] = ia_urn1[i_urn1]; /* move it into urn2 */
+      ia_urn1[i_urn1] = ia_urn1[k-1];    /* move highest index to fill gap */
+      k = k - 1;                         /* reduce number of accessible indices */
+      i_urn2 = i_urn2 + 1;               /* next position in urn2 */
+      i_urn1 = (int)(unif_rand() * k);   /* choose a random index */
     }
 
   PutRNGstate();
-	
+
 }
