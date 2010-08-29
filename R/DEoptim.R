@@ -2,7 +2,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
                             storepopfreq = 1, checkWinner = FALSE,
-                            avWinner = TRUE) {
+                            avWinner = TRUE, p = 0.2) {
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
@@ -19,24 +19,32 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
     warning("'CR' not in [0,1]; set to default value 0.5\n", immediate. = TRUE)
     CR <- 0.5
   }
-  if (strategy < 1 | strategy > 5) {
-    warning("'strategy' not in {1,...,5}; set to default value 2\n",
+  if (strategy < 1 | strategy > 6) {
+    warning("'strategy' not in {1,...,6}; set to default value 2\n",
             immediate. = TRUE)
     strategy <- 2
   }
     
   bs <- (bs > 0)
 
-  trace <- (trace > 0)
+  if ( trace < 0 ) {
+    warning("'trace' cannot be negative; set to 'TRUE'")
+    trace <- TRUE
+  }
 
   storepopfreq <- floor(storepopfreq)
   if (storepopfreq > itermax)
     storepopfreq <- 1
 
+  if (p <= 0 || p > 1) {
+    warning("'p' not in (0,1]; set to default value 0.2\n", immediate. = TRUE)
+    p <- 0.2
+  }
+
   list(VTR = VTR, strategy = strategy, NP = NP, itermax = itermax, CR
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq,
-       checkWinner = checkWinner, avWinner = avWinner)
+       checkWinner = checkWinner, avWinner = avWinner, p = p)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {

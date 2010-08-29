@@ -10,7 +10,7 @@
 DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
-   storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE)
+   storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2)
 }
 \arguments{
    \item{VTR}{The value to be reached. The optimization process
@@ -24,6 +24,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
      \code{3}: DE / best / 1 / bin with jitter\cr
      \code{4}: DE / rand / 1 / bin with per-vector-dither\cr
      \code{5}: DE / rand / 1 / bin with per-generation-dither\cr
+     \code{6}: DE / current-to-p-best / 1\cr
      any value not above:
      variation to DE / rand / 1 / bin: either-or-algorithm.  Default
      strategy is currently \code{2}.
@@ -45,7 +46,8 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
     \item{CR}{Crossover probability from interval [0,1]. Default
       to \code{0.9}.}
     \item{F}{Stepsize from interval [0,2]. Default to \code{0.8}.}
-    \item{trace}{Printing of progress occurs? Default to \code{TRUE}.}
+    \item{trace}{Printing of progress occurs? Default to \code{TRUE}. If
+      numeric, progress will be printed every \code{trace} iterations.}
     \item{initialpop}{An initial population used as a starting
       population in the optimization procedure. May be useful to speed up
       the convergence. Default to \code{NULL}.  If given, each member of
@@ -74,6 +76,9 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    may be useful for optimization of noisy objective functions, and is
    interpretted only if \code{checkWinner=TRUE}.
    The default value is \code{TRUE}.}
+ \item{p}{When \code{strategy == 6} (DE / current-to-p-best / 1), the
+   top (100*p)\% best solutions are used in the mutation. \code{p} must
+   be defined in (0,1].}
  }
   \value{
     A \code{list} with components:
@@ -90,6 +95,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
     \item{storepopfreq}{}
     \item{checkWinner}{}
     \item{avWinner}{}
+    \item{p}{}
     with meanings as explained under \sQuote{Arguments}.
 }
 
