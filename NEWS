@@ -1,3 +1,5 @@
+Changes in version 2.0-6
+  o Added dataset documentation now required by R CMD check.
 Changes in version 2.0-5
   o CITATION file modified, updated references. 
   o Removed check on length of parameter vector (it was left over from versions
