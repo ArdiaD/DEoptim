@@ -38,9 +38,9 @@ void devol(double VTR, double f_weight, double fcross, int i_bs_flag,
            double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
            double *t_bestitP, double *t_tmpP, double *tempP,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct);
+           int *gi_iter, double i_pPct, long l_nfeval);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid);
-double evaluate(double *param, int i_D, SEXP fcall, SEXP env);
+double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env);
 
 
 /*------General functions-----------------------------------------*/
@@ -65,6 +65,8 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   int i_strategy = INTEGER_VALUE(getListElement(control, "strategy"));
   /* Maximum number of generations */
   int i_itermax = INTEGER_VALUE(getListElement(control, "itermax"));
+  /* Number of objective function evaluations */
+  long l_nfeval = (long)NUMERIC_VALUE(getListElement(control, "nfeval"));
   /* Dimension of parameter vector */
   int i_D = INTEGER_VALUE(getListElement(control, "npar"));
   /* Number of population members */
@@ -136,7 +138,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
         gta_popC, gta_oldC, gta_newC, gt_bestC,
         t_bestitP, t_tmpP, tempP,
         gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
-        &gi_iter, i_pPct);
+        &gi_iter, i_pPct, l_nfeval);
   /*---end optimization----------------------------------*/
 
   PROTECT(sexp_bestmem = NEW_NUMERIC(i_D));
@@ -167,7 +169,8 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   NUMERIC_POINTER(sexp_bestval)[0] = gt_bestC[0];
 
   PROTECT(sexp_nfeval = NEW_INTEGER(1));
-  INTEGER_POINTER(sexp_nfeval)[0] = 0;
+  //INTEGER_POINTER(sexp_nfeval)[0] = 0;
+  INTEGER_POINTER(sexp_nfeval)[0] = (int)l_nfeval;
 
   PROTECT(sexp_iter = NEW_INTEGER(1));
   INTEGER_POINTER(sexp_iter)[0] = gi_iter;
@@ -208,7 +211,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
            double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
            double *t_bestitP, double *t_tmpP, double *tempP,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct)
+           int *gi_iter, double i_pPct, long l_nfeval)
 {
 
 #define URN_DEPTH  5   /* 4 + one index to avoid */
@@ -283,6 +286,9 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       }
     }
   }
+  /* number of function evaluations
+   * (this is an input via DEoptim.control, but we over-write it?) */
+  l_nfeval = 0;
 
   /*------Initialization-----------------------------*/
   for (i = 0; i < i_NP; i++) {
@@ -295,7 +301,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       else /* or user-specified initial member */
         gta_popP[i][j] = initialpop[i][j];
     } 
-    gta_popC[i] = evaluate(gta_popP[i], i_D, fcall, rho);
+    gta_popC[i] = evaluate(&l_nfeval, gta_popP[i], i_D, fcall, rho);
 
     if (i == 0 || gta_popC[i] <= gt_bestC[0]) {
       gt_bestC[0] = gta_popC[i];
@@ -512,7 +518,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	/*------Trial mutation now in t_tmpP-----------------*/
 	/* Evaluate mutant in t_tmpP[]*/
 
-	t_tmpC = evaluate(t_tmpP, i_D, fcall, rho); 
+	t_tmpC = evaluate(&l_nfeval, t_tmpP, i_D, fcall, rho); 
 	
 	/* note that i_bs_flag means that we will choose the
 	 *best NP vectors from the old and new population later*/
@@ -604,7 +610,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	if(same && i_iter > 1)  {
 	  i_xav++;
 	  /* if re-evaluation of winner */
-	  tmp_best = evaluate(gt_bestP, i_D, fcall, rho);
+	  tmp_best = evaluate(&l_nfeval, gt_bestP, i_D, fcall, rho);
 	 
 	  /* possibly letting the winner be the average of all past generations */
 	  if(i_av_winner)
