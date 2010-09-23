@@ -2,10 +2,8 @@ if(!exists("meta") || is.null(meta)) meta <- packageDescription("DEoptim")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("version", meta$Version)
 
-citHeader("To cite 'DEoptim' in publications use:")
-
 citEntry(entry = "manual",
-	 title = "The {DEoptim} Package: Differential Evolution Optimization in {R}",
+	 title = "The {DEoptim} Package: {D}ifferential {E}volution Optimization in {R}",
      author = personList(as.person("David Ardia"), 
                              as.person("Katharine Mullen"), 
                              as.person("Brian G. Peterson"),
@@ -15,11 +13,13 @@ citEntry(entry = "manual",
 	 url = "http://CRAN.R-project.org/package=DEoptim",
 	 textVersion =
          paste("Ardia, D., Mullen, K.M., et.al. (", year,"). ",
-               "The 'DEoptim' Package: Differential Evolution Optimization in 'R'. ", vers, ".", sep = "")
+               "The 'DEoptim' Package: Differential Evolution Optimization in 'R'. ", vers, ".", sep = ""), 
+     header = "To cite the 'DEoptim' in publications use:"
+     
 )
 
 citEntry(entry = "misc",
-	 title = "{DEoptim}: An {R} Package for Global Optimization by Differential Evolution",
+	 title = "{DEoptim}: An {R} Package for Global Optimization by {D}ifferential {E}volution",
 	 author = personList(person("Katharine","Mullen","M."),
                          person("David","Ardia"),
                          person("David","Gil","L."),
@@ -34,7 +34,7 @@ citEntry(entry = "misc",
 )
 
 citEntry(entry = "misc",
-	 title = "Differential Evoluation ({DEoptim}) for Non-Convex Portfolio Optimization",
+	 title = "{D}ifferential {E}volution ({DEoptim}) for Non-Convex Portfolio Optimization",
 	 author = personList(person("David","Ardia"),
                          person("Kris","Boudt"),
                          person("Peter","Carl"),
@@ -44,12 +44,12 @@ citEntry(entry = "misc",
          url = "http://ssrn.com/abstract=1584905",
          textVersion = 
          paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
-               "Differential Evoluation ('DEoptim') for Non-Convex Portfolio Optimization.",
+               "Differential Evolution ('DEoptim') for Non-Convex Portfolio Optimization.",
                "URL http://ssrn.com/abstract=1584905.")
 )
 
 citEntry(entry = "Book",
-         title = "Differential Evolution - A Practical Approach to Global Optimization",
+         title = "{D}ifferential {E}volution - A Practical Approach to Global Optimization",
          author = personList(as.person("Kenneth V. Price"),
                              as.person("Rainer M. Storn"),
                              as.person("Jouni A. Lampinen")),
@@ -57,10 +57,10 @@ citEntry(entry = "Book",
          series = "Natural Computing",
          month = "January",
          year = "2006",
-         note = "ISBN number: 3540209506",
+         note = "ISBN 540209506",
          textVersion =
          paste("Kenneth V. Price, Rainer M. Storn and Jouni A. Lampinen (2006).",
                "Differential Evolution - A Practical Approach to Global Optimization.",
-               "Springer-Verlag. ISBN 3540209506."),
-         header = "to cite the Differential Evolution algorithm use:"
+               "Berlin Heidelberg: Springer-Verlag. ISBN 3540209506."),
+         header = "To cite the Differential Evolution algorithm use:"
 )
