@@ -9,26 +9,54 @@
 \method{plot}{DEoptim}(x, plot.type = c("bestmemit", "bestvalit", "storepop"), \dots)
 }
 \arguments{
-  \item{object}{An object of class \code{DEoptim}; usually, a result
+  \item{object}{an object of class \code{DEoptim}; usually, a result
     of a call to \code{\link{DEoptim}}.}
-  \item{x}{An object of class \code{DEoptim}; usually, a result
+  \item{x}{an object of class \code{DEoptim}; usually, a result
     of a call to \code{\link{DEoptim}}.}
-  \item{plot.type}{Should we plot the best member at each iteration, the best value
+  \item{plot.type}{should we plot the best member at each iteration, the best value
     at each iteration or the intermediate populations?}
-  \item{\dots}{Further arguments passed to or from other methods.}
+  \item{\dots}{further arguments passed to or from other methods.}
+}
+\details{
+  Members of the class \code{DEoptim} have a \code{plot} method that
+  accepts the argument \code{plot.type}. \code{plot.type = "bestmemit"} results
+  in a plot of the parameter values that represent the lowest value of the objective function
+  each generation. \code{plot.type = "bestvalit"} plots the best value of
+  the objective function each generation. Finally, \code{plot.type = "storepop"} results in a plot of
+  stored populations (which are only available if these have been saved by
+  setting the \code{control} argument of \code{DEoptim} appropriately). Storing intermediate populations 
+  allows us to examine the progress of the optimization in detail.   
+  A summary method also exists and returns the best parameter vector, the best value of the objective function,
+  the number of generations optimization ran, and the number of times the 
+  objective function was evaluated. 
 }
 \note{
+  Further details and examples of the \R package \pkg{DEoptim} can be found
+  in Mullen et al. (2009) and Ardia et al. (2010).
+
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
 \author{
-  David Ardia \email{david.ardia@unifr.ch} and 
-  Katharine Mullen \email{katharine.mullen@nist.gov}.
+  David Ardia, Katharine Mullen \email{katharine.mullen@nist.gov}, 
+  Brian Peterson and Joshua Ulrich.
 }
 \seealso{
-  \code{\link{DEoptim}} and \code{\link{DEoptim-methods}}.
+  \code{\link{DEoptim}} and \code{\link{DEoptim.control}}.
+}
+\references{
+  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (2009)
+  \pkg{DEoptim}: An \R Package for Global Optimization by Differential Evolution.
+  URL \url{http://ssrn.com/abstract=1526466}
+
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010)
+  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio Optimization.
+  URL \url{http://ssrn.com/abstract=1584905}
 }
 \examples{
   ## Rosenbrock Banana function
+  ## The function has a global minimum f(x) = 0 at the point (0,0).  
+  ## Note that the vector of parameters to be optimized must be the first 
+  ## argument of the objective function passed to DEoptim.
   Rosenbrock <- function(x){
     x1 <- x[1]
     x2 <- x[2]
@@ -39,7 +67,6 @@
   upper <- -lower
   
   set.seed(1234)
-
   outDEoptim <- DEoptim(Rosenbrock, lower, upper)
   
   ## print output information
@@ -99,7 +126,6 @@
      xlim = thexlim, ylim = theylim)
 
   set.seed(1234)
-
   outDEoptim <- DEoptim(negPdfMix, c(-10, -10), c(10, 10),
      DEoptim.control(NP = 100, itermax = 100, storepopfrom = 1,
      storepopfreq = 5))
