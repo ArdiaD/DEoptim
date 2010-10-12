@@ -38,9 +38,9 @@ void devol(double VTR, double f_weight, double fcross, int i_bs_flag,
            double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
            double *t_bestitP, double *t_tmpP, double *tempP,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct, long l_nfeval);
+           int *gi_iter, double i_pPct, long *l_nfeval);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid);
-double evaluate(long *l_nfeval, double *param, int i_D, SEXP fcall, SEXP env);
+double evaluate(long *l_nfeval, double *param, SEXP par, SEXP fcall, SEXP env);
 
 
 /*------General functions-----------------------------------------*/
@@ -138,7 +138,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
         gta_popC, gta_oldC, gta_newC, gt_bestC,
         t_bestitP, t_tmpP, tempP,
         gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
-        &gi_iter, i_pPct, l_nfeval);
+        &gi_iter, i_pPct, &l_nfeval);
   /*---end optimization----------------------------------*/
 
   PROTECT(sexp_bestmem = NEW_NUMERIC(i_D));
@@ -170,7 +170,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
 
   PROTECT(sexp_nfeval = NEW_INTEGER(1));
   //INTEGER_POINTER(sexp_nfeval)[0] = 0;
-  INTEGER_POINTER(sexp_nfeval)[0] = (int)l_nfeval;
+  INTEGER_POINTER(sexp_nfeval)[0] = l_nfeval;
 
   PROTECT(sexp_iter = NEW_INTEGER(1));
   INTEGER_POINTER(sexp_iter)[0] = gi_iter;
@@ -211,11 +211,14 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
            double *gta_popC, double *gta_oldC, double *gta_newC, double *gt_bestC,
            double *t_bestitP, double *t_tmpP, double *tempP,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct, long l_nfeval)
+           int *gi_iter, double i_pPct, long *l_nfeval)
 {
 
 #define URN_DEPTH  5   /* 4 + one index to avoid */
 
+  /* initialize parameter vector to pass to evaluate function */
+  SEXP par; PROTECT(par = NEW_NUMERIC(i_D));
+  
   int i, j, k, x;  /* counting variables */
   int i_r1, i_r2, i_r3, i_r4;  /* placeholders for random indexes */
 
@@ -257,11 +260,11 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   }
 
   /* initialize best members */
-  for (int i = 0; i <= i_itermax * i_D; i++)
+  for (int i = 0; i < i_itermax * i_D; i++)
     gd_bestmemit[i] = 0.0;
 
   /* initialize best values */
-  for (int i = 0; i <= i_itermax; i++)
+  for (int i = 0; i < i_itermax; i++)
     gd_bestvalit[i] = 0.0;
 
   /* initialize best population */
@@ -288,7 +291,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   }
   /* number of function evaluations
    * (this is an input via DEoptim.control, but we over-write it?) */
-  l_nfeval = 0;
+  *l_nfeval = 0;
 
   /*------Initialization-----------------------------*/
   for (i = 0; i < i_NP; i++) {
@@ -301,7 +304,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       else /* or user-specified initial member */
         gta_popP[i][j] = initialpop[i][j];
     } 
-    gta_popC[i] = evaluate(&l_nfeval, gta_popP[i], i_D, fcall, rho);
+    gta_popC[i] = evaluate(l_nfeval, gta_popP[i], par, fcall, rho);
 
     if (i == 0 || gta_popC[i] <= gt_bestC[0]) {
       gt_bestC[0] = gta_popC[i];
@@ -518,7 +521,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	/*------Trial mutation now in t_tmpP-----------------*/
 	/* Evaluate mutant in t_tmpP[]*/
 
-	t_tmpC = evaluate(&l_nfeval, t_tmpP, i_D, fcall, rho); 
+	t_tmpC = evaluate(l_nfeval, t_tmpP, par, fcall, rho); 
 	
 	/* note that i_bs_flag means that we will choose the
 	 *best NP vectors from the old and new population later*/
@@ -610,7 +613,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	if(same && i_iter > 1)  {
 	  i_xav++;
 	  /* if re-evaluation of winner */
-	  tmp_best = evaluate(&l_nfeval, gt_bestP, i_D, fcall, rho);
+	  tmp_best = evaluate(l_nfeval, gt_bestP, par, fcall, rho);
 	 
 	  /* possibly letting the winner be the average of all past generations */
 	  if(i_av_winner)
@@ -651,6 +654,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   *gi_iter = i_iter;
 
   PutRNGstate();
+  UNPROTECT(1);
 
 }
 
