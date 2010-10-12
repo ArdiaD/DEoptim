@@ -1,3 +1,11 @@
+Changes in version 2.0-7
+  o Many improvements in the C code, including removal of all global variables 
+    thanks to Joshua Ulrich.
+  o Thanks to Ralf Tautenhahn and Joshua Ulrich, a bug with bs=TRUE is removed.
+  o Thanks to Dirk Eddelbuettel several bugs (some possibly causing segfaults)
+    removed. 
+  o Added DE/current-to-p-best/1 strategy.
+  o Added ability to only print every "trace" iterations.
 Changes in version 2.0-6
   o Added dataset documentation now required by R CMD check.
 Changes in version 2.0-5

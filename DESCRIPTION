@@ -1,7 +1,7 @@
 Package: DEoptim
-Version: 2.0-6
+Version: 2.0-7
 Title: Global optimization by differential evolution
-Author: David Ardia and Katharine Mullen
+Author: David Ardia, Katharine Mullen, Brian Peterson, Joshua Ulrich
 Maintainer: Katharine Mullen <katharine.mullen@nist.gov>
 Description: This package provides the DEoptim function which performs
         global optimization by differential evolution.

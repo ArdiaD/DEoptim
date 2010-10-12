@@ -592,7 +592,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	/* make sure best is best of old and new gen. */
 	if (gta_newC[0] <= gt_bestC[0]) {
 	  for (j = 0; j < i_D; j++) 
-	    gt_bestP[j]=gta_newP[i][j];
+	    gt_bestP[j]=gta_newP[0][j];
 	  gt_bestC[0]=gta_newC[0];
 	}
       } /*i_bs_flag*/
