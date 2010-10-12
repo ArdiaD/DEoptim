@@ -589,12 +589,6 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    gta_newP[i][j] = gta_popP[i][j];
 	  gta_newC[i] = gta_popC[i];
 	}
-	/* make sure best is best of old and new gen. */
-	if (gta_newC[0] <= gt_bestC[0]) {
-	  for (j = 0; j < i_D; j++) 
-	    gt_bestP[j]=gta_newP[0][j];
-	  gt_bestC[0]=gta_newC[0];
-	}
       } /*i_bs_flag*/
 
       /* have selected NP mutants move on to next generation */
