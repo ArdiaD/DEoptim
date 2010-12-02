@@ -382,7 +382,8 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	
 	/*===Choice of strategy=======================================================*/
 	/*---classical strategy DE/rand/1/bin-----------------------------------------*/
-	if (i_strategy == 1) {
+	switch (i_strategy) {
+        case 1: {
 	  
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -394,10 +395,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-
+        break;
 	}
 	/*---DE/local-to-best/1/bin---------------------------------------------------*/
-	else if (i_strategy == 2) {
+        case 2: {
 	 
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -410,10 +411,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-
+        break;
 	}
 	/*---DE/best/1/bin with jitter------------------------------------------------*/
-	else if (i_strategy == 3) {
+        case 3: {
 	 	  
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -426,10 +427,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-
+        break;
 	}
 	/*---DE/rand/1/bin with per-vector-dither-------------------------------------*/
-	else if (i_strategy == 4) {
+        case 4: {
 		  
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -442,10 +443,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-
+        break;
 	}
 	/*---DE/rand/1/bin with per-generation-dither---------------------------------*/
-	else if (i_strategy == 5) {
+        case 5: {
 	  
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -457,10 +458,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-       
+        break;
 	}
 	/*---DE/current-to-p-best/1 (JADE)--------------------------------------------*/
-	else if (i_strategy == 6) {
+        case 6: {
 
           /* select from [0, 1, 2, ..., (pNP-1)] */
           i_pbest = sortIndex[(int)(unif_rand() * p_NP)];
@@ -476,10 +477,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    j = (j + 1) % i_D;
 	    k++;
 	  }while((unif_rand() < f_cross) && (k < i_D));
-
+        break;
         }
 	/*---variation to DE/rand/1/bin: either-or-algorithm--------------------------*/
-	else {
+        default: {
 	  
 	  j = (int)(unif_rand() * i_D); /* random parameter */
 	  k = 0;
@@ -492,8 +493,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	      j = (j + 1) % i_D;
 	      k++;
 	    }while((unif_rand() < f_cross) && (k < i_D));
-	  }
-	  else {
+	  } else {
 	    /* recombination with K = 0.5*(F+1) -. F-K-Rule */
 	    do {
 	      /* add fluctuation to random target */
@@ -506,7 +506,8 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	    }while((unif_rand() < f_cross) && (k < i_D));
 
 	  }
-	}/* end if (i_strategy ...*/
+        }
+        }/* end switch */
 	
 	/*----boundary constraints, bounce-back method was not enforcing bounds correctly*/
 	for (j = 0; j < i_D; j++) {
