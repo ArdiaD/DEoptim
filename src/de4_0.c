@@ -39,8 +39,8 @@ void devol(double VTR, double f_weight, double fcross, int i_bs_flag,
            double *t_bestitP, double *t_tmpP, double *tempP,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
            int *gi_iter, double i_pPct, long *l_nfeval);
-void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid);
-double evaluate(long *l_nfeval, double *param, SEXP par, SEXP fcall, SEXP env);
+void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
+double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env);
 
 
 /*------General functions-----------------------------------------*/
@@ -223,6 +223,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   int i_r1, i_r2, i_r3, i_r4;  /* placeholders for random indexes */
 
   int ia_urn2[URN_DEPTH];
+  int ia_urnTemp[i_NP];
   int i_nstorepop, i_xav;
   i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
   
@@ -303,8 +304,9 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       }
       else /* or user-specified initial member */
         gta_popP[i][j] = initialpop[i][j];
-    } 
-    gta_popC[i] = evaluate(l_nfeval, gta_popP[i], par, fcall, rho);
+    }
+    memcpy(REAL(par), gta_popP[i], Rf_nrows(par) * sizeof(double));
+    gta_popC[i] = evaluate(l_nfeval, par, fcall, rho);
 
     if (i == 0 || gta_popC[i] <= gt_bestC[0]) {
       gt_bestC[0] = gta_popC[i];
@@ -371,7 +373,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	  t_tmpP[j] = gta_oldP[i][j];
 	t_tmpC = gta_oldC[i];
 
-	permute(ia_urn2, URN_DEPTH, i_NP, i); /* Pick 4 random and distinct */
+	permute(ia_urn2, URN_DEPTH, i_NP, i, ia_urnTemp); /* Pick 4 random and distinct */
 
 	i_r1 = ia_urn2[1];  /* population members */
 	i_r2 = ia_urn2[2];
@@ -521,7 +523,8 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	/*------Trial mutation now in t_tmpP-----------------*/
 	/* Evaluate mutant in t_tmpP[]*/
 
-	t_tmpC = evaluate(l_nfeval, t_tmpP, par, fcall, rho); 
+        memcpy(REAL(par), t_tmpP, Rf_nrows(par) * sizeof(double));
+        t_tmpC = evaluate(l_nfeval, par, fcall, rho);
 	
 	/* note that i_bs_flag means that we will choose the
 	 *best NP vectors from the old and new population later*/
@@ -607,7 +610,8 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	if(same && i_iter > 1)  {
 	  i_xav++;
 	  /* if re-evaluation of winner */
-	  tmp_best = evaluate(l_nfeval, gt_bestP, par, fcall, rho);
+          memcpy(REAL(par), gt_bestP, Rf_nrows(par) * sizeof(double));
+          tmp_best = evaluate(l_nfeval, par, fcall, rho);
 	 
 	  /* possibly letting the winner be the average of all past generations */
 	  if(i_av_winner)
@@ -652,7 +656,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 
 }
 
-void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
+void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[])
 /********************************************************************
  ** Function       : void permute(int ia_urn2[], int i_urn2_depth)
  ** Author         : Rainer Storn (w/bug fixes contributed by DEoptim users)
@@ -675,7 +679,6 @@ void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid)
  *********************************************************************/
 {
   int  i, k, i_urn1, i_urn2;
-  int ia_urn1[i_NP];
   
   GetRNGstate();
 
