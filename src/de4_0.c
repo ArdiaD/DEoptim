@@ -123,10 +123,11 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
 
   int i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
-  double *gd_pop = (double *)R_alloc(i_NP*i_D,sizeof(double));
-  double *gd_storepop = (double *)R_alloc(i_NP,sizeof(double) * i_D * i_nstorepop);
-  double *gd_bestmemit = (double *)R_alloc(i_itermax*i_D,sizeof(double));
-  double *gd_bestvalit = (double *)R_alloc(i_itermax,sizeof(double));
+  /* Use S_alloc, since it initializes with zeros */
+  double *gd_pop = (double *)S_alloc(i_NP*i_D,sizeof(double));
+  double *gd_storepop = (double *)S_alloc(i_NP,sizeof(double) * i_D * i_nstorepop);
+  double *gd_bestmemit = (double *)S_alloc(i_itermax*i_D,sizeof(double));
+  double *gd_bestvalit = (double *)S_alloc(i_itermax,sizeof(double));
   int gi_iter = 0;
 
   /*---optimization--------------------------------------*/
@@ -253,31 +254,31 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 
   gta_popP[0][0] = 0;
  
-  /* initialize initial popuplation */
-  for (int i = 0; i < i_NP; i++) {
+  /* initialize initial popuplation FIXME: is this necessary? */
+  /*for (int i = 0; i < i_NP; i++) {
     for (int j = 0; j < i_D; j++) {
       initialpop[i][j] = 0.0;
     }
-  }
+  }*/
 
   /* initialize best members */
-  for (int i = 0; i < i_itermax * i_D; i++)
-    gd_bestmemit[i] = 0.0;
+  /*for (int i = 0; i < i_itermax * i_D; i++)
+    gd_bestmemit[i] = 0.0;*/
 
   /* initialize best values */
-  for (int i = 0; i < i_itermax; i++)
-    gd_bestvalit[i] = 0.0;
+  /*for (int i = 0; i < i_itermax; i++)
+    gd_bestvalit[i] = 0.0;*/
 
   /* initialize best population */
-  for (int i = 0; i < i_NP * i_D; i++)
-    gd_pop[i] = 0.0;
+  /*for (int i = 0; i < i_NP * i_D; i++)
+    gd_pop[i] = 0.0;*/
 
   /* initialize stored populations */
   if (i_nstorepop < 0)
     i_nstorepop = 0;
 
-  for (int i = 0; i < (i_nstorepop * i_NP * i_D); i++)
-    gd_storepop[i] = 0.0;
+  /*for (int i = 0; i < (i_nstorepop * i_NP * i_D); i++)
+    gd_storepop[i] = 0.0;*/
       
   /* if initial population provided, initialize with values */
   if (i_specinitialpop > 0) {
