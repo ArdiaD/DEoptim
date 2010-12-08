@@ -181,6 +181,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 
   /* initialize parameter vector to pass to evaluate function */
   SEXP par; PROTECT(par = NEW_NUMERIC(i_D));
+  double *d_par = REAL(par);
   
   /* Data structures for parameter vectors */
   double **gta_popP = (double **)R_alloc(i_NP*2,sizeof(double *));
@@ -276,7 +277,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       else /* or user-specified initial member */
         gta_popP[i][j] = initialpop[i][j];
     }
-    memcpy(REAL(par), gta_popP[i], i_D * sizeof(double));
+    memcpy(d_par, gta_popP[i], i_D * sizeof(double));
     gta_popC[i] = evaluate(l_nfeval, par, fcall, rho);
 
     if (i == 0 || gta_popC[i] <= gt_bestC[0]) {
@@ -495,7 +496,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	/*------Trial mutation now in t_tmpP-----------------*/
 	/* Evaluate mutant in t_tmpP[]*/
 
-        memcpy(REAL(par), t_tmpP, i_D * sizeof(double));
+        memcpy(d_par, t_tmpP, i_D * sizeof(double));
         t_tmpC = evaluate(l_nfeval, par, fcall, rho);
 	
 	/* note that i_bs_flag means that we will choose the
@@ -582,7 +583,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
 	if(same && i_iter > 1)  {
 	  i_xav++;
 	  /* if re-evaluation of winner */
-          memcpy(REAL(par), gt_bestP, i_D * sizeof(double));
+          memcpy(d_par, gt_bestP, i_D * sizeof(double));
           tmp_best = evaluate(l_nfeval, par, fcall, rho);
 	 
 	  /* possibly letting the winner be the average of all past generations */

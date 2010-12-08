@@ -3,13 +3,12 @@
 
 /*------objective function---------------------------------------*/
 
-//double evaluate(long *l_nfeval, double *param, SEXP par, SEXP fcall, SEXP env)
 double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env)
 {
    SEXP sexp_fvec, fn;
    double f_result;  
 
-   PROTECT(fn = lang2(fcall, par)); 
+   PROTECT(fn = lang3(fcall, par, R_DotsSymbol)); 
       (*l_nfeval)++;  /* increment function evaluation count */
 
    PROTECT(sexp_fvec = eval(fn, env)); 
