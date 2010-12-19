@@ -81,7 +81,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
     warning("For many problems it is best to set 'NP' (in 'control') to be at least ten times the length of the parameter vector. \n", immediate. = TRUE)
   if (!is.null(ctrl$initialpop)) {
     ctrl$specinitialpop <- TRUE
-    if(!identical(as.numeric(dim(ctrl$initialpop)), c(ctrl$NP, ctrl$npar)))
+    if(!identical(as.numeric(dim(ctrl$initialpop)), as.numeric(c(ctrl$NP, ctrl$npar))))
       stop("Initial population is not a matrix with dim. NP x length(upper).")
   }
   else {
