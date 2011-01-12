@@ -7,7 +7,7 @@ Changes in version 2.0-8
       - allocate ia_urn1 once, rather than once per permute call
       - replace strategy if/else block with switch statement
   o More bug fixes and optimizations when bs=TRUE
-  o Fixed bug in initial population check. Thanks to Vinícius Veloso.
+  o Fixed bug in initial population check. Thanks to Vinecius Veloso.
   o Added '...' to objective function call in evaluate rather than in DEoptim
     R function. This yields a speed gain, since it avoids an extra function
     call. Thanks to Dirk Eddelbuettel for the idea.
