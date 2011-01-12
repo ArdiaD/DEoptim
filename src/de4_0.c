@@ -206,7 +206,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   double *t_tmpP = (double *)R_alloc(1,sizeof(double) * i_D);
   double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
 
-  int i, j, k, x;  /* counting variables */
+  int i, j, k;  /* counting variables */
   int i_r1, i_r2, i_r3, i_r4;  /* placeholders for random indexes */
 
   int ia_urn2[URN_DEPTH];
@@ -220,7 +220,6 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   double *fa_maxbound = upper;
   double f_jitter, f_dither;
  
-  double t_bestitC;
   double t_tmpC, tmp_best; 
   
   double initialpop[i_NP][i_D];
@@ -237,19 +236,6 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   double tempC;
 
   GetRNGstate();
-
-  //gta_popP[0][0] = 0;  /* is this necessary? */
- 
-  /* initialize initial popuplation FIXME: is this necessary? */
-  /*for (int i = 0; i < i_NP; i++) {
-    for (int j = 0; j < i_D; j++) {
-      initialpop[i][j] = 0.0;
-    }
-  }*/
-
-  /* initialize stored populations */
-  if (i_nstorepop < 0)
-    i_nstorepop = 0;
 
   /* if initial population provided, initialize with values */
   if (i_specinitialpop > 0) {
@@ -320,12 +306,12 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       
       for (j = 0; j < i_D; j++) 
         t_bestitP[j] = gt_bestP[j];
-      t_bestitC = gt_bestC[0];
       
       i_iter++;
      
       /*----computer dithering factor -----------------*/
-      f_dither = f_weight + unif_rand() * (1.0 - f_weight);
+      if (i_strategy == 5)
+        f_dither = f_weight + unif_rand() * (1.0 - f_weight);
       
       /*---DE/current-to-p-best/1 -----------------------------------------------------*/
       if (i_strategy == 6) {
@@ -601,7 +587,6 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       }
       for (j = 0; j < i_D; j++) 
 	t_bestitP[j] = gt_bestP[j];
-      t_bestitC = gt_bestC[0];
 
       if( trace > 0 ) {
         if( (i_iter % trace) == 0 ) {
