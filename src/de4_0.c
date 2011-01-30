@@ -185,7 +185,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
   double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
 
   int i, j, k;  /* counting variables */
-  int i_r1, i_r2, i_r3, i_r4;  /* placeholders for random indexes */
+  int i_r1, i_r2, i_r3;  /* placeholders for random indexes */
 
   int ia_urn2[URN_DEPTH];
   int ia_urnTemp[i_NP];
@@ -309,136 +309,63 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
         i_r1 = ia_urn2[1];  /* population members */
         i_r2 = ia_urn2[2];
         i_r3 = ia_urn2[3];
-        i_r4 = ia_urn2[4];
 
-        /*===Choice of strategy=======================================================*/
-        /*---classical strategy DE/rand/1/bin-----------------------------------------*/
-        switch (i_strategy) {
-        case 1: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
-
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---DE/local-to-best/1/bin---------------------------------------------------*/
-        case 2: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-
-            t_tmpP[j] = t_tmpP[j] +
-              f_weight * (t_bestitP[j] - t_tmpP[j]) +
-              f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---DE/best/1/bin with jitter------------------------------------------------*/
-        case 3: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-            f_jitter = 0.0001 * unif_rand() + f_weight;
-            t_tmpP[j] = t_bestitP[j] +
-              f_jitter * (gta_oldP[i_r1][j] - gta_oldP[i_r2][j]);
-
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---DE/rand/1/bin with per-vector-dither-------------------------------------*/
-        case 4: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              (f_weight + unif_rand()*(1.0 - f_weight))*
-              (gta_oldP[i_r2][j]-gta_oldP[i_r3][j]);
-
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---DE/rand/1/bin with per-generation-dither---------------------------------*/
-        case 5: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              f_dither * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
-
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---DE/current-to-p-best/1 (JADE)--------------------------------------------*/
-        case 6: {
-
-          /* select from [0, 1, 2, ..., (pNP-1)] */
-          i_pbest = sortIndex[(int)(unif_rand() * p_NP)];
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          do {
-            /* add fluctuation to random target */
-            t_tmpP[j] = gta_oldP[i][j] +
-              f_weight * (gta_oldP[i_pbest][j] - gta_oldP[i][j]) +
-              f_weight * (gta_oldP[i_r1][j]    - gta_oldP[i_r2][j]);
-
-            j = (j + 1) % i_D;
-            k++;
-          }while((unif_rand() < f_cross) && (k < i_D));
-        break;
-        }
-        /*---variation to DE/rand/1/bin: either-or-algorithm--------------------------*/
-        default: {
-
-          j = (int)(unif_rand() * i_D); /* random parameter */
-          k = 0;
-          if (unif_rand() < 0.5) { /* differential mutation, Pmu = 0.5 */
-            do {
-              /* add fluctuation to random target */
+        /*===Choice of strategy===============================================*/
+        j = (int)(unif_rand() * i_D); /* random parameter */
+        k = 0;
+        do {
+          switch (i_strategy) {
+            case 1: { /*---classical strategy DE/rand/1/bin-------------------*/
               t_tmpP[j] = gta_oldP[i_r1][j] +
                 f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
-
-              j = (j + 1) % i_D;
-              k++;
-            }while((unif_rand() < f_cross) && (k < i_D));
-          } else {
-            /* recombination with K = 0.5*(F+1) -. F-K-Rule */
-            do {
-              /* add fluctuation to random target */
+              break;
+            }
+            case 2: { /*---DE/local-to-best/1/bin-----------------------------*/
+              t_tmpP[j] = t_tmpP[j] +
+                f_weight * (t_bestitP[j] - t_tmpP[j]) +
+                f_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+              break;
+            }
+            case 3: { /*---DE/best/1/bin with jitter--------------------------*/
+              f_jitter = 0.0001 * unif_rand() + f_weight;
+              t_tmpP[j] = t_bestitP[j] +
+                f_jitter * (gta_oldP[i_r1][j] - gta_oldP[i_r2][j]);
+              break;
+            }
+            case 4: { /*---DE/rand/1/bin with per-vector-dither---------------*/
+              t_tmpP[j] = gta_oldP[i_r1][j] +
+                (f_weight + unif_rand()*(1.0 - f_weight))*
+                (gta_oldP[i_r2][j]-gta_oldP[i_r3][j]);
+              break;
+            }
+            case 5: { /*---DE/rand/1/bin with per-generation-dither-----------*/
+              t_tmpP[j] = gta_oldP[i_r1][j] +
+                f_dither * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+              break;
+            }
+            case 6: { /*---DE/current-to-p-best/1 (JADE)----------------------*/
+              /* select from [0, 1, 2, ..., (pNP-1)] */
+              i_pbest = sortIndex[(int)(unif_rand() * p_NP)];
+              t_tmpP[j] = gta_oldP[i][j] +
+                f_weight * (gta_oldP[i_pbest][j] - gta_oldP[i][j]) +
+                f_weight * (gta_oldP[i_r1][j]    - gta_oldP[i_r2][j]);
+              break;
+            }
+            default: { /*---variation to DE/rand/1/bin: either-or-algorithm---*/
+              if (unif_rand() < 0.5) { /* differential mutation, Pmu = 0.5 */
+                t_tmpP[j] = gta_oldP[i_r1][j] + f_weight *
+                  (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+              } else { /* recombination with K = 0.5*(F+1) -. F-K-Rule */
               t_tmpP[j] = gta_oldP[i_r1][j] +
                 0.5 * (f_weight + 1.0) * (gta_oldP[i_r2][j]
-                                          + gta_oldP[i_r3][j] - 2 * gta_oldP[i_r1][j]);
-
-              j = (j + 1) % i_D;
-              k++;
-            }while((unif_rand() < f_cross) && (k < i_D));
-
-          }
-        }
-        }/* end switch */
+                + gta_oldP[i_r3][j] - 2 * gta_oldP[i_r1][j]);
+              }
+            }
+          } /* end switch */
+          j = (j + 1) % i_D;
+          k++;
+        }while((unif_rand() < f_cross) && (k < i_D));
+        /*===End choice of strategy===========================================*/
 
         /*----boundary constraints, bounce-back method was not enforcing bounds correctly*/
         for (j = 0; j < i_D; j++) {
