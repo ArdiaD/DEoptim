@@ -26,6 +26,7 @@ is likely a limitation of these functions.
 
 #include <R.h>
 #include <Rdefines.h>
+#include <Rmath.h>
 
 SEXP getListElement(SEXP list, char *str);
 SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho);
@@ -36,7 +37,7 @@ void devol(double VTR, double f_weight, double fcross, int i_bs_flag,
            int i_specinitialpop, int i_check_winner, int i_av_winner,
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct, long *l_nfeval);
+           int *gi_iter, double i_pPct, double d_c, long *l_nfeval);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
 double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env);
 
@@ -84,6 +85,8 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   int i_av_winner = NUMERIC_VALUE(getListElement(control, "avWinner"));
   /* p to define the top 100p% best solutions */
   double i_pPct = NUMERIC_VALUE(getListElement(control, "p"));
+  /* crossover adaptation (a positive constant between 0 and 1) */
+  double d_c = NUMERIC_VALUE(getListElement(control, "c"));
 
   int i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
   /* Use S_alloc, since it initializes with zeros FIXME: these should be SEXP */
@@ -116,7 +119,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
         i_specinitialpop, i_check_winner, i_av_winner,
         gt_bestP, &gt_bestC,
         gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
-        &gi_iter, i_pPct, &l_nfeval);
+        &gi_iter, i_pPct, d_c, &l_nfeval);
   /*---end optimization----------------------------------*/
 
   j =  i_nstorepop * i_NP * i_D;
@@ -151,7 +154,7 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
            int i_specinitialpop, int i_check_winner, int i_av_winner,
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
-           int *gi_iter, double i_pPct, long *l_nfeval)
+           int *gi_iter, double i_pPct, double d_c, long *l_nfeval)
 {
 
 #define URN_DEPTH  5   /* 4 + one index to avoid */
@@ -206,6 +209,8 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       p_NP = p_NP < 2 ? 2 : p_NP;
   int sortIndex[i_NP];              /* sorted values of gta_oldC */
   for(i = 0; i < i_NP; i++) sortIndex[i] = i;
+  double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = 0.5, meanF = 0.5;
+  int i_goodNP = 0;
 
   /* vars for when i_bs_flag == 1 */
   int i_len, done, step, bound;
@@ -309,6 +314,16 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       i_r2 = ia_urn2[2];
       i_r3 = ia_urn2[3];
 
+      if (i_strategy == 6) {
+        f_cross = rnorm(meanCR, 0.1);
+        f_cross = f_cross > 1.0 ? 1 : f_cross;
+        f_cross = f_cross < 0.0 ? 0 : f_cross;
+        do {
+          f_weight = rcauchy(meanF, 0.1);
+          f_weight = f_weight > 1 ? 1.0 : f_weight;
+        }while(f_weight <= 0.0);
+      }
+
       /*===Choice of strategy===============================================*/
       j = (int)(unif_rand() * i_D); /* random parameter */
       k = 0;
@@ -370,12 +385,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       /*----boundary constraints, bounce-back method was not enforcing bounds correctly*/
       for (j = 0; j < i_D; j++) {
         if (t_tmpP[j] < d_lower[j]) {
-          t_tmpP[j] = d_lower[j] +
-            unif_rand() * (d_upper[j] - d_lower[j]);
+          t_tmpP[j] = d_lower[j] + unif_rand() * (d_upper[j] - d_lower[j]);
         }
         if (t_tmpP[j] > d_upper[j]) {
-          t_tmpP[j] =  d_upper[j] -
-            unif_rand() * (d_upper[j] - d_lower[j]);
+          t_tmpP[j] = d_upper[j] - unif_rand() * (d_upper[j] - d_lower[j]);
         }
       }
 
@@ -397,6 +410,11 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
             gt_bestP[j]=t_tmpP[j];
           t_bestC=t_tmpC;
         }
+        if (i_strategy == 6) { /* calculate new goodCR and goodF */
+          goodCR += f_cross / ++i_goodNP;
+          goodF += f_weight;
+          goodF2 += pow(f_weight,2.0);
+        }
       }
       else {
         for (j = 0; j < i_D; j++)
@@ -406,6 +424,10 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
       }
     } /* End mutation loop through pop. */
 
+    if (i_strategy == 6) { /* calculate new meanCR and meanF */
+      meanCR = (1-d_c)*meanCR + d_c*goodCR;
+      meanF = (1-d_c)*meanF + d_c*goodF2/goodF;
+    }
 
     if(i_bs_flag) {
       /* examine old and new pop. and take the best NP members
@@ -496,6 +518,9 @@ void devol(double VTR, double f_weight, double f_cross, int i_bs_flag,
         Rprintf("\n");
       }
     }
+
+    /* check for user interrupt */
+
   } /* end iteration loop */
 
   /* last population */

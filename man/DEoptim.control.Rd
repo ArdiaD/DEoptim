@@ -10,7 +10,8 @@
 DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
-   storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2)
+   storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2,
+   c = 0.05)
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process
@@ -77,6 +78,9 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    The default value is \code{TRUE}.}
  \item{p}{when \code{strategy = 6}, the top (100 * p)\% best 
    solutions are used in the mutation. \code{p} must be defined in (0,1].}
+ \item{c}{when \code{strategy = 6}, \code{c} controls the speed of the
+   crossover adaptation. Higher values of \code{c} give more weight to the
+   current successful mutations. \code{c} must be defined in (0,1].}
  }
 \value{
   The default value of \code{control} is the return value of 
