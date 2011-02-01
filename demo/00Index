@@ -1,1 +1,2 @@
 DEoptim         some examples of the DEoptim function.
+benchmarks      some common optimization benchmarks, comparing various strategies (e.g. DE vs. JADE)
