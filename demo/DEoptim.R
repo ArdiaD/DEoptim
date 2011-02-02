@@ -27,21 +27,21 @@ demo.DEoptim <- function(){
 
   'demo.2' <- function(){
     r <- DEoptim(Rosenbrock, rep(-10,2), rep(10,2), 
-                 control = list(NP = 100, refresh = 1))
+                 control = list(NP = 100, trace = 1))
     summary(r)
   }
 
   'demo.3' <- function(){
     r <- DEoptim(Rosenbrock, rep(-10,2), rep(10,2), 
                  control = list(NP = 50, itermax = 300, F = 1.5, 
-                   CR = 0.2, refresh = 1))
+                   CR = 0.2, trace = 1))
     summary(r)
     plot(r, type = 'b')
   }
 
   'demo.4' <- function(){
     r <- DEoptim(Wild, lower = -50, upper = 50,
-                 control = list(NP = 50, refresh = 1))
+                 control = list(NP = 50, trace = 1))
     par(mfrow = c(2,1))
     plot(r, type = 'b')
     plot(r, plot.type = "bestvalit", type = 'l')
@@ -49,7 +49,7 @@ demo.DEoptim <- function(){
 
   'demo.5' <- function(){
     r <- DEoptim(Wild, lower = -50, upper = 50,
-                 control = list(NP = 50, refresh = 1, digits = 8))
+                 control = list(NP = 50, trace = 1, digits = 8))
   }
 
   str.stop <- "end of the demo"
@@ -80,9 +80,9 @@ demo.DEoptim <- function(){
        main = "DEoptim minimizing 'Wild function'")
   if (wait()) stop(str.stop) else demo.4()
 
-  tstr <- "\nIncrease the number of printed digits"
-  print.comments(tstr)
-  if (wait()) stop(str.stop) else demo.5()
+#  tstr <- "\nIncrease the number of printed digits"
+#  print.comments(tstr)
+#  if (wait()) stop(str.stop) else demo.5()
   
   cat("\n",str.stop,"\n")
 }
