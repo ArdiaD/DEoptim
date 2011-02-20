@@ -18,18 +18,21 @@ citEntry(entry = "manual",
      
 )
 
-citEntry(entry = "misc",
+citEntry(entry = "article",
 	 title = "{DEoptim}: An {R} Package for Global Optimization by {D}ifferential {E}volution",
 	 author = personList(person("Katharine","Mullen","M."),
                          person("David","Ardia"),
                          person("David","Gil","L."),
                          person("Donald","Windover"),
                          person("James","Cline")),
-         year = "2009",
+         journal = "Journal of Statistical Software",
+         volume = "in press",
+         year = "forthcoming",
          url = "http://ssrn.com/abstract=1526466",
 	 textVersion =
-         paste("Mullen, K.M., Ardia, D., Gil, D.L., Windover, D., Cline, J. (2009).",
+         paste("Mullen, K.M., Ardia, D., Gil, D.L., Windover, D., Cline, J. (forthcoming).",
                "'DEoptim': An 'R' Package for Global Optimization by Differential Evolution.",
+               "Journal of Statistical Software, in press.",
                "URL http://ssrn.com/abstract=1526466.")
 )
 
@@ -45,6 +48,19 @@ citEntry(entry = "misc",
          textVersion = 
          paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
                "Differential Evolution ('DEoptim') for Non-Convex Portfolio Optimization.",
+               "URL http://ssrn.com/abstract=1584905.")
+)
+
+citEntry(entry = "misc",
+	 title = "{J}ump-Diffusion Calibration using {D}ifferential {E}volution",
+	 author = personList(person("David","Ardia"),
+                         person("Juan","Ospina Arango"),
+                         person("Norman","Giraldo Gomez")),
+         year = "2010",
+         url = "http://ssrn.com/abstract=1584905",
+         textVersion = 
+         paste("Ardia, D., Ospina Arango, N., Giraldo Gomez, N. (2010).",
+               "Jump-Diffusion Calibration using Differential Evolution.",
                "URL http://ssrn.com/abstract=1584905.")
 )
 
