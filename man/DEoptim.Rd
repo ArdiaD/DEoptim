@@ -38,7 +38,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   implementation dynamically allocates the memory required to store the population, removing limitations on the 
   number of members in the population and length of the parameter vectors that may be optimized. 
   Since becoming publicly available, the package \pkg{DEoptim} has been used by several authors to solve optimization 
-  problems arising in diverse domains; see Mullen et al. (2009) for a review.
+  problems arising in diverse domains; see Mullen et al. (forthcoming) for a review.
   
   To perform a maximization (instead of minimization) of a given
   function, simply define a new function which is the opposite of the
@@ -81,7 +81,8 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   lower-level language like C or Fortran may also increase speed.
 
   Further details and examples of the \R package \pkg{DEoptim} can be found
-  in Mullen et al. (2009) and Ardia et al. (2010).
+  in Mullen et al. (forthcoming) and Ardia et al. (2010a, 2010b) or look at 
+  the package's vignette by typing \code{vignette("DEoptim")}.
   
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
@@ -190,25 +191,30 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   Differential Evolution homepage:
   URL \url{http://www.icsi.berkeley.edu/~storn/code.html}
   
-  Storn, R. and Price, K. (1997) 
-  Differential Evolution -- A Simple and Efficient Heuristic for Global Optimization over Continuous Spaces,
-  \emph{Journal of Global Optimization}, 11:4, 341--359.  
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010a)
+  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio Optimization.
+  URL \url{http://ssrn.com/abstract=1584905}
 
-  Price, K.V., Storn, R.M., Lampinen J.A. (2006)
-  \emph{Differential Evolution - A Practical Approach to Global Optimization}.
-  Berlin Heidelberg: Springer-Verlag. ISBN 3540209506.
+  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2010b)
+  Jump-Diffusion Calibration using Differential Evolution
+  URL \url{http://ssrn.com/abstract=1689829}
 
   Mitchell, M. (1998) 
   \emph{An Introduction to Genetic Algorithms}.
   The MIT Press. ISBN 0262631857.
 
-  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (2009)
+  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (forthcoming)
   \pkg{DEoptim}: An \R Package for Global Optimization by Differential Evolution.
+  \emph{Journal of Statistical Software}, in press.
   URL \url{http://ssrn.com/abstract=1526466}
 
-  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010)
-  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio Optimization.
-  URL \url{http://ssrn.com/abstract=1584905}
+  Price, K.V., Storn, R.M., Lampinen J.A. (2006)
+  \emph{Differential Evolution - A Practical Approach to Global Optimization}.
+  Berlin Heidelberg: Springer-Verlag. ISBN 3540209506.
+
+  Storn, R. and Price, K. (1997) 
+  Differential Evolution -- A Simple and Efficient Heuristic for Global Optimization over Continuous Spaces,
+  \emph{Journal of Global Optimization}, 11:4, 341--359.  
 }
 \author{
   David Ardia, Katharine Mullen \email{katharine.mullen@nist.gov}, 

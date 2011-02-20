@@ -32,7 +32,8 @@
 }
 \note{
   Further details and examples of the \R package \pkg{DEoptim} can be found
-  in Mullen et al. (2009) and Ardia et al. (2010).
+  in Mullen et al. (forthcoming) and Ardia et al. (2010a, 2010b) or look at the 
+  package's vignette by typing \code{vignette("DEoptim")}.
 
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
@@ -44,13 +45,18 @@
   \code{\link{DEoptim}} and \code{\link{DEoptim.control}}.
 }
 \references{
-  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (2009)
-  \pkg{DEoptim}: An \R Package for Global Optimization by Differential Evolution.
-  URL \url{http://ssrn.com/abstract=1526466}
-
-  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010)
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010a)
   Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio Optimization.
   URL \url{http://ssrn.com/abstract=1584905}
+
+  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2010b)
+  Jump-Diffusion Calibration using Differential Evolution
+  URL \url{http://ssrn.com/abstract=1689829}
+
+  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (forthcoming)
+  \pkg{DEoptim}: An \R Package for Global Optimization by Differential Evolution.
+  \emph{Journal of Statistical Software}, in press.
+  URL \url{http://ssrn.com/abstract=1526466}
 }
 \examples{
   ## Rosenbrock Banana function
