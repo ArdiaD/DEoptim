@@ -1,3 +1,6 @@
+Changes in version 2.0-9
+  o Added vignette. 
+
 Changes in version 2.0-8
   o Many improvements in the C code, thanks to Dirk Eddelbuettel's detailed
     code review. Dirk's contributions include:
