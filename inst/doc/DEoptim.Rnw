@@ -4,7 +4,7 @@
 %% need no \usepackage{Sweave}
 
 \author{David Ardia \\ aeris CAPITAL AG \And Katharine M. Mullen \\ NIST 
-  \And Joshua Ulrich \\ FOSS Trading \And Brian G. Peterson \\ Breakwater Trading}
+  \And Joshua Ulrich \\ FOSS Trading \And Brian G. Peterson \\ Cheiron Trading}
 
 \title{\pkg{DEoptim}: An \proglang{R} Package for Global 
   Optimization by Differential Evolution}
