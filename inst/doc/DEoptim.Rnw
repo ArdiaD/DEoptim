@@ -41,7 +41,7 @@ FOSS Trading \\
 URL:~\url{http://fosstrading.com}  \\
 
 Brian G. Peterson\\
-Breakwater Trading LLC, Chicago, IL\\
+Cheiron Trading LLC, Chicago, IL\\
 E-mail: \email{brian@braverock.com}  \\ 
 
 }
