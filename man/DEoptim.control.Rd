@@ -11,7 +11,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
    storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2,
-   c = 0.05)
+   c = 0.05, reltol, steptol)
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process
@@ -81,6 +81,11 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
  \item{c}{when \code{strategy = 6}, \code{c} controls the speed of the
    crossover adaptation. Higher values of \code{c} give more weight to the
    current successful mutations. \code{c} must be defined in (0,1].}
+ \item{reltol}{relative convergence tolerance.  The algorithm stops if
+   it is unable to reduce the value by a factor of \code{reltol * (val +
+   reltol)} after \code{steptol} steps. Defaults to
+   \code{sqrt(.Machine$double.eps)}, typically about \code{1e-8}.}
+ \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
  }
 \value{
   The default value of \code{control} is the return value of 
