@@ -7,7 +7,7 @@
   in \code{DEoptim}.
 }
 \usage{
-DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
+DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
    storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2,
@@ -37,17 +37,22 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = 50,
       values, and the best \code{NP} vectors will proceed into the next
       generation (best of parent and child selection). Default is
     \code{FALSE}.}
-    \item{NP}{number of population members. Defaults to \code{50}.  For
+    \item{NP}{number of population members. Defaults to \code{NA}; if
+      the user does not change the value of \code{NP} from \code{NA} or
+      specifies a value less than 4 it
+      is reset when \code{DEoptim} is called as \code{10*length(lower)}. For
       many problems it is best to set
       \code{NP} to be at least 10 times the length
       of the parameter vector.  }
     \item{itermax}{the maximum iteration (population generation) allowed.
       Default is \code{200}.}
     \item{CR}{crossover probability from interval [0,1]. Default
-      to \code{0.9}.}
+      to \code{0.5}.}
     \item{F}{step-size from interval [0,2]. Default to \code{0.8}.}
-    \item{trace}{Printing of progress occurs? Default to \code{TRUE}. If
-      numeric, progress will be printed every \code{trace} iterations.}
+    \item{trace}{Positive integer or logical value indicating whether 
+  printing of progress occurs at each iteration. The default value is
+  \code{TRUE}.  If a positive integer is specified, printing occurs every
+  \code{trace} iterations.  }
     \item{initialpop}{an initial population used as a starting
       population in the optimization procedure. May be useful to speed up
       the convergence. Default to \code{NULL}.  If given, each member of

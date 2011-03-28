@@ -322,7 +322,7 @@ however, may be inefficient on smooth functions, where
 derivative-based methods generally are most efficient.
 
 In the example below, a generalized Rosenbrock function is considered.
-This function is differentiable and has a single local minima.  It is
+This function is differentiable and has a single local minimum.  It is
 often more efficient to apply methods other than DE to optimization of
 such functions.  
 Functions that are smooth but have many local minima, however, 
@@ -330,7 +330,7 @@ may still be good candidates for optimization with DE, since
 alternative algorithms for local, as opposed to global, optimization 
 may converge to a sub-optimal solution.
 
-A generalized Rosenback function is possible 
+A generalized Rosenbrock function is possible 
 to represent in \proglang{R} as 
 <<opt,echo=FALSE,results=hide>>=
 options(prompt = "R> ")
@@ -529,11 +529,12 @@ the following elements of which are currently interpreted:
 \item \code{itermax}: The maximum iteration (population generation) allowed.
   The default value is \code{200}.
 \item \code{CR}: Crossover probability from interval [0,1]. The default
-  value is \code{0.9}.
+  value is \code{0.5}.
 \item \code{F}: Stepsize from interval [0,2]. The default value is \code{0.8}.
-\item \code{trace}: Logical value indicating whether 
+\item \code{trace}: Positive integer or logical value indicating whether 
   printing of progress occurs at each iteration. The default value is
-  \code{TRUE}.
+  \code{TRUE}.  If a positive integer is specified, printing occurs every
+  \code{trace} iterations.  
 \item \code{initialpop}: An initial population used as a starting
   population in the optimization procedure, specified as a matrix in which each row represents
   a population member.   May be useful to speed up
