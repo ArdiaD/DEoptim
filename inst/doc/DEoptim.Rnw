@@ -15,7 +15,7 @@
 
 \Abstract{This introduction to the \proglang{R} package \pkg{DEoptim} is 
   an abreviated version of the manuscript 
-  \citet{Mullen:Ardia:Gil:Windover:Cline:inpress}, 
+  \citet{DEoptimJSS2011}, 
   published in the \emph{Journal of Statistical Software}. 
   \pkg{DEoptim} implements the Differential Evolution algorithm
   for global optimization of a real-valued function of a 
@@ -97,7 +97,7 @@ been used by a variety of authors, e.g.,
 \citet{OpsinaArango:09}, 
 \citet{ArdiaBoudtCarlMullenPeterson2010} and \citet{Ardia:Ospina:Giraldo:2010} to 
 solve optimization problems arising in diverse domains. Interested readers
-are referred to \citet{Mullen:Ardia:Gil:Windover:Cline:inpress} for a 
+are referred to \citet{DEoptimJSS2011} for a 
 longer version of the present vignette. 
   
 The recently released \pkg{RcppDE} \citep{RcppDE} package ports the \proglang{C}
@@ -621,78 +621,7 @@ The views expressed in this vignette are the sole responsibility of the
 authors and do not necessarily reflect those of NIST and aeris CAPITAL
 AG.
 
-\begin{thebibliography}{14}
-\bibitem[Ardia \emph{et~al.}(2011)]{DEoptim}
-Ardia D, Mullen KM, Peterson BG, Ulrich J (2010).
-\newblock \emph{\pkg{DEoptim}: Differential Evolution Optimization in \proglang{R}}.
-\newblock URL \url{http://CRAN.R-project.org/package=DEoptim}.
 
-\bibitem[{Ardia \emph{et~al.}(2010a)Ardia, Boudt, Carl, Mullen, and Peterson}]{ArdiaBoudtCarlMullenPeterson2010}
-Ardia D, Boudt K, Carl P, Mullen K, Peterson BG (2010a).
-\newblock {D}ifferential {E}volution ({DEoptim}) for Non-Convex Portfolio Optimization.
-\newblock \emph{Technical report}, Social Science Research Network.
-
-\bibitem[{Ardia \emph{et~al.}(2010b)Ardia, Ospina~Arango, and Giraldo~Gomez}]{Ardia:Ospina:Giraldo:2010}
-Ardia D, Ospina~Arango JD, Giraldo~Gomez ND (2010b).
-\newblock Jump-Diffusion Calibration using Differential Evolution.
-\newblock \emph{Technical report}, Social Science Research Network.
-
-\bibitem[{B{\"{o}}rner \emph{et~al.}(2007)B{\"{o}}rner, Higgins, Kantelhardt, and Scheiter}]{Borner:Higgins:Kantelhardt:Scheiter:07}
-B{\"{o}}rner J, Higgins SI, Kantelhardt J, Scheiter S (2007).
-\newblock Rainfall or Price Variability: What Determines Rangeland Management Decisions? 
-A Simulation-Optimization Approach to {S}outh {A}frican Savanas.
-\newblock \emph{Agricultural Economics}, \textbf{37}(2--3), 189--200.
-
-\bibitem[{Eddelbuettel(2010)}]{RcppDE}
-Eddelbuettel D (2010).
-\newblock \emph{{\pkg{RcppDE}}: Global Optimization by Differential Evolution in \proglang{C++}}.
-
-\bibitem[{Higgins \emph{et~al.}(2007)Higgins, Kantelhardt, Scheiter, and Boerner}]{Higgins:Kantelhardt:Scheiter:Boerner:07}
-Higgins SI, Kantelhardt J, Scheiter S, Boerner J (2007).
-\newblock Sustainable Management of Extensively Managed Savanna Rangelands.
-\newblock \emph{Ecological Economics}, \textbf{62}(1), 102--114.
-
-\bibitem[{Holland(1975)}]{holland}
-Holland JH (1975).
-\newblock \emph{Adaptation in Natural Artificial Systems}.
-\newblock University of Michigan Press, Ann Arbor.
-
-\bibitem[{Mitchell(1998)}]{mitchell}
-Mitchell M (1998).
-\newblock \emph{An Introduction to Genetic Algorithms}.
-\newblock The MIT Press.
-
-\bibitem[{Mullen \emph{et~al.}(forthcoming)Mullen, Ardia, Gil, Windover, and Cline}]{Mullen:Ardia:Gil:Windover:Cline:inpress}
-Mullen KM, Ardia D, Gil DL, Windover D, Cline J (forthcoming).
-\newblock \pkg{DEoptim}: An \proglang{R} Package for Global Optimization by Differential Evolution.
-\newblock \emph{Journal of Statistical Software}, in press.
-
-\bibitem[{Nash(1990)}]{nash}
-Nash JC (1990).
-\newblock \emph{Compact Numerical Methods for Computers: Linear Algebra and Function Minimisation}.
-\newblock Adam Hilger.
-
-\bibitem[{Opsina~Arango(2009)}]{OpsinaArango:09}
-Opsina~Arango JD (2009).
-\newblock \emph{Estimacion de un Modelo de Difusion con Saltos con Distribucion de Error Generalizada Asimetrica usando Algorithmos Evolutivos}.
-\newblock Master's thesis, Universidad Nacional de Colombia.
-
-\bibitem[{Price \emph{et~al.}(2006)Price, Storn, and Lampinen}]{Price:Storn:Lampinen:06}
-Price KV, Storn RM, Lampinen JA (2006).
-\newblock \emph{Differential Evolution: A Practical Approach to Global Optimization}.
-\newblock Springer-Verlag, Berlin, Germany.
-
-\bibitem[{{\proglang{R} Development Core Team}(2009)}]{r_env}
-{\proglang{R} Development Core Team} (2009).
-\newblock \emph{{\proglang{R}}: A Language and Environment for Statistical Computing}.
-\newblock \proglang{R} Foundation for Statistical Computing, Vienna, Austria.
-\newblock URL \url{http://www.R-project.org}.
-
-\bibitem[{Storn and Price(1997)}]{price}
-Storn R, Price K (1997).
-\newblock Differential Evolution -- A Simple and Efficient Heuristic for Global Optimization over Continuous Spaces.
-\newblock \emph{Journal of Global Optimization}, \textbf{11}(4), 341--359.
-
-\end{thebibliography}
+\bibliography{DEoptim}
 
 \end{document}

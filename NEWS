@@ -1,3 +1,8 @@
+Changes in version 2.1-0
+  o Added documentation of strategy six.
+  o Fixed typos in vignette. 
+  o Modified CITATION file and Rd files.  
+
 Changes in version 2.0-9
   o Added vignette. 
 

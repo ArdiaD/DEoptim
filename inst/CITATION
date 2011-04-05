@@ -2,66 +2,55 @@ if(!exists("meta") || is.null(meta)) meta <- packageDescription("DEoptim")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("version", meta$Version)
 
-citEntry(entry = "manual",
-	 title = "The {DEoptim} Package: {D}ifferential {E}volution Optimization in {R}",
-     author = personList(as.person("David Ardia"), 
-                             as.person("Katharine Mullen"), 
-                             as.person("Brian G. Peterson"),
-                             as.person("Joshua Ulrich")),
-     year = year,
-	 note = vers,
-	 url = "http://CRAN.R-project.org/package=DEoptim",
-	 textVersion =
-         paste("Ardia, D., Mullen, K.M., et.al. (", year,"). ",
-               "The 'DEoptim' Package: Differential Evolution Optimization in 'R'. ", vers, ".", sep = ""), 
-     header = "To cite the 'DEoptim' in publications use:"
-     
-)
-
-citEntry(entry = "article",
-	 title = "{DEoptim}: An {R} Package for Global Optimization by {D}ifferential {E}volution",
-	 author = personList(person("Katharine","Mullen","M."),
-                         person("David","Ardia"),
-                         person("David","Gil","L."),
-                         person("Donald","Windover"),
-                         person("James","Cline")),
-         journal = "Journal of Statistical Software",
-         volume = "in press",
-         year = "forthcoming",
-         url = "http://ssrn.com/abstract=1526466",
-	 textVersion =
-         paste("Mullen, K.M., Ardia, D., Gil, D.L., Windover, D., Cline, J. (forthcoming).",
-               "'DEoptim': An 'R' Package for Global Optimization by Differential Evolution.",
-               "Journal of Statistical Software, in press.",
-               "URL http://ssrn.com/abstract=1526466.")
+citEntry(entry = "Article",
+  title        = "{DEoptim}: An {R} Package for Global Optimization by Differential Evolution",
+  author       = personList(as.person("Katharine Mullen"),
+                   as.person("David Ardia"),
+                   as.person("David Gil"),
+                   as.person("Donald Windover"),
+                   as.person("James Cline")),
+  journal      = "Journal of Statistical Software",
+  year         = "2011",
+  volume       = "40",
+  number       = "6",
+  pages        = "1--26",
+  textVersion  =
+  paste("Katharine Mullen, David Ardia, David Gil, Donald Windover, James Cline (2011).",
+        "DEoptim: An R Package for Global Optimization by Differential Evolution.",
+        "Journal of Statistical Software, 40(6), 1-26.",
+        "URL http://www.jstatsoft.org/v40/i06/."),
+  
+  header       = "To cite the R package use:",
+  url          = "http://www.jstatsoft.org/v40/i06/"
 )
 
 citEntry(entry = "misc",
 	 title = "{D}ifferential {E}volution ({DEoptim}) for Non-Convex Portfolio Optimization",
-	 author = personList(person("David","Ardia"),
-                         person("Kris","Boudt"),
-                         person("Peter","Carl"),
-                         person("Katharine","Mullen","M."),
-                         person("Brian","Peterson","G.")),
+	 author = personList(as.person("David Ardia"),
+                         as.person("Kris Boudt"),
+                         as.person("Peter Carl"),
+                         as.person("Katharine M. Mullen"),
+                         as.person("Brian G. Peterson")),
          year = "2010",
          url = "http://ssrn.com/abstract=1584905",
          textVersion = 
          paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
                "Differential Evolution ('DEoptim') for Non-Convex Portfolio Optimization.",
-               "URL http://ssrn.com/abstract=1584905.")
+               "URL http://ssrn.com/abstract=1584905."),
+         header       = "Selected additional DEoptim-related references:",
 )
 
 citEntry(entry = "misc",
 	 title = "{J}ump-Diffusion Calibration using {D}ifferential {E}volution",
-	 author = personList(person("David","Ardia"),
-                         person("Juan","Ospina Arango"),
-                         person("Norman","Giraldo Gomez")),
+	 author = personList(as.person("David Ardia"),
+                         as.person("Juan Ospina Arango"),
+                         as.person("Norman Giraldo Gomez")),
          year = "2010",
          url = "http://ssrn.com/abstract=1584905",
          textVersion = 
          paste("Ardia, D., Ospina Arango, N., Giraldo Gomez, N. (2010).",
                "Jump-Diffusion Calibration using Differential Evolution.",
-               "URL http://ssrn.com/abstract=1584905.")
+               "URL http://ssrn.com/abstract=1584905.")	       
 )
 
 citEntry(entry = "Book",
@@ -80,3 +69,7 @@ citEntry(entry = "Book",
                "Berlin Heidelberg: Springer-Verlag. ISBN 3540209506."),
          header = "To cite the Differential Evolution algorithm use:"
 )
+
+citFooter("BibTeX entries for LaTeX users: use\n", 
+sQuote('toBibtex(citation("DEoptim"))'))
+

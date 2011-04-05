@@ -152,7 +152,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
 }
 \note{
   Further details and examples of the \R package \pkg{DEoptim} can be found
-  in Mullen et al. (forthcoming) and Ardia et al. (2010a, 2010b) or look at the 
+  in Mullen et al. (2011) and Ardia et al. (2010a, 2010b) or look at the 
   package's vignette by typing \code{vignette("DEoptim")}.
 
   Please cite the package in publications. Use \code{citation("DEoptim")}.
@@ -162,18 +162,18 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
 }
 \references{
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010a)
-  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio Optimization.
-  URL \url{http://ssrn.com/abstract=1584905}
+  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio
+  Optimization. URL \url{http://ssrn.com/abstract=1584905}.
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2010b)
-  Jump-Diffusion Calibration using Differential Evolution
-  URL \url{http://ssrn.com/abstract=1689829}
+  Jump-Diffusion Calibration using Differential Evolution.
+  URL \url{http://ssrn.com/abstract=1689829}.
 
-  Mullen, K.M., Ardia, D., Gil, D.L, Windover, D., Cline, J. (forthcoming)
-  \pkg{DEoptim}: An \R Package for Global Optimization by Differential Evolution.
-  \emph{Journal of Statistical Software}, in press.
-  URL \url{http://ssrn.com/abstract=1526466}
-
+  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
+  J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
+  Differential Evolution. \emph{Journal of Statistical Software}, 40(6), 1-26.
+  URL \url{http://www.jstatsoft.org/v40/i06/}.
+  
   Price, K.V., Storn, R.M., Lampinen J.A. (2006)
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.
   Berlin Heidelberg: Springer-Verlag. ISBN 3540209506.
