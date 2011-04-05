@@ -425,9 +425,12 @@ Then the objective function
 values associated with the children $v$ are determined.  If a trial
 vector $v_{i,g}$ has equal or lower objective function value than the
 vector $x_{i,g}$, $v_{i,g}$ replaces $x_{i,g}$ in the population;
-otherwise $x_{i,g}$ remains.  The algorithm stops after some set number of 
-generations, or after the objective function value associated with the 
-best member has been reduced below some set threshold.  
+otherwise $x_{i,g}$ remains.
+
+The algorithm stops after some set number of generations, or after the objective 
+function value associated with the best member has been reduced below some set 
+threshold, or if it is unable to reduce the best member by a certain value over
+over set number of iterations.
 
 Variations on this theme are possible,
 some of which are described in the following section.   
@@ -505,6 +508,9 @@ the following elements of which are currently interpreted:
       \item \code{5}: DE / rand / 1 / bin with per generation dither.
      The strategy described for \code{4} is used, but $\text{dither}$
      is only determined once per-generation. 
+      \item \code{6}: DE / current-to-p-best / 1.
+     The top $\text(100*p)$ percent best solutions are used in the mutation,
+     where $p$ is defined in $\text(0,1]$.
    \item any value not above: variation to DE / rand / 1 / bin: either-or 
      algorithm.
      In the case that $\mathit{rand} < 0.5$, 
