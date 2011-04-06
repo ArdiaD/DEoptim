@@ -145,7 +145,7 @@ the function has a global minimum $f(x)=0$ at the point $(0,0)$.
 library("vcd")
 library("grid")
 library("lattice")
-pdf("Rastrigin1.pdf")
+jpeg("Rastrigin1.jpg")
 x <- y <- seq(-5,5,by=.1)
 z <- matrix(nrow=length(x), ncol=length(y))
 for(i in 1:length(x)) {
@@ -177,7 +177,7 @@ set.seed(123)
 
 \begin{figure}[t!]
 \centering
-\includegraphics[width=.5\textwidth]{Rastrigin1.pdf}
+\includegraphics[width=.5\textwidth]{Rastrigin1.jpg}
 \caption{A contour plot of the two-dimensional Rastrigin function $f(x)$.  
 The global minimum $f(x)=0$ is at $(0,0)$ and is marked with an open 
 white circle.}
@@ -204,7 +204,7 @@ est.ras <- DEoptim(rastrigin,lower=c(-5,-5),upper=c(5,5),
 
 \begin{figure}[t!] 
   \centering
-  \includegraphics[width=.8\textwidth]{Rastrigin2.pdf} 
+  \includegraphics[width=.8\textwidth]{Rastrigin2.jpg} 
   \caption{The population associated with various generations of a call
     to \code{DEoptim} as it searches for the minimum of the Rastrigin
     function (marked with an open white circle).  The minimum is consistently 
@@ -279,7 +279,7 @@ xy <- list(fontsize=list(text=12,points=10),
            layout.widths=list(left.padding=.1, right.padding=.1,between=0),
            layout.heights=list(top.padding=.1, bottom.padding=.1,between=0))
 
-pdf("Rastrigin2.pdf")
+jpeg("Rastrigin2.jpg")
 
 grid.newpage()
 downViewport(pushLayout(nr, nc))
