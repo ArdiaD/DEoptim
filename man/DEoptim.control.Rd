@@ -139,6 +139,10 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
      The strategy described for \code{4} is used, but \eqn{dither}
      is only determined once per-generation. 
      
+     \item \code{strategy = 6}: DE / current-to-p-best / 1.\cr
+     The top \eqn{(100*p)} percent best solutions are used in the mutation,
+     where \eqn{p} is defined in \eqn{(0,1]}.
+     
      \item any value not above: variation to DE / rand / 1 / bin: either-or algorithm.\cr
      In the case that \code{rand} < 0.5, the classical strategy \code{strategy = 1} is used. 
      Otherwise, the expression
