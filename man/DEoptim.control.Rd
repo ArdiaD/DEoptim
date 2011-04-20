@@ -11,7 +11,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
    storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2,
-   c = 0.05, reltol, steptol)
+   c = 0, reltol, steptol)
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process

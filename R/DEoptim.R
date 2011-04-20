@@ -2,7 +2,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
                             storepopfreq = 1, checkWinner = FALSE,
-                            avWinner = TRUE, p = 0.2, c = 0.05,
+                            avWinner = TRUE, p = 0.2, c = 0,
                             reltol, steptol) {
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
@@ -38,9 +38,9 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
     p <- 0.2
   }
 
-  if (c <= 0 || c > 1) {
-    warning("'c' not in (0,1]; set to default value 0.05\n", immediate. = TRUE)
-    c <- 0.05
+  if (c < 0 || c > 1) {
+    warning("'c' not in [0,1]; set to default value 0\n", immediate. = TRUE)
+    c <- 0
   }
 
   if (missing(reltol)) {

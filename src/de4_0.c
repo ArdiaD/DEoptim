@@ -216,7 +216,8 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       p_NP = p_NP < 2 ? 2 : p_NP;
   int sortIndex[i_NP];              /* sorted values of gta_oldC */
   for(i = 0; i < i_NP; i++) sortIndex[i] = i;
-  double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = 0.5, meanF = 0.5;
+  //double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = 0.5, meanF = 0.5;
+  double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = d_cross, meanF = d_weight;
   int i_goodNP = 0;
 
   /* vars for when i_bs_flag == 1 */
@@ -322,7 +323,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       i_r2 = ia_urn2[2];
       i_r3 = ia_urn2[3];
 
-      if (i_strategy == 6) {
+      if (d_c > 0) {
         d_cross = rnorm(meanCR, 0.1);
         d_cross = d_cross > 1.0 ? 1 : d_cross;
         d_cross = d_cross < 0.0 ? 0 : d_cross;
@@ -418,7 +419,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
             gt_bestP[j]=t_tmpP[j];
           t_bestC=t_tmpC;
         }
-        if (i_strategy == 6) { /* calculate new goodCR and goodF */
+        if (d_c > 0) { /* calculate new goodCR and goodF */
           goodCR += d_cross / ++i_goodNP;
           goodF += d_weight;
           goodF2 += pow(d_weight,2.0);
@@ -432,7 +433,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       }
     } /* End mutation loop through pop. */
 
-    if (i_strategy == 6) { /* calculate new meanCR and meanF */
+    if (d_c > 0) { /* calculate new meanCR and meanF */
       meanCR = (1-d_c)*meanCR + d_c*goodCR;
       meanF = (1-d_c)*meanF + d_c*goodF2/goodF;
     }
