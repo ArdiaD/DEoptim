@@ -532,7 +532,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     /*if( i_iter % 10000 == 999 ) R_CheckUserInterrupt();*/
 
     /* check relative tolerance (as in src/main/optim.c) */
-    if( (t_bestC - gd_bestvalit[i_iter-1]) >
+    if( fabs(t_bestC - gd_bestvalit[i_iter-1]) <
         (d_reltol * (gd_bestvalit[i_iter-1] + d_reltol)) ) {
       i_iter_tol++;
     } else {
