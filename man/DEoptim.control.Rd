@@ -87,7 +87,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
    crossover adaptation. Higher values of \code{c} give more weight to the
    current successful mutations. \code{c} must be defined in (0,1].}
  \item{reltol}{relative convergence tolerance.  The algorithm stops if
-   it is unable to reduce the value by a factor of \code{reltol * (val +
+   it is unable to reduce the value by a factor of \code{reltol * (abs(val) +
    reltol)} after \code{steptol} steps. Defaults to
    \code{sqrt(.Machine$double.eps)}, typically about \code{1e-8}.}
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
@@ -154,6 +154,18 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
      is used. 
   }
   
+  Several conditions can cause the optimization process to stop:
+  \itemize{
+    \item{if the best parameter vector (\code{bestmem}) produces a value
+      less than or equal to \code{VTR} (i.e. \code{fn(bestmem) <= VTR}), or}
+    \item{if the maximum number of iterations is reached (\code{itermax}), or}
+    \item{if a number (\code{steptol}) of consecutive iterations are unable
+      to reduce the best function value by a certain amount (\code{reltol *
+      (abs(val) + reltol)}). \code{100*reltol} is approximately the percent
+      change of the objective value required to consider the parameter set
+      an improvement over the current best member.}
+  }
+
   Zhang and Sanderson (2009) define several extensions to the DE algorithm, 
   including strategy 6, DE/current-to-p-best/1. They also define a self-adaptive 
   mechanism for the other control parameters.  This self-adaptation may speed 
