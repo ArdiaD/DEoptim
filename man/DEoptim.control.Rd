@@ -168,10 +168,11 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
 
   Zhang and Sanderson (2009) define several extensions to the DE algorithm, 
   including strategy 6, DE/current-to-p-best/1. They also define a self-adaptive 
-  mechanism for the other control parameters.  This self-adaptation may speed 
+  mechanism for the other control parameters.  This self-adaptation will speed 
   convergence on many problems, and is defined by the control parameter \code{c}.
   If \code{c} is non-zero, crossover and mutation will be adapted by the algorithm.  
-  If you wish to try this, we suggest starting with a value of \code{c=.5}.
+  Values in the range of \code{c=.05} to \code{c=.5} appear to work best for most 
+  problems, though the adaptive algorithm is robust to a wide range of \code{c}.
     
 }
 \note{
