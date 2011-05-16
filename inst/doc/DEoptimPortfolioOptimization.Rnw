@@ -6,7 +6,7 @@
 \author{Kris Boudt \\ Lessius and K.U.Leuven \And David Ardia \\ aeris CAPITAL AG \AND 
 Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ Cheiron Trading}
 
-\title{Large scale portfolio optimization with \pkg{DEoptim}}
+\title{Large-scale portfolio optimization with \pkg{DEoptim}}
 
 \Plainauthor{Kris Boudt, David Ardia, Katharine M. Mullen, Brian Peterson} 
 \Plaintitle{Large scale portfolio optimization with DEoptim} 
