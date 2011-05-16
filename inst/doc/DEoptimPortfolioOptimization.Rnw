@@ -9,8 +9,8 @@ Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ Cheiron Trading}
 \title{Large-scale portfolio optimization with \pkg{DEoptim}}
 
 \Plainauthor{Kris Boudt, David Ardia, Katharine M. Mullen, Brian Peterson} 
-\Plaintitle{Large scale portfolio optimization with DEoptim} 
-\Shorttitle{Large scale portfolio optimization with DEoptim} 
+\Plaintitle{Large-scale portfolio optimization with DEoptim} 
+\Shorttitle{Large-scale portfolio optimization with DEoptim} 
 
 \Abstract{This vignette evaluates the performance of \pkg{DEoptim} on a 
 high-dimensional portfolio problem. The setup is the same as in the \emph{R Journal} article 
