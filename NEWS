@@ -1,6 +1,8 @@
 Changes in version 2.1-1
   o Added portfolio optimization vignette.
-  o Bug with reltol / steptol stopping criteria fixed. 
+  o Bug with reltol / steptol stopping criteria fixed.
+  o Changed JADE to be 'on' when c > 0 for *any* strategy and set c=0
+    as default in DEoptim.control (JADE is 'off').
 
 Changes in version 2.1-0
   o Added documentation of strategy six.
