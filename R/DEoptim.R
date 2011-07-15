@@ -132,14 +132,14 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   names(outC$bestmem) <- nam
 #  bestval <- as.numeric(outC$bestval)
 #  nfeval <- as.numeric(outC$nfeval)
-#  iter <- as.numeric(outC$iter)
+  iter <- max(1,as.numeric(outC$iter))
 
   ## member
   names(lower) <- names(upper) <- nam
-  bestmemit <- matrix(outC$bestmemit[1:(outC$iter * ctrl$npar)],
-                      nrow = outC$iter, ncol = ctrl$npar, byrow = TRUE)
+  bestmemit <- matrix(outC$bestmemit[1:(iter * ctrl$npar)],
+                      nrow = iter, ncol = ctrl$npar, byrow = TRUE)
 
-  dimnames(bestmemit) <- list(1:outC$iter, nam)
+  dimnames(bestmemit) <- list(1:iter, nam)
 #  dimnames(outC$bestmemit) <- list(1:outC$iter, nam)
 #  bestvalit <- as.numeric(outC$bestvalit[1:iter])
 #  pop <- matrix(outC$pop, nrow = ctrl$NP, ncol = ctrl$npar,
