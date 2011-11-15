@@ -1,5 +1,7 @@
 Changes in version 2.1-2
   o Modified CITATION file and Rd files.
+  o Joshua Ulrich fixed the crash caused by a stack overflow when optimizing
+    many parameters.  Thanks to Suraj Gupta for pointing out the problem. 
 
 Changes in version 2.1-1
   o Added portfolio optimization vignette.
