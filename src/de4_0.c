@@ -208,7 +208,9 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
   double t_tmpC, tmp_best, t_bestC;
 
-  double initialpop[i_NP][i_D];
+  double **initialpop = (double **)R_alloc(i_NP,sizeof(double *));
+  for (int i = 0; i < i_NP; i++)
+    initialpop[i] = (double *)R_alloc(i_D,sizeof(double));
 
   /* vars for DE/current-to-p-best/1 */
   int i_pbest;
