@@ -4,7 +4,7 @@
 %% need no \usepackage{Sweave}
 
 \author{David Ardia \\ aeris CAPITAL AG \And Katharine M. Mullen \\ NIST 
-  \And Joshua Ulrich \\ FOSS Trading \And Brian G. Peterson \\ Cheiron Trading}
+  \And Joshua Ulrich \\ FOSS Trading \And Brian G. Peterson \\ DV Trading}
 
 \title{\pkg{DEoptim}: An \proglang{R} Package for Global 
   Optimization by Differential Evolution}
@@ -41,7 +41,7 @@ FOSS Trading \\
 URL:~\url{http://fosstrading.com}  \\
 
 Brian G. Peterson\\
-Cheiron Trading LLC, Chicago, IL\\
+DV Trading\\
 E-mail: \email{brian@braverock.com}  \\ 
 
 }
@@ -95,7 +95,7 @@ been used by a variety of authors, e.g.,
 \citet{Borner:Higgins:Kantelhardt:Scheiter:07},
 \citet{Higgins:Kantelhardt:Scheiter:Boerner:07},
 \citet{OpsinaArango:09}, 
-\citet{ArdiaBoudtCarlMullenPeterson2010} and \citet{Ardia:Ospina:Giraldo:2010} to 
+\citet{ArdiaBoudtCarlMullenPeterson2011} and \citet{Ardia:Ospina:Giraldo:2011} to 
 solve optimization problems arising in diverse domains. Interested readers
 are referred to \citet{DEoptimJSS2011} for a 
 longer version of the present vignette. 
@@ -618,9 +618,8 @@ may also increase speed.
 \section*{Disclaimer}
 
 The views expressed in this vignette are the sole responsibility of the
-authors and do not necessarily reflect those of NIST and aeris CAPITAL
-AG.
-
+authors and do not necessarily reflect those of NIST and 
+aeris CAPITAL AG.
 
 \bibliography{DEoptim}
 

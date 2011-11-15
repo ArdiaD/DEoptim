@@ -4,7 +4,7 @@
 %% need no \usepackage{Sweave}
 
 \author{Kris Boudt \\ Lessius and K.U.Leuven \And David Ardia \\ aeris CAPITAL AG \AND 
-Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ Cheiron Trading}
+Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ DV Trading}
 
 \title{Large-scale portfolio optimization with \pkg{DEoptim}}
 
@@ -14,7 +14,7 @@ Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ Cheiron Trading}
 
 \Abstract{This vignette evaluates the performance of \pkg{DEoptim} on a 
 high-dimensional portfolio problem. The setup is the same as in the \emph{R Journal} article 
-\citet{ArdiaBoudtCarlMullenPeterson2010}; namely minimizing 
+\citet{ArdiaBoudtCarlMullenPeterson2011}; namely minimizing 
 the portfolio CVaR under an upper bound constraint on the percentage CVaR contributions. 
 Because the resulting optimization model is a non-convex programming problem with multiple local optima, \pkg{DEoptim} is more apt in solving this problem than gradient-based 
 methods such as \code{optim} and \code{nlminb}.
@@ -37,7 +37,7 @@ Ceramics Division, National Institute of Standards and Technology (NIST)\\
 E-mail: \email{Katharine.Mullen@nist.gov}\\
 
 Brian G. Peterson\\
-Cheiron Trading LLC, Chicago, IL\\
+DV Trading\\
 E-mail: \email{brian@braverock.com}\\ 
 }
 
@@ -57,10 +57,9 @@ portfolio problem.
 
 In this vignette, we use of \pkg{DEoptim} to solve the 
 portfolio optimization problem
-described 
-\cite{ArdiaBoudtCarlMullenPeterson2010}, but expand the problem 
+described in \cite{ArdiaBoudtCarlMullenPeterson2011}, but expand the problem 
 to include 100 free variables.  As in
-\citet{ArdiaBoudtCarlMullenPeterson2010}, the portfolio CVaR is
+\citet{ArdiaBoudtCarlMullenPeterson2011}, the portfolio CVaR is
 minimized under an upper bound constraint on the percentage CVaR
 contributions.  See \citet{BoudtCarlPeterson2010} for the rational
 underlying this portfolio construction technique.
@@ -75,13 +74,13 @@ methods.  For instance, gradient-based methods such as the
 problem considered here.
 
 The version of this problem described in
-\citet{ArdiaBoudtCarlMullenPeterson2010} was stylized to describe many
+\citet{ArdiaBoudtCarlMullenPeterson2011} was stylized to describe many
 fewer variables to allow users to complete the optimization on a
 personal computer in a matter of minutes.  Portfolio problems
 encountered in practice may require days to optimize on a personal
 computer, and involve several hundred variables.  In the present
 vignette we examine a problem of complexity in-between the stylized,
-simple case considered by \citet{ArdiaBoudtCarlMullenPeterson2010},
+simple case considered by \citet{ArdiaBoudtCarlMullenPeterson2011},
 and the most complex problems encountered in typical financial
 research.
 
@@ -408,9 +407,6 @@ Furthermore, DE is a stochastic optimizer and typically will only find a near-op
 The function \code{optimize.portfolio.parallel} in \pkg{PortfolioAnalytics} allows to run an arbitrary number of portfolio 
 sets in parallel in order to develop \emph{confidence bands} around your solution. 
 It is based on REvolution's \pkg{foreach} package \citep{foreach}.
-
-
-
 
 \bibliography{DEoptim}
 
