@@ -2,7 +2,23 @@ if(!exists("meta") || is.null(meta)) meta <- packageDescription("DEoptim")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("version", meta$Version)
 
-citEntry(entry = "Article",
+citHeader("To cite 'DEoptim' in publications use:")
+
+citEntry(entry = "manual",
+	 title = "{DEoptim}: Differential Evolution in {R}",
+	 author = personList(as.person("David Ardia"),
+                         as.person("Katharine M. Mullen"),
+                         as.person("Brian G. Peterson"), 
+                         as.person("Joshua Ulrich")),
+     year = year,
+	 note = vers,
+	 url = "http://CRAN.R-project.org/package=DEoptim",
+	 textVersion =
+         paste("David Ardia, Katharine M. Mullen, Brian G. Peterson, Joshua Ulrich (", year,"). ",
+               "'DEoptim': Differential Evoluation in 'R'. ", vers, ".", sep = "")
+)
+
+citEntry(entry = "article",
   title        = "{DEoptim}: An {R} Package for Global Optimization by Differential Evolution",
   author       = personList(as.person("Katharine Mullen"),
                    as.person("David Ardia"),
@@ -14,43 +30,49 @@ citEntry(entry = "Article",
   volume       = "40",
   number       = "6",
   pages        = "1--26",
+  url          = "http://www.jstatsoft.org/v40/i06/",
   textVersion  =
   paste("Katharine Mullen, David Ardia, David Gil, Donald Windover, James Cline (2011).",
-        "DEoptim: An R Package for Global Optimization by Differential Evolution.",
+        "'DEoptim': An R Package for Global Optimization by Differential Evolution.",
         "Journal of Statistical Software, 40(6), 1-26.",
-        "URL http://www.jstatsoft.org/v40/i06/."),
-  
-  header       = "To cite the R package use:",
-  url          = "http://www.jstatsoft.org/v40/i06/"
+        "URL http://www.jstatsoft.org/v40/i06/.")
 )
 
-citEntry(entry = "misc",
-	 title = "{D}ifferential {E}volution ({DEoptim}) for Non-Convex Portfolio Optimization",
+citEntry(entry = "article",
+	 title = "{D}ifferential {E}volution with {DEoptim}: An Application to Non-Convex Portfolio Optimization",
 	 author = personList(as.person("David Ardia"),
                          as.person("Kris Boudt"),
                          as.person("Peter Carl"),
                          as.person("Katharine M. Mullen"),
                          as.person("Brian G. Peterson")),
-         year = "2010",
-         url = "http://ssrn.com/abstract=1584905",
+         journal      = "The R Journal",
+  		 year         = "2011",
+         volume       = "3",
+         number       = "1",
+         pages        = "27--34",
+         url          = "http://journal.r-project.org/archive/2011-1/2011-1_index.html",
          textVersion = 
          paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
-               "Differential Evolution ('DEoptim') for Non-Convex Portfolio Optimization.",
-               "URL http://ssrn.com/abstract=1584905."),
-         header       = "Selected additional DEoptim-related references:",
+               "Differential Evolution with 'DEoptim': An Application to Non-Convex Portfolio Optimization.",
+               "The R Journal, 3(1), 27-34.",
+               "URL http://journal.r-project.org/archive/2011-1/2011-1_index.html.")
 )
 
-citEntry(entry = "misc",
+citEntry(entry = "article",
 	 title = "{J}ump-Diffusion Calibration using {D}ifferential {E}volution",
 	 author = personList(as.person("David Ardia"),
                          as.person("Juan Ospina Arango"),
                          as.person("Norman Giraldo Gomez")),
-         year = "2010",
-         url = "http://ssrn.com/abstract=1584905",
+         journal      = "Wilmott Magazine",
+  		 year         = "2011",
+         volume       = "55",
+         pages        = "76--79",
+         url          = "http://www.wilmott.com/",
          textVersion = 
          paste("Ardia, D., Ospina Arango, N., Giraldo Gomez, N. (2010).",
                "Jump-Diffusion Calibration using Differential Evolution.",
-               "URL http://ssrn.com/abstract=1584905.")	       
+               "Wilmott Magazine, Issue 55 (September), 76-79.", 
+               "URL http://www.wilmott.com/.")	       
 )
 
 citEntry(entry = "Book",
