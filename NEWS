@@ -1,3 +1,6 @@
+Changes in version 2.1-2
+  o Modified CITATION file and Rd files.
+
 Changes in version 2.1-1
   o Added portfolio optimization vignette.
   o Bug with reltol / steptol stopping criteria fixed.
