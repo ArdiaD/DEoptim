@@ -32,7 +32,7 @@
 }
 \note{
   Further details and examples of the \R package \pkg{DEoptim} can be found
-  in Mullen et al. (2011) and Ardia et al. (2010a, 2010b) or look at the 
+  in Mullen et al. (2011) and Ardia et al. (2011a, 2011b) or look at the 
   package's vignette by typing \code{vignette("DEoptim")}.
 
   Please cite the package in publications. Use \code{citation("DEoptim")}.
@@ -45,13 +45,15 @@
   \code{\link{DEoptim}} and \code{\link{DEoptim.control}}.
 }
 \references{
-  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010a)
-  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio
-  Optimization. URL \url{http://ssrn.com/abstract=1584905}.
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
+  Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
+  \emph{The R Journal}, 3(1), 27-34. 
+  URL \url{http://journal.r-project.org/2011-1/}.
 
-  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2010b)
-  Jump-Diffusion Calibration using Differential Evolution.
-  URL \url{http://ssrn.com/abstract=1689829}.
+  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
+  Jump-Diffusion Calibration using Differential Evolution. 
+  \emph{Wilmott Magazine}, 55 (September), 76-79.
+  URL \url{http://www.wilmott.com}.
 
   Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
   J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
@@ -60,7 +62,7 @@
 }
 \examples{
   ## Rosenbrock Banana function
-  ## The function has a global minimum f(x) = 0 at the point (0,0).  
+  ## The function has a global minimum f(x) = 0 at the point (1,1).  
   ## Note that the vector of parameters to be optimized must be the first 
   ## argument of the objective function passed to DEoptim.
   Rosenbrock <- function(x){

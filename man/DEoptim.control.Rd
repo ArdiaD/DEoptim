@@ -177,8 +177,10 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
 }
 \note{
   Further details and examples of the \R package \pkg{DEoptim} can be found
-  in Mullen et al. (2011) and Ardia et al. (2010a, 2010b) or look at the 
-  package's vignette by typing \code{vignette("DEoptim")}.
+  in Mullen et al. (2011) and Ardia et al. (2011a, 2011b) or look at the 
+  package's vignette by typing \code{vignette("DEoptim")}. Also, an illustration of
+  the package usage for a high-dimensional non-linear portfolio optimization problem 
+  is available by typing \code{vignette("DEoptimPortfolioOptimization")}. 
 
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
@@ -186,14 +188,16 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   \code{\link{DEoptim}} and \code{\link{DEoptim-methods}}.
 }
 \references{
-  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010a)
-  Differential Evolution (\pkg{DEoptim}) for Non-Convex Portfolio
-  Optimization. URL \url{http://ssrn.com/abstract=1584905}.
+  Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
+  Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio
+  Optimization. URL \emph{The R Journal}, 3(1), 27-34. 
+  URL \url{http://journal.r-project.org/2011-1/}.
 
-  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2010b)
+  Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution.
-  URL \url{http://ssrn.com/abstract=1689829}.
-
+  Wilmott Magazine, 55 (September), 76-79.
+  URL \url{http://www.wilmott.com}.
+  
   Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
   J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
   Differential Evolution. \emph{Journal of Statistical Software}, 40(6), 1-26.
