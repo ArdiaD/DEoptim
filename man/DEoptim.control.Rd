@@ -48,7 +48,8 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
       Default is \code{200}.}
     \item{CR}{crossover probability from interval [0,1]. Default
       to \code{0.5}.}
-    \item{F}{step-size from interval [0,2]. Default to \code{0.8}.}
+    \item{F}{differential weighting factor from interval [0,2]. Default
+      to \code{0.8}.}
     \item{trace}{Positive integer or logical value indicating whether 
   printing of progress occurs at each iteration. The default value is
   \code{TRUE}.  If a positive integer is specified, printing occurs every

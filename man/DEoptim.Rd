@@ -150,8 +150,8 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
 
   \deqn{v_i \doteq x_{r_0} + \mathit{F} \cdot (x_{r_1} - x_{r_2})}{v_i := x_{r_0} + F * (x_{r_1} - x_{r_2})}  
 
-  where \eqn{\mathit{F}}{F} is a positive scale factor, effective values for which are
-  typically less than one. After the first mutation operation, mutation is
+  where \eqn{\mathit{F}}{F} is the differential weighting factor, effective values for which are
+  typically between 0 and 1. After the first mutation operation, mutation is
   continued until \eqn{d} mutations have been made, with a crossover probability 
   \eqn{\mathit{CR} \in [0,1]}{CR in [0,1]}.
   The crossover probability \eqn{\mathit{CR}}{CR} controls the fraction of the parameter
@@ -171,7 +171,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
 
   As a general advice regarding the choice of \eqn{\mathit{NP}}{NP}, \eqn{\mathit{F}}{F} and \eqn{\mathit{CR}}{CR}, 
   Storn et al. (2006) state the following: Set the number
-  of parents \eqn{\mathit{NP}}{NP} to 10 times the number of parameters, select weighting factor 
+  of parents \eqn{\mathit{NP}}{NP} to 10 times the number of parameters, select differential weighting factor 
   \eqn{\mathit{F} = 0.8}{F = 0.8} and crossover constant \eqn{\mathit{CR} = 0.9}{CR = 0.9}. Make sure that you initialize your parameter vectors
   by exploiting their full numerical range, i.e., if a parameter is allowed to exhibit
   values in the range [-100, 100] it is a good idea to pick the initial values from this

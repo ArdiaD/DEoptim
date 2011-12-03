@@ -396,8 +396,8 @@ $x_{r2,g}$, at random.  Then $v_{i,g}$ is generated as
 v_{i,g} \doteq x_{r0,g} + \text{F} \cdot (x_{r1,g} - x_{r2,g})
 \label{de} 
 \end{equation}
-where $F$ is a positive scale factor.  Effective values of $\text{F}$ are 
-typically less than 1. 
+where $F$ is the differential weighting factor.  Effective values of $\text{F}$ are 
+typically between 0 and 1.
 
 After the first mutation operation, mutation is continued until either
 $\text{length}(x)$ mutations have been made or $\mathit{rand} > \mathit{CR}$,
@@ -536,7 +536,7 @@ the following elements of which are currently interpreted:
   The default value is \code{200}.
 \item \code{CR}: Crossover probability from interval [0,1]. The default
   value is \code{0.5}.
-\item \code{F}: Stepsize from interval [0,2]. The default value is \code{0.8}.
+\item \code{F}: differential weighting factor from interval [0,2]. The default value is \code{0.8}.
 \item \code{trace}: Positive integer or logical value indicating whether 
   printing of progress occurs at each iteration. The default value is
   \code{TRUE}.  If a positive integer is specified, printing occurs every
