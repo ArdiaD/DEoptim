@@ -106,9 +106,20 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
-  
-  outC <- .Call("DEoptimC", lower, upper, fn, ctrl, new.env(),
-               PACKAGE = "DEoptim")
+
+  fnPop <- function(params, ...) {
+    # use foreach
+#    my_chunksize <- ceiling(NROW(params)/getDoParWorkers())
+#    my_iter <- iter(params,by="row",chunksize=my_chunksize)
+#    foreach(i=my_iter, .combine=c, .export="fn") %dopar% {
+#      apply(i,1,fn,...)
+#    }
+    # use regular for loop / apply
+    apply(params,1,fn,...)
+  }
+
+  outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), PACKAGE="DEoptim")
+
   ##
   if (length(outC$storepop) > 0) {
     nstorepop <- floor((outC$iter - ctrl$storepopfrom) / ctrl$storepopfreq)

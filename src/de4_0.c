@@ -41,13 +41,14 @@ void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            double d_reltol, int i_steptol);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
 double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env);
+SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env);
 
 
 /*------General functions-----------------------------------------*/
 
 SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
 {
-  int i, j;
+  int i, j, P=0;
 
   if (!isFunction(fn))
     error("fn is not a function!");
@@ -101,10 +102,10 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   SEXP sexp_bestmem, sexp_bestval, sexp_nfeval, sexp_iter,
     out, sexp_pop, sexp_storepop, sexp_bestmemit, sexp_bestvalit;
 
-  PROTECT(sexp_bestmem = NEW_NUMERIC(i_D));
-  PROTECT(sexp_pop = allocMatrix(REALSXP, i_D, i_NP));
-  PROTECT(sexp_bestmemit = allocMatrix(REALSXP, i_itermax, i_D));
-  PROTECT(sexp_bestvalit = allocVector(REALSXP, i_itermax));
+  PROTECT(sexp_bestmem = NEW_NUMERIC(i_D)); P++;
+  PROTECT(sexp_pop = allocMatrix(REALSXP, i_D, i_NP)); P++;
+  PROTECT(sexp_bestmemit = allocMatrix(REALSXP, i_itermax, i_D)); P++;
+  PROTECT(sexp_bestvalit = allocVector(REALSXP, i_itermax)); P++;
   double *gt_bestP     = REAL(sexp_bestmem);
   double *gd_pop       = REAL(sexp_pop);
   double *gd_bestmemit = REAL(sexp_bestmemit);
@@ -129,17 +130,17 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   /*---end optimization----------------------------------*/
 
   j =  i_nstorepop * i_NP * i_D;
-  PROTECT(sexp_storepop = NEW_NUMERIC(j));
+  PROTECT(sexp_storepop = NEW_NUMERIC(j)); P++;
   for (i = 0; i < j; i++)
     NUMERIC_POINTER(sexp_storepop)[i] = gd_storepop[i];
 
-  PROTECT(sexp_nfeval = ScalarInteger(l_nfeval));
-  PROTECT(sexp_iter = ScalarInteger(gi_iter));
-  PROTECT(sexp_bestval = ScalarReal(gt_bestC));
+  PROTECT(sexp_nfeval = ScalarInteger(l_nfeval)); P++;
+  PROTECT(sexp_iter = ScalarInteger(gi_iter)); P++;
+  PROTECT(sexp_bestval = ScalarReal(gt_bestC)); P++;
 
   const char *out_names[] = {"bestmem", "bestval", "nfeval",
       "iter", "bestmemit", "bestvalit", "pop", "storepop", ""};
-  PROTECT(out = mkNamed(VECSXP, out_names));
+  PROTECT(out = mkNamed(VECSXP, out_names)); P++;
   SET_VECTOR_ELT(out, 0, sexp_bestmem);
   SET_VECTOR_ELT(out, 1, sexp_bestval);
   SET_VECTOR_ELT(out, 2, sexp_nfeval);
@@ -149,7 +150,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
   SET_VECTOR_ELT(out, 6, sexp_pop);
   SET_VECTOR_ELT(out, 7, sexp_storepop);
 
-  UNPROTECT(9);
+  UNPROTECT(P);
   return out;
 }
 
@@ -166,26 +167,33 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
 #define URN_DEPTH  5   /* 4 + one index to avoid */
 
+  int P=0;
   /* initialize parameter vector to pass to evaluate function */
   SEXP par;
-  PROTECT(par = NEW_NUMERIC(i_D));
+  PROTECT(par = NEW_NUMERIC(i_D)); P++;
   double *d_par = REAL(par);
 
   /* Data structures for parameter vectors */
-  double **gta_popP = (double **)R_alloc(i_NP*2,sizeof(double *));
-  for (int i = 0; i < (i_NP*2); i++)
-    gta_popP[i] = (double *)R_alloc(i_D,sizeof(double));
-
-  double **gta_oldP = (double **)R_alloc(i_NP,sizeof(double *));
-  for (int i = 0; i < i_NP; i++)
-    gta_oldP[i] = (double *)R_alloc(i_D,sizeof(double));
-
-  double **gta_newP = (double **)R_alloc(i_NP,sizeof(double *));
-  for (int i = 0; i < i_NP; i++)
-    gta_newP[i] = (double *)R_alloc(i_D,sizeof(double));
+  SEXP sexp_gta_popP, sexp_gta_oldP, sexp_gta_newP, sexp_map_pop;
+  PROTECT(sexp_gta_popP = allocMatrix(REALSXP, i_NP, i_D)); P++; /* FIXME THIS HAD 2x the rows!!! */
+  PROTECT(sexp_gta_oldP = allocMatrix(REALSXP, i_NP, i_D)); P++;
+  PROTECT(sexp_gta_newP = allocMatrix(REALSXP, i_NP, i_D)); P++;
+  PROTECT(sexp_map_pop  = allocMatrix(REALSXP, i_NP, i_D)); P++;
+  double *ngta_popP = REAL(sexp_gta_popP); /* FIXME THIS HAD 2x the rows!!! */
+  double *ngta_oldP = REAL(sexp_gta_oldP);
+  double *ngta_newP = REAL(sexp_gta_newP);
+  double *nmap_pop  = REAL(sexp_map_pop);
 
   /* Data structures for objective function values associated with
    * parameter vectors */
+  SEXP sexp_gta_popC, sexp_gta_oldC, sexp_gta_newC;
+  PROTECT(sexp_gta_popC = allocVector(REALSXP, i_NP)); P++;
+  PROTECT(sexp_gta_oldC = allocVector(REALSXP, i_NP)); P++;
+  PROTECT(sexp_gta_newC = allocVector(REALSXP, i_NP)); P++;
+  double *ngta_popC = REAL(sexp_gta_popC);
+  double *ngta_oldC = REAL(sexp_gta_oldC);
+  double *ngta_newC = REAL(sexp_gta_newC);
+
   double *gta_popC = (double *)R_alloc(i_NP*2,sizeof(double));
   double *gta_oldC = (double *)R_alloc(i_NP,sizeof(double));
   double *gta_newC = (double *)R_alloc(i_NP,sizeof(double));
@@ -193,6 +201,12 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   double *t_bestitP = (double *)R_alloc(1,sizeof(double) * i_D);
   double *t_tmpP = (double *)R_alloc(1,sizeof(double) * i_D);
   double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
+
+  SEXP sexp_t_tmpP, sexp_t_tmpC;
+  PROTECT(sexp_t_tmpP = allocMatrix(REALSXP, i_NP, i_D)); P++;
+  PROTECT(sexp_t_tmpC = allocVector(REALSXP, i_NP)); P++;
+  double *nt_tmpP = REAL(sexp_t_tmpP);
+  double *nt_tmpC = REAL(sexp_t_tmpC);
 
   int i, j, k;  /* counting variables */
   int i_r1, i_r2, i_r3;  /* placeholders for random indexes */
@@ -223,8 +237,8 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   int i_goodNP = 0;
 
   /* vars for when i_bs_flag == 1 */
-  int i_len, done, step, bound;
-  double tempC;
+//  int i_len, done, step, bound;
+//  double tempC;
 
   GetRNGstate();
 
@@ -241,29 +255,31 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   }
 
   /*------Initialization-----------------------------*/
-  for (i = 0; i < i_NP; i++) {
-    for (j = 0; j < i_D; j++) {
+  for (j = 0; j < i_D; j++) {
+    for (i = 0; i < i_NP; i++) {
       if (i_specinitialpop <= 0) { /* random initial member */
-        gta_popP[i][j] = d_lower[j] +
+        ngta_popP[i+i_NP*j] = d_lower[j] +
         unif_rand() * (d_upper[j] - d_lower[j]);
 
       }
       else /* or user-specified initial member */
-        gta_popP[i][j] = initialpop[i][j];
+        ngta_popP[i+i_NP*j] = initialpop[i][j];
     }
-    memcpy(d_par, gta_popP[i], i_D * sizeof(double));
-    gta_popC[i] = evaluate(l_nfeval, par, fcall, rho);
-
-    if (i == 0 || gta_popC[i] <= t_bestC) {
-      t_bestC = gta_popC[i];
+  }
+  PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho));
+  ngta_popC = REAL(sexp_gta_popC);
+  for (i = 0; i < i_NP; i++) {
+    if (i == 0 || ngta_popC[i] <= t_bestC) {
+      t_bestC = ngta_popC[i];
       for (j = 0; j < i_D; j++)
-        gt_bestP[j]=gta_popP[i][j];
+        gt_bestP[j]=ngta_popP[i+i_NP*j];
     }
   }
 
   /*---assign pointers to current ("old") population---*/
-  gta_oldP = gta_popP;
-  gta_oldC = gta_popC;
+  memcpy(REAL(sexp_gta_oldP), REAL(sexp_gta_popP), i_NP * i_D * sizeof(double));
+  memcpy(REAL(sexp_gta_oldC), REAL(sexp_gta_popC), i_NP * sizeof(double));
+  UNPROTECT(1);  // sexp_gta_popC
 
   /*------Iteration loop--------------------------------------------*/
   int i_iter = 0;
@@ -278,7 +294,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     if (i_iter % i_storepopfreq == 0 && i_iter >= i_storepopfrom) {
       for (i = 0; i < i_NP; i++) {
         for (j = 0; j < i_D; j++) {
-          gd_storepop[popcnt] = gta_oldP[i][j];
+          gd_storepop[popcnt] = ngta_oldP[i+i_NP*j];
           popcnt++;
         }
       }
@@ -305,7 +321,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     if (i_strategy == 6) {
       /* create a copy of gta_oldC to avoid changing it */
       double temp_oldC[i_NP];
-      for(j = 0; j < i_NP; j++) temp_oldC[j] = gta_oldC[j];
+      for(j = 0; j < i_NP; j++) temp_oldC[j] = ngta_oldC[j];
 
       /* sort temp_oldC to use sortIndex later */
       rsort_with_index( (double*)temp_oldC, (int*)sortIndex, i_NP );
@@ -316,8 +332,8 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
       /*t_tmpP is the vector to mutate and eventually select*/
       for (j = 0; j < i_D; j++)
-        t_tmpP[j] = gta_oldP[i][j];
-      t_tmpC = gta_oldC[i];
+        nt_tmpP[i+i_NP*j] = ngta_oldP[i+i_NP*j];
+      nt_tmpC[i] = ngta_oldC[i];
 
       permute(ia_urn2, URN_DEPTH, i_NP, i, ia_urnTemp); /* Pick 4 random and distinct */
 
@@ -341,50 +357,50 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       do {
         switch (i_strategy) {
           case 1: { /*---classical strategy DE/rand/1/bin-------------------*/
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              d_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+            nt_tmpP[i+i_NP*j] = ngta_oldP[i_r1+i_NP*j] +
+              d_weight * (ngta_oldP[i_r2+i_NP*j] - ngta_oldP[i_r3+i_NP*j]);
             break;
           }
           case 2: { /*---DE/local-to-best/1/bin-----------------------------*/
-            t_tmpP[j] = t_tmpP[j] +
-              d_weight * (t_bestitP[j] - t_tmpP[j]) +
-              d_weight * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+            nt_tmpP[i+i_NP*j] = nt_tmpP[i+i_NP*j] +
+              d_weight * (t_bestitP[j] - nt_tmpP[i+i_NP*j]) +
+              d_weight * (ngta_oldP[i_r2+i_NP*j] - ngta_oldP[i_r3+i_NP*j]);
             break;
           }
           case 3: { /*---DE/best/1/bin with jitter--------------------------*/
             d_jitter = 0.0001 * unif_rand() + d_weight;
-            t_tmpP[j] = t_bestitP[j] +
-              d_jitter * (gta_oldP[i_r1][j] - gta_oldP[i_r2][j]);
+            nt_tmpP[i+i_NP*j] = t_bestitP[j] +
+              d_jitter * (ngta_oldP[i_r1+i_NP*j] - ngta_oldP[i_r2+i_NP*j]);
             break;
           }
           case 4: { /*---DE/rand/1/bin with per-vector-dither---------------*/
-            t_tmpP[j] = gta_oldP[i_r1][j] +
+            nt_tmpP[i+i_NP*j] = ngta_oldP[i_r1+i_NP*j] +
               (d_weight + unif_rand()*(1.0 - d_weight))*
-              (gta_oldP[i_r2][j]-gta_oldP[i_r3][j]);
+              (ngta_oldP[i_r2+i_NP*j]-ngta_oldP[i_r3+i_NP*j]);
             break;
           }
           case 5: { /*---DE/rand/1/bin with per-generation-dither-----------*/
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              d_dither * (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+            nt_tmpP[i+i_NP*j] = ngta_oldP[i_r1+i_NP*j] +
+              d_dither * (ngta_oldP[i_r2+i_NP*j] - ngta_oldP[i_r3+i_NP*j]);
             break;
           }
           case 6: { /*---DE/current-to-p-best/1 (JADE)----------------------*/
             /* select from [0, 1, 2, ..., (pNP-1)] */
             i_pbest = sortIndex[(int)(unif_rand() * p_NP)];
-            t_tmpP[j] = gta_oldP[i][j] +
-              d_weight * (gta_oldP[i_pbest][j] - gta_oldP[i][j]) +
-              d_weight * (gta_oldP[i_r1][j]    - gta_oldP[i_r2][j]);
+            nt_tmpP[i+i_NP*j] = ngta_oldP[i+i_NP*j] +
+              d_weight * (ngta_oldP[i_pbest+i_NP*j] - ngta_oldP[i+i_NP*j]) +
+              d_weight * (ngta_oldP[i_r1+i_NP*j]    - ngta_oldP[i_r2+i_NP*j]);
             break;
           }
           default: { /*---variation to DE/rand/1/bin: either-or-algorithm---*/
             if (unif_rand() < 0.5) { /* differential mutation, Pmu = 0.5 */
-              t_tmpP[j] = gta_oldP[i_r1][j] + d_weight *
-                (gta_oldP[i_r2][j] - gta_oldP[i_r3][j]);
+              nt_tmpP[i+i_NP*j] = ngta_oldP[i_r1+i_NP*j] + d_weight *
+                (ngta_oldP[i_r2+i_NP*j] - ngta_oldP[i_r3+i_NP*j]);
             } else {
             /* recombination with K = 0.5*(F+1) -. F-K-Rule */
-            t_tmpP[j] = gta_oldP[i_r1][j] +
-              0.5 * (d_weight + 1.0) * (gta_oldP[i_r2][j]
-              + gta_oldP[i_r3][j] - 2 * gta_oldP[i_r1][j]);
+            nt_tmpP[i+i_NP*j] = ngta_oldP[i_r1+i_NP*j] +
+              0.5 * (d_weight + 1.0) * (ngta_oldP[i_r2+i_NP*j]
+              + ngta_oldP[i_r3+i_NP*j] - 2 * ngta_oldP[i_r1+i_NP*j]);
             }
           }
         } /* end switch */
@@ -395,31 +411,36 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
       /*----boundary constraints, bounce-back method was not enforcing bounds correctly*/
       for (j = 0; j < i_D; j++) {
-        if (t_tmpP[j] < d_lower[j]) {
-          t_tmpP[j] = d_lower[j] + unif_rand() * (d_upper[j] - d_lower[j]);
+        if (nt_tmpP[i+i_NP*j] < d_lower[j]) {
+          nt_tmpP[i+i_NP*j] = d_lower[j] + unif_rand() * (d_upper[j] - d_lower[j]);
         }
-        if (t_tmpP[j] > d_upper[j]) {
-          t_tmpP[j] = d_upper[j] - unif_rand() * (d_upper[j] - d_lower[j]);
+        if (nt_tmpP[i+i_NP*j] > d_upper[j]) {
+          nt_tmpP[i+i_NP*j] = d_upper[j] - unif_rand() * (d_upper[j] - d_lower[j]);
         }
       }
 
-      /*------Trial mutation now in t_tmpP-----------------*/
-      /* Evaluate mutant in t_tmpP[]*/
+    } /* NEW End mutation loop through ensemble */
 
-      memcpy(d_par, t_tmpP, i_D * sizeof(double));
-      t_tmpC = evaluate(l_nfeval, par, fcall, rho);
+    /*------Trial mutation now in t_tmpP-----------------*/
+    /* evaluate mutated population */
+    if(i_iter > 1) UNPROTECT(1);  // previous iteration's sexp_t_tmpC
+    PROTECT(sexp_t_tmpC  = popEvaluate(l_nfeval, sexp_t_tmpP, fcall, rho));
+    nt_tmpC = REAL(sexp_t_tmpC);
+
+    /* compare old pop with mutated pop */
+    for (i = 0; i < i_NP; i++) {
 
       /* note that i_bs_flag means that we will choose the
        *best NP vectors from the old and new population later*/
-      if (t_tmpC <= gta_oldC[i] || i_bs_flag) {
+      if (nt_tmpC[i] <= ngta_oldC[i] || i_bs_flag) {
         /* replace target with mutant */
         for (j = 0; j < i_D; j++)
-          gta_newP[i][j]=t_tmpP[j];
-        gta_newC[i]=t_tmpC;
-        if (t_tmpC <= t_bestC) {
+          ngta_newP[i+i_NP*j]=nt_tmpP[i+i_NP*j];
+        ngta_newC[i]=nt_tmpC[i];
+        if (nt_tmpC[i] <= t_bestC) {
           for (j = 0; j < i_D; j++)
-            gt_bestP[j]=t_tmpP[j];
-          t_bestC=t_tmpC;
+            gt_bestP[j]=nt_tmpP[i+i_NP*j];
+          t_bestC=nt_tmpC[i];
         }
         if (d_c > 0) { /* calculate new goodCR and goodF */
           goodCR += d_cross / ++i_goodNP;
@@ -429,95 +450,97 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       }
       else {
         for (j = 0; j < i_D; j++)
-          gta_newP[i][j]=gta_oldP[i][j];
-        gta_newC[i]=gta_oldC[i];
+          ngta_newP[i+i_NP*j]=ngta_oldP[i+i_NP*j];
+        ngta_newC[i]=ngta_oldC[i];
 
       }
-    } /* End mutation loop through pop. */
+    } /* End mutation loop through ensemble */
 
     if (d_c > 0) { /* calculate new meanCR and meanF */
       meanCR = (1-d_c)*meanCR + d_c*goodCR;
       meanF = (1-d_c)*meanF + d_c*goodF2/goodF;
     }
 
-    if(i_bs_flag) {
-      /* examine old and new pop. and take the best NP members
-       * into next generation */
-      for (i = 0; i < i_NP; i++) {
-        for (j = 0; j < i_D; j++)
-          gta_popP[i][j] = gta_oldP[i][j];
-        gta_popC[i] = gta_oldC[i];
-      }
-      for (i = 0; i < i_NP; i++) {
-        for (j = 0; j < i_D; j++)
-          gta_popP[i_NP+i][j] = gta_newP[i][j];
-        gta_popC[i_NP+i] = gta_newC[i];
-      }
-      i_len = 2 * i_NP;
-      step = i_len;  /* array length */
-      while (step > 1) {
-        step /= 2;   /* halve the step size */
-        do {
-          done = 1;
-          bound  = i_len - step;
-          for (j = 0; j < bound; j++) {
-              i = j + step + 1;
-              if (gta_popC[j] > gta_popC[i-1]) {
-                  for (k = 0; k < i_D; k++)
-                    tempP[k] = gta_popP[i-1][k];
-                  tempC = gta_popC[i-1];
-                  for (k = 0; k < i_D; k++)
-                    gta_popP[i-1][k] = gta_popP[j][k];
-                  gta_popC[i-1] = gta_popC[j];
-                  for (k = 0; k < i_D; k++)
-                    gta_popP[j][k] = tempP[k];
-                  gta_popC[j] = tempC;
-                    done = 0;
-                    /* if a swap has been made we are not finished yet */
-              }  /* if */
-          }  /* for */
-        } while (!done);   /* while */
-      } /*while (step > 1) */
-      /* now the best NP are in first NP places in gta_pop, use them */
-      for (i = 0; i < i_NP; i++) {
-        for (j = 0; j < i_D; j++)
-          gta_newP[i][j] = gta_popP[i][j];
-        gta_newC[i] = gta_popC[i];
-      }
+    if(i_bs_flag) {  /* FIXME */
+      error("bs = TRUE not currently supported");
+//      /* examine old and new pop. and take the best NP members
+//       * into next generation */
+//      for (i = 0; i < i_NP; i++) {
+//        for (j = 0; j < i_D; j++)
+//          gta_popP[i][j] = gta_oldP[i][j];
+//        gta_popC[i] = gta_oldC[i];
+//      }
+//      for (i = 0; i < i_NP; i++) {
+//        for (j = 0; j < i_D; j++)
+//          gta_popP[i_NP+i][j] = gta_newP[i][j];
+//        gta_popC[i_NP+i] = gta_newC[i];
+//      }
+//      i_len = 2 * i_NP;
+//      step = i_len;  /* array length */
+//      while (step > 1) {
+//        step /= 2;   /* halve the step size */
+//        do {
+//          done = 1;
+//          bound  = i_len - step;
+//          for (j = 0; j < bound; j++) {
+//              i = j + step + 1;
+//              if (gta_popC[j] > gta_popC[i-1]) {
+//                  for (k = 0; k < i_D; k++)
+//                    tempP[k] = gta_popP[i-1][k];
+//                  tempC = gta_popC[i-1];
+//                  for (k = 0; k < i_D; k++)
+//                    gta_popP[i-1][k] = gta_popP[j][k];
+//                  gta_popC[i-1] = gta_popC[j];
+//                  for (k = 0; k < i_D; k++)
+//                    gta_popP[j][k] = tempP[k];
+//                  gta_popC[j] = tempC;
+//                    done = 0;
+//                    /* if a swap has been made we are not finished yet */
+//              }  /* if */
+//          }  /* for */
+//        } while (!done);   /* while */
+//      } /*while (step > 1) */
+//      /* now the best NP are in first NP places in gta_pop, use them */
+//      for (i = 0; i < i_NP; i++) {
+//        for (j = 0; j < i_D; j++)
+//          gta_newP[i][j] = gta_popP[i][j];
+//        gta_newC[i] = gta_popC[i];
+//      }
     } /*i_bs_flag*/
 
     /* have selected NP mutants move on to next generation */
     for (i = 0; i < i_NP; i++) {
       for (j = 0; j < i_D; j++)
-        gta_oldP[i][j] = gta_newP[i][j];
-      gta_oldC[i] = gta_newC[i];
+        ngta_oldP[i+i_NP*j] = ngta_newP[i+i_NP*j];
+      ngta_oldC[i] = ngta_newC[i];
     }
     /* check if the best stayed the same, if necessary */
-    if(i_check_winner)  {
-      same = 1;
-      for (j = 0; j < i_D; j++)
-        if(t_bestitP[j] != gt_bestP[j]) {
-          same = 0;
-        }
-      if(same && i_iter > 1)  {
-        i_xav++;
-        /* if re-evaluation of winner */
-        memcpy(d_par, gt_bestP, i_D * sizeof(double));
-        tmp_best = evaluate(l_nfeval, par, fcall, rho);
+    if(i_check_winner)  {  /* FIXME */
+      error("checkWinner = TRUE not currently supported");
+//      same = 1;
+//      for (j = 0; j < i_D; j++)
+//        if(t_bestitP[j] != gt_bestP[j]) {
+//          same = 0;
+//        }
+//      if(same && i_iter > 1)  {
+//        i_xav++;
+//        /* if re-evaluation of winner */
+//        memcpy(d_par, gt_bestP, i_D * sizeof(double));
+//        tmp_best = evaluate(l_nfeval, par, fcall, rho);
+//
+//        /* possibly letting the winner be the average of all past generations */
+//        if(i_av_winner)
+//          t_bestC = ((1/(double)i_xav) * t_bestC)
+//            + ((1/(double)i_xav) * tmp_best) + (gd_bestvalit[i_iter-1] * ((double)(i_xav - 2))/(double)i_xav);
+//        else
+//          t_bestC = tmp_best;
+//
+//      }
+//      else {
+//        i_xav = 1;
+//      }
 
-        /* possibly letting the winner be the average of all past generations */
-        if(i_av_winner)
-          t_bestC = ((1/(double)i_xav) * t_bestC)
-            + ((1/(double)i_xav) * tmp_best) + (gd_bestvalit[i_iter-1] * ((double)(i_xav - 2))/(double)i_xav);
-        else
-          t_bestC = tmp_best;
-
-      }
-      else {
-        i_xav = 1;
-      }
-
-    }
+    } /* i_check_winner */
     for (j = 0; j < i_D; j++)
       t_bestitP[j] = gt_bestP[j];
 
@@ -547,7 +570,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   k = 0;
   for (i = 0; i < i_NP; i++) {
     for (j = 0; j < i_D; j++) {
-      gd_pop[k] = gta_oldP[i][j];
+      gd_pop[k] = ngta_oldP[i+i_NP*j];
       k++;
     }
   }
@@ -556,7 +579,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   *gt_bestC = t_bestC;
 
   PutRNGstate();
-  UNPROTECT(1);
+  UNPROTECT(P+1); // +1 is for last iteration's sexp_t_tmpC
 
 }
 
