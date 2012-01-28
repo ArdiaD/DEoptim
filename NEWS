@@ -1,6 +1,7 @@
-Changes in version 2.1-3
+Changes in version 2.2-0
   o Fixed typo in box constraint example in DEoptim.Rd
-
+  o Thanks to Joshua Ulrich and Kris Boudt, parallel operation is possible, 
+    using foreach.
 Changes in version 2.1-2
   o Modified CITATION file and Rd files.
   o Joshua Ulrich fixed the crash caused by a stack overflow when optimizing
