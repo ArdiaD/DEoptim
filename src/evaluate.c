@@ -32,6 +32,8 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env)
 
    PROTECT(sexp_fvec = eval(fn, env));
    int nr = nrows(sexp_fvec);
+   if(nr != nrows(parMat))
+     error("objective function result has different length than parameter matrix");
    switch(TYPEOF(sexp_fvec)) {
      case INTSXP:
        i_result = INTEGER(sexp_fvec);
