@@ -49,7 +49,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ...)
   constraint within the function to optimize, for instance: 
   \preformatted{
     fn <- function(x)\{
-      if (x[1] + x[2]^2 < 2)\{
+      if (x[1] + x[2]^2 >= 2)\{
         r <- Inf
       else\{
         ...
