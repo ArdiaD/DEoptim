@@ -107,15 +107,24 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
 
-  fnPop <- function(params, ...) {
-    # use foreach
-#    my_chunksize <- ceiling(NROW(params)/getDoParWorkers())
-#    my_iter <- iter(params,by="row",chunksize=my_chunksize)
-#    foreach(i=my_iter, .combine=c, .export="fn") %dopar% {
-#      apply(i,1,fn,...)
-#    }
+  use.foreach <- suppressMessages(require(foreach,quietly=TRUE))
+  if(use.foreach) {
+    # use foreach if it's available
+    if(!getDoParRegistered()) {
+      registerDoSEQ()
+    }
+    fnPop <- function(params, ...) {
+      my_chunksize <- ceiling(NROW(params)/getDoParWorkers())
+      my_iter <- iter(params,by="row",chunksize=my_chunksize)
+      foreach(i=my_iter, .combine=c, .export="fn") %dopar% {
+        apply(i,1,fn,...)
+      }
+    }
+  } else {
     # use regular for loop / apply
-    apply(params,1,fn,...)
+    fnPop <- function(params, ...) {
+      apply(params,1,fn,...)
+    }
   }
 
   outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), PACKAGE="DEoptim")

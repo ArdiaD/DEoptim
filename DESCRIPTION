@@ -5,6 +5,7 @@ Author: David Ardia, Katharine Mullen, Brian Peterson, Joshua Ulrich
 Maintainer: Katharine Mullen <katharine.mullen@nist.gov>
 Description: This package provides the DEoptim function which performs
         global optimization by differential evolution.
+Suggests: foreach
 License: GPL (>= 2)
 Packaged: 2010-08-24 17:42:50 UTC; kmullen
 Repository: CRAN
