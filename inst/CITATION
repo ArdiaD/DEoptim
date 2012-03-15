@@ -15,7 +15,7 @@ citEntry(entry = "manual",
 	 url = "http://CRAN.R-project.org/package=DEoptim",
 	 textVersion =
          paste("David Ardia, Katharine M. Mullen, Brian G. Peterson, Joshua Ulrich (", year,"). ",
-               "'DEoptim': Differential Evoluation in 'R'. ", vers, ".", sep = "")
+               "'DEoptim': Differential Evolution in 'R'. ", vers, ".", sep = "")
 )
 
 citEntry(entry = "article",
