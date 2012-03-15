@@ -1,6 +1,5 @@
 
 library(PerformanceAnalytics)
-library(PortfolioAnalytics)
 library(DEoptim)
 library(doSNOW)
 

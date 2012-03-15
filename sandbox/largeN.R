@@ -14,9 +14,10 @@ tickers =  c( "VNO"  , "VMC" ,  "WMT" ,  "WAG"  , "DIS" ,  "WPO"  , "WFC"  , "WD
   "COP"  , "ED"   , "CEG"   ,"GLW" ,  "COST" , "CVH"  , "CSX" ,  "CMI" ,  "CVS"  ,
   "DHR" ,  "DE")
 
-library(PerformanceAnalytics);  library(PortfolioAnalytics);library(DEoptim)
+library(PerformanceAnalytics)
+library(DEoptim)
+library(quantmod)
 
-library(quantmod);
 getSymbols(tickers, from = "2000-12-01", to = "2010-12-31")
 
 P <- NULL; seltickers <- NULL
