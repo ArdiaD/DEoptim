@@ -29,7 +29,7 @@ is likely a limitation of these functions.
 #include <Rmath.h>
 
 SEXP getListElement(SEXP list, char *str);
-SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho);
+SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMap);
 void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            double *d_lower, double *d_upper, SEXP fcall, SEXP rho, int i_trace,
            int i_strategy, int i_D, int i_NP, int i_itermax,
@@ -38,7 +38,7 @@ void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
-           double d_reltol, int i_steptol);
+           double d_reltol, int i_steptol, SEXP fnMap);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
 double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env);
 SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env);
@@ -46,7 +46,7 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env);
 
 /*------General functions-----------------------------------------*/
 
-SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
+SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMap)
 {
   int i, j, P=0;
 
@@ -126,7 +126,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho)
         gt_bestP, &gt_bestC,
         gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
         &gi_iter, d_pPct, d_c, &l_nfeval,
-        d_reltol, i_steptol);
+        d_reltol, i_steptol, fnMap);
   /*---end optimization----------------------------------*/
 
   j =  i_nstorepop * i_NP * i_D;
@@ -162,7 +162,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
-           double d_reltol, int i_steptol)
+           double d_reltol, int i_steptol, SEXP fnMap)
 {
 
 #define URN_DEPTH  5   /* 4 + one index to avoid */
@@ -266,6 +266,9 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
         ngta_popP[i+i_NP*j] = initialpop[i][j];
     }
   }
+  PROTECT(sexp_map_pop  = popEvaluate(l_nfeval, sexp_gta_popP, fnMap, rho));
+  memcpy(REAL(sexp_gta_popP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double));
+  UNPROTECT(1);  // sexp_map_pop
   PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho));
   ngta_popC = REAL(sexp_gta_popC);
   for (i = 0; i < i_NP; i++) {
@@ -424,6 +427,9 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     /*------Trial mutation now in t_tmpP-----------------*/
     /* evaluate mutated population */
     if(i_iter > 1) UNPROTECT(1);  // previous iteration's sexp_t_tmpC
+    PROTECT(sexp_map_pop = popEvaluate(l_nfeval, sexp_t_tmpP,  fnMap, rho));
+    memcpy(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double));
+    UNPROTECT(1);  // sexp_map_pop
     PROTECT(sexp_t_tmpC  = popEvaluate(l_nfeval, sexp_t_tmpP, fcall, rho));
     nt_tmpC = REAL(sexp_t_tmpC);
 

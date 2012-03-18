@@ -58,7 +58,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
        reltol = reltol, steptol = steptol)
 }
 
-DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
+DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL) {
   if (length(lower) != length(upper))
     stop("'lower' and 'upper' are not of same length")
   if (!is.vector(lower))
@@ -127,7 +127,40 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...) {
     }
   }
 
-  outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), PACKAGE="DEoptim")
+  # Mapping function
+  if(is.null(fnMap)) {
+    fnMapC <- function(params,...) params
+  } else {
+    fnMapC <- function(params,...) {
+      mappedPop <- t(apply(params,1,fnMap))   # run mapping function
+      if(all(dim(mappedPop) != dim(params)))  # check results
+        stop("mapping function did not return an object with ",
+          "dim NP x length(upper).")
+      dups <- duplicated(mappedPop)  # check for duplicates
+      np <- NCOL(mappedPop)
+      tries <- 0
+      while(tries < 5 && any(dups)) {
+        #print('dups!'); flush.console()
+        nd <- sum(dups)
+        # generate new random population member
+        newPop <- matrix(runif(nd*np),ncol=np)
+        newPop <- rep(lower,each=nd) + newPop * rep(upper-lower,each=nd)
+        # replace duplicate with _mapped_ random member
+        mappedPop[dups,] <- t(apply(newPop,1,fnMap))
+        dups <- duplicated(mappedPop)  # re-check for duplicates
+        tries <- tries + 1
+      }
+      if(tries==5)
+        warning("Could not remove ",sum(dups)," duplicates from the mapped ",
+          "population in 5 tries. Evaluating population with duplicates.",
+          call.=FALSE, immediate.=TRUE)
+      # memcpy fails if mappedPop isn't double (need TYPEOF switch in C?)
+      storage.mode(mappedPop) <- "double"
+      mappedPop
+    }
+  }
+
+  outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), fnMapC, PACKAGE="DEoptim")
 
   ##
   if (length(outC$storepop) > 0) {
