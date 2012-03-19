@@ -3,7 +3,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             initialpop = NULL, storepopfrom = itermax + 1,
                             storepopfreq = 1, checkWinner = FALSE,
                             avWinner = TRUE, p = 0.2, c = 0,
-                            reltol, steptol) {
+                            reltol, steptol, foreachArgs = list() ) {
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
@@ -55,7 +55,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq,
        checkWinner = checkWinner, avWinner = avWinner, p = p, c = c,
-       reltol = reltol, steptol = steptol)
+       reltol = reltol, steptol = steptol, foreachArgs = foreachArgs)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL) {
@@ -113,10 +113,14 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NU
     if(!getDoParRegistered()) {
       registerDoSEQ()
     }
+    args <-  ctrl$foreachArgs
     fnPop <- function(params, ...) {
       my_chunksize <- ceiling(NROW(params)/getDoParWorkers())
       my_iter <- iter(params,by="row",chunksize=my_chunksize)
-      foreach(i=my_iter, .combine=c, .export="fn") %dopar% {
+      args$i <- my_iter
+      args$.combine <- c
+      args$.export <- "fn" 
+      do.call(foreach, args) %dopar% {
         apply(i,1,fn,...)
       }
     }
@@ -204,7 +208,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NU
               bestval = outC$bestval,
               nfeval = outC$nfeval,
               iter = outC$iter),
-            member = list(
+              member = list(
               lower = lower,
               upper = upper,
               bestmemit = bestmemit,

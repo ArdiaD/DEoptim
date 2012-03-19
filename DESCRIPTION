@@ -2,11 +2,11 @@ Package: DEoptim
 Version: 2.2-0
 Title: Global optimization by Differential Evolution
 Author: David Ardia, Katharine Mullen, Brian Peterson, Joshua Ulrich
+Contributor:  Kris Boudt 
 Maintainer: Katharine Mullen <katharine.mullen@nist.gov>
 Description: This package provides the DEoptim function which performs
         global optimization by differential evolution.
-Suggests: foreach
+Suggests: foreach, vcd, lattice, quantmod, PerformanceAnalytics, PortfolioAnalytics, quantmod
 License: GPL (>= 2)
-Packaged: 2010-08-24 17:42:50 UTC; kmullen
 Repository: CRAN
-Date/Publication: 2010-08-25 09:37:06
+

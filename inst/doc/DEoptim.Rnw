@@ -25,6 +25,7 @@
 }
 \Keywords{global optimization, evolutionary algorithm, Differential Evolution, \proglang{R} software}
 \Plainkeywords{global optimization, evolutionary algorithm, Differential Evolution, R software} 
+%\VignetteDepends{vcd,lattice, grid}
 
 \Address{
 David Ardia\\

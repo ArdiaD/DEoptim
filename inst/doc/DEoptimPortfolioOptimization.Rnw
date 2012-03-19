@@ -47,6 +47,7 @@ E-mail: \email{brian@braverock.com}\\
 %\VignetteIndexEntry{Large scale portfolio optimization with DEoptim}
 %\VignetteKeywords{portfolio optimization, evolutionary algorithm, Differential Evolution, R}
 %\VignettePackage{DEoptim}
+%\VignetteDepends{quantmod, PerformanceAnalytics,PortfolioAnalytics}
 
 \section{Introduction}
 

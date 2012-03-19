@@ -11,7 +11,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
    itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
    initialpop = NULL, storepopfrom = itermax + 1,
    storepopfreq = 1, checkWinner = FALSE, avWinner = TRUE, p = 0.2,
-   c = 0, reltol, steptol)
+   c = 0, reltol, steptol, foreachArgs = list())
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process
@@ -92,10 +92,16 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
    reltol)} after \code{steptol} steps. Defaults to
    \code{sqrt(.Machine$double.eps)}, typically about \code{1e-8}.}
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
+ \item{foreachArgs}{A list of named arguments for the \code{foreach}
+    function from the
+    package \pkg{foreach}.  The arguments \code{i}, \code{.combine} and
+    \code{.export} are not possible to set here; they are set
+    internally. }
  }
 \value{
   The default value of \code{control} is the return value of 
-  \code{DEoptim.control()}, which is  a list (and a member of the \code{S3} class  
+  \code{DEoptim.control()}, which is  a list (and a member of the
+  \code{S3} class  
   \code{DEoptim.control}) with the above elements.
 }
 \details{
