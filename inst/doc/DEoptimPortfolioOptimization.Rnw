@@ -16,7 +16,8 @@ Katharine M. Mullen \\ NIST \And Brian G. Peterson \\ DV Trading}
 high-dimensional portfolio problem. The setup is the same as in the \emph{R Journal} article 
 \citet{ArdiaBoudtCarlMullenPeterson2011}; namely minimizing 
 the portfolio CVaR under an upper bound constraint on the percentage CVaR contributions. 
-Because the resulting optimization model is a non-convex programming problem with multiple local optima, \pkg{DEoptim} is more apt in solving this problem than gradient-based 
+Because the resulting optimization model is a non-convex programming problem with multiple local optima, 
+\pkg{DEoptim} is more apt in solving this problem than gradient-based 
 methods such as \code{optim} and \code{nlminb}.
 }
 \Keywords{portfolio optimization, evolutionary algorithm, Differential Evolution, \proglang{R} software}
@@ -47,7 +48,7 @@ E-mail: \email{brian@braverock.com}\\
 %\VignetteIndexEntry{Large scale portfolio optimization with DEoptim}
 %\VignetteKeywords{portfolio optimization, evolutionary algorithm, Differential Evolution, R}
 %\VignettePackage{DEoptim}
-%\VignetteDepends{quantmod, PerformanceAnalytics,PortfolioAnalytics}
+%\VignetteDepends{quantmod, PerformanceAnalytics}
 
 \section{Introduction}
 
@@ -94,7 +95,7 @@ for many users. If you use \proglang{R} or \pkg{DEoptim}, please cite the softwa
 The results in this vignette are obtained using \proglang{R} version 2.13.0.  The function \code{getSymbols} in \pkg{quantmod} \citep{quantmod} 
 is used to obtain the data.  The risk measures in the portfolio objective function are computed using  \pkg{PerformanceAnalytics} \citep{PerformanceAnalytics}. 
 The initial population in \pkg{DEoptim} is generated using the function \code{random_portfolios}
-in \pkg{PortfolioAnalytics} \citep{PortAnalytics}.\footnote{All packages are readily available from CRAN, except for \pkg{PortfolioAnalytics} 
+from \pkg{PortfolioAnalytics} \citep{PortAnalytics}.\footnote{All packages are readily available from CRAN, except for \pkg{PortfolioAnalytics} 
 which can be downloaded from \url{https://r-forge.r-project.org/R/?group_id=579} or installed directly within
 \proglang{R} using the command \code{install.packages("PortfolioAnalytics", repos="http://R-Forge.R-project.org")}.} 
 
@@ -205,13 +206,15 @@ The weights need to satisfy additionally a long only and full investment constra
 
 The full investment constraint is accounted for in two ways. First, we standardize
 all the weights in the objective function such that they sum up to one.
-Second, we use the function \code{random_portfolios} in \pkg{PortfolioAnalytics} \citep{PortAnalytics} to generate
-random portfolios that satisfy all constraints. These random portfolios will be used as the initial
+Second, we use the function \code{random_portfolios} (taken 
+from the \pkg{PortfolioAnalytics} \citep{PortAnalytics} package) 
+to generate random portfolios that satisfy all constraints. These random portfolios will be used as the initial
 generation in \code{DEoptim}.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-> library("PortfolioAnalytics")
+> source("random_portfolios.R")
+> source(``constraints.R'')
 > eps <- 0.025
 > weight_seq<-generatesequence(min=minw,max=maxw,by=.001,rounding=3)
 > rpconstraint<-constraint(
