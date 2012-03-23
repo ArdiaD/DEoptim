@@ -34,7 +34,7 @@ void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            double *d_lower, double *d_upper, SEXP fcall, SEXP rho, int i_trace,
            int i_strategy, int i_D, int i_NP, int i_itermax,
            double *initialpopv, int i_storepopfreq, int i_storepopfrom,
-           int i_specinitialpop, int i_check_winner, int i_av_winner,
+           int i_specinitialpop, 
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
@@ -81,10 +81,6 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMa
   int i_bs_flag = NUMERIC_VALUE(getListElement(control, "bs"));
   /* Print progress? */
   int i_trace = NUMERIC_VALUE(getListElement(control, "trace"));
-  /* Re-evaluate best parameter vector? */
-  int i_check_winner = NUMERIC_VALUE(getListElement(control, "checkWinner"));
-  /* Average */
-  int i_av_winner = NUMERIC_VALUE(getListElement(control, "avWinner"));
   /* p to define the top 100p% best solutions */
   double d_pPct = NUMERIC_VALUE(getListElement(control, "p"));
   /* crossover adaptation (a positive constant between 0 and 1) */
@@ -122,7 +118,7 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMa
   devol(VTR, d_weight, d_cross, i_bs_flag, d_lower, d_upper, fn, rho, i_trace,
         i_strategy, i_D, i_NP, i_itermax,
         initialpopv, i_storepopfrom, i_storepopfreq,
-        i_specinitialpop, i_check_winner, i_av_winner,
+        i_specinitialpop,
         gt_bestP, &gt_bestC,
         gd_pop, gd_storepop, gd_bestmemit, gd_bestvalit,
         &gi_iter, d_pPct, d_c, &l_nfeval,
@@ -158,7 +154,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
            double *d_lower, double *d_upper, SEXP fcall, SEXP rho, int trace,
            int i_strategy, int i_D, int i_NP, int i_itermax,
            double *initialpopv, int i_storepopfrom, int i_storepopfreq,
-           int i_specinitialpop, int i_check_winner, int i_av_winner,
+           int i_specinitialpop, 
            double *gt_bestP, double *gt_bestC,
            double *gd_pop, double *gd_storepop, double *gd_bestmemit, double *gd_bestvalit,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
@@ -520,36 +516,9 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
         ngta_oldP[i+i_NP*j] = ngta_newP[i+i_NP*j];
       ngta_oldC[i] = ngta_newC[i];
     }
-    /* check if the best stayed the same, if necessary */
-    if(i_check_winner)  {  /* FIXME */
-      error("checkWinner = TRUE not currently supported");
-//      same = 1;
-//      for (j = 0; j < i_D; j++)
-//        if(t_bestitP[j] != gt_bestP[j]) {
-//          same = 0;
-//        }
-//      if(same && i_iter > 1)  {
-//        i_xav++;
-//        /* if re-evaluation of winner */
-//        memcpy(d_par, gt_bestP, i_D * sizeof(double));
-//        tmp_best = evaluate(l_nfeval, par, fcall, rho);
-//
-//        /* possibly letting the winner be the average of all past generations */
-//        if(i_av_winner)
-//          t_bestC = ((1/(double)i_xav) * t_bestC)
-//            + ((1/(double)i_xav) * tmp_best) + (gd_bestvalit[i_iter-1] * ((double)(i_xav - 2))/(double)i_xav);
-//        else
-//          t_bestC = tmp_best;
-//
-//      }
-//      else {
-//        i_xav = 1;
-//      }
-
-    } /* i_check_winner */
     for (j = 0; j < i_D; j++)
-      t_bestitP[j] = gt_bestP[j];
-
+	t_bestitP[j] = gt_bestP[j];
+      
     if( trace > 0 ) {
       if( (i_iter % trace) == 0 ) {
         Rprintf("Iteration: %d bestvalit: %f bestmemit:", i_iter, t_bestC);
