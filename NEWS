@@ -1,13 +1,16 @@
 Changes in version 2.2-0
-  o Fixed typo in box constraint example in DEoptim.Rd
   o Thanks to Joshua Ulrich and Kris Boudt, parallel operation is possible, 
     using foreach.
   o sandbox directory added, with example parallel code
   o Kris Boudt added as a contributor
   o foreach added as suggested package
   o foreachArgs arguement added to DEoptim.control() function 
+  o Fixed typo in box constraint example in DEoptim.Rd 
   o VignetteDepends metadata added to .Rnw 
   o Added mapping function for integer / cardinality constraints
+  o checkWinner and avWinner options have been removed.  If the user desires
+    averaging (to deal with a stochastic objective function) then a wrapper 
+    function may be used to give the average value over several calls.  
 
 Changes in version 2.1-2
   o Modified CITATION file and Rd files.

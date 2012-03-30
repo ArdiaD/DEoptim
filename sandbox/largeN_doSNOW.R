@@ -1,7 +1,11 @@
+#############################################################################
+## Set up objective function to minimize 
+#############################################################################
 
 library(PerformanceAnalytics)
 library(DEoptim)
 library(doSNOW)
+library(parallel)
 
 load("10y_returns.rda")
 load("random_portfolios.rda")
@@ -31,25 +35,77 @@ obj <- function(w) {
   return(out)
 }
 
-controlDE <- list(
-  NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
-  reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6 )
+#############################################################################
+## Call DEoptim on one CPU 
+#############################################################################
 
+## Note that parallelType = 0 means that only one CPU will be utilized,
+## which was the default behavior of DEoptim prior to version 2-2.0 
+
+controlDE <- list(NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
+                  reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
+                  parallelType = 0)
+
+## Call DEoptim using only one CPU
 set.seed(1234)
-system.time(out1 <- DEoptim(fn=obj, lower=lower, upper=upper,
+timeONECORE <- system.time(out1 <- DEoptim(fn=obj, lower=lower, upper=upper,
   control=controlDE))
 out1$optim$iter
 out1$optim$bestval
 
+#############################################################################
+## Call DEoptim on multiple CPU's, using the parallel package   
+#############################################################################
 
-cl <- makeSOCKcluster(2)
-clusterEvalQ(cl, library(PerformanceAnalytics)) # load any necessary libraries
-clusterExport(cl, list("mu", "sigma", "m3", "m4")) # copy any necessary objects
-registerDoSNOW(cl) # register foreach backend
+## Note that the packages needed are listed in packages
+## Note that packVar gives the arguments needed 
+
+controlDE1 <- list(NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
+                   reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
+                   parallelType = 1, 
+                   packages = list("PerformanceAnalytics"),
+                   parVar = list("mu", "sigma", "m3", "m4"))
+
 set.seed(1234)
-system.time(out2 <- DEoptim(fn=obj, lower=lower, upper=upper,
-  control=controlDE)) # *do not* pass mu, sigma, m3, m4
-stopCluster(cl) # stop cluster
-out2$optim$iter
-out2$optim$bestval
+
+timeALLCORES1 <- system.time(out2 <- DEoptim(fn=obj, lower=lower, upper=upper,
+  control=controlDE1))
+
+############################################################################
+## Call DEoptim on multiple CPU's, using the foreach package 
+#############################################################################
+
+## Find out how many CPUs are available on the local machine 
+nC <- detectCores() 
+
+## Get ready to evaluate on all these cores 
+cl <- makeSOCKcluster(nC)
+
+## load any necessary packages 
+clusterEvalQ(cl, library(PerformanceAnalytics)) 
+
+## copy any necessary objects
+clusterExport(cl, list("mu", "sigma", "m3", "m4"))
+
+## register foreach backend
+registerDoSNOW(cl) 
+
+controlDE <- list(
+                  NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
+                  reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
+                  parallelType = 2)
+
+## Call DEoptim using all available cores 
+## *do not* pass mu, sigma, m3, m4 
+set.seed(1234)
+timeALLCORES2 <- system.time(out2 <- DEoptim(fn=obj, lower=lower, upper=upper,
+  control=controlDE)) 
+## stop cluster
+stopCluster(cl) 
+
+## Compare timings
+timeONECORE
+timeALLCORES1
+timeALLCORES2
+
 

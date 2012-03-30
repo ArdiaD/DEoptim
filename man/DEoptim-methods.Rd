@@ -19,7 +19,8 @@
 }
 \details{
   Members of the class \code{DEoptim} have a \code{plot} method that
-  accepts the argument \code{plot.type}. \code{plot.type = "bestmemit"} results
+  accepts the argument \code{plot.type}. \cr
+  \code{plot.type = "bestmemit"} results
   in a plot of the parameter values that represent the lowest value of the objective function
   each generation. \code{plot.type = "bestvalit"} plots the best value of
   the objective function each generation. Finally, \code{plot.type = "storepop"} results in a plot of
