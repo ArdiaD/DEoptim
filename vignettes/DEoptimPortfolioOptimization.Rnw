@@ -1,0 +1,5 @@
+% for the real source, see http://deoptim.r-forge.r-project.org/
+
+%\VignetteIndexEntry{Large scale portfolio optimization with DEoptim}
+%\VignetteKeywords{portfolio optimization, evolutionary algorithm, Differential Evolution, R}
+%\VignettePackage{DEoptim}
