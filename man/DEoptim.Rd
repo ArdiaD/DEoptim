@@ -241,7 +241,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   \emph{Journal of Global Optimization}, 11:4, 341--359.  
 }
 \author{
-  David Ardia, Katharine Mullen \email{katharine.mullen@nist.gov}, 
+  David Ardia, Katharine Mullen \email{mullenkate@gmail.com}, 
   Brian Peterson and Joshua Ulrich.
 }
 \seealso{

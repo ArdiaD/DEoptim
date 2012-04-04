@@ -6,7 +6,7 @@ Contributor:  Kris Boudt
 Maintainer: Katharine Mullen <mullenkate@gmail.com>
 Description: This package provides the DEoptim function which performs
         global optimization by differential evolution.
-Suggests: foreach, vcd, lattice, quantmod, PerformanceAnalytics
+Suggests: foreach
 License: GPL (>= 2)
 Repository: CRAN
 

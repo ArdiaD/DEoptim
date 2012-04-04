@@ -223,7 +223,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   Springer-Verlag. ISBN 978-3-642-01526-7
 }
 \author{
-  David Ardia, Katharine Mullen \email{katharine.mullen@nist.gov}, 
+  David Ardia, Katharine Mullen \email{mullenkate@gmail.com}, 
   Brian Peterson and Joshua Ulrich.
 }
 \examples{

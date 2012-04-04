@@ -39,7 +39,7 @@
   Please cite the package in publications. Use \code{citation("DEoptim")}.
 }
 \author{
-  David Ardia, Katharine Mullen \email{katharine.mullen@nist.gov}, 
+  David Ardia, Katharine Mullen \email{mullenkate@gmail.com}, 
   Brian Peterson and Joshua Ulrich.
 }
 \seealso{
