@@ -121,7 +121,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
       my_chunksize <- ceiling(NROW(params)/foreach:::getDoParWorkers())
       my_iter <- iter(params,by="row",chunksize=my_chunksize)
       args$i <- my_iter
-      args$.combine <- c
+      if(is.null(args$.combine)) args$.combine <- c
       args$.export <- "fn" 
       do.call(foreach, args) %dopar% {
         apply(i,1,fn,...)
