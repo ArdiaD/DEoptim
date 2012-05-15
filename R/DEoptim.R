@@ -1,10 +1,14 @@
 DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
-                            storepopfreq = 1,  p = 0.2, c = 0,
-                            reltol, steptol, parallelType = 0,
-                            packages = c(), parVar = c(), 
-                            foreachArgs = list() ) {
+                            storepopfreq = 1,  p = 0.2, c = 0, 
+                            ...,
+                            reltol, steptol, 
+                            parallelType = c('auto','none','parallel','foreach'),
+                            parallelArgs) 
+{ #begin function
+  
+  #check for bounds  
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
@@ -51,13 +55,55 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   if (missing(steptol)) {
     steptol <- itermax
   }
+  
 
+  #####################
+  # handle parallel options
+    
+  #check for a single parallelType
+  if(missing(parallelType) | length(parallelType)>1){
+      parallelType<-parallelType[1]
+  }  
+  
+
+  #support old deprecated parallelType arguments
+  switch(parallelType,
+          0 = {
+              parallelType='none' 
+          },
+          1= {
+              parallelType='parallel' 
+          },
+          2 = {
+              parallelType='foreach' 
+              # handle deprecated foreachArgs
+   
+          }
+  )
+  switch(parallelType,
+          foreach = {
+              if(missing(parallelArgs) && hasArg(foreachArgs)){
+                  parallelArgs<-match.call(expand.dots=TRUE)$foreachArgs
+              }   
+              if(is.null(parallelArgs$.packages) && hasArg(packages)){
+                  parallelArgs$.packages<-packages
+              }
+          },
+          parallel = {
+              if(missing(packages) || !hasArg(packages)){
+                  packages<-(.packages())
+              }
+          }
+  )
+  # end parallel options
+  ######################
+  
+  # format and return  
   list(VTR = VTR, strategy = strategy, NP = NP, itermax = itermax, CR
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq, p =
-       p, c = c, reltol = reltol, steptol = steptol, parallelType =
-       parallelType, packages = packages, parVar = parVar, foreachArgs =
-       foreachArgs)
+       p, c = c, reltol = reltol, steptol = steptol, 
+       parallelType = parallelType, parallelArgs = parallelArgs, ...)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
@@ -109,38 +155,40 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
-  if(ctrl$parallelType == 2) { ## use foreach 
+  if(ctrl$parallelType == 'foreach') { ## use foreach 
     use.foreach <- suppressMessages(require(foreach,quietly=TRUE))
     if(!use.foreach)
       stop("foreach package not available but parallelType set to 2")
     if(!foreach:::getDoParRegistered()) {
       foreach:::registerDoSEQ()
     }
-    args <-  ctrl$foreachArgs
+    args <-  ctrl$parallelArgs
     fnPop <- function(params, ...) {
       my_chunksize <- ceiling(NROW(params)/foreach:::getDoParWorkers())
       my_iter <- iter(params,by="row",chunksize=my_chunksize)
       args$i <- my_iter
       if(is.null(args$.combine)) args$.combine <- c
-      args$.export <- "fn" 
+      args$.export <-c(args$.export,"fn")
       do.call(foreach, args) %dopar% {
         apply(i,1,fn,...)
       }
     }
   }
-  else if(ctrl$parallelType == 1){ ## use parallel 
+  else if(ctrl$parallelType == 'parallel'){ ## use parallel 
     use.parallel <- suppressMessages(require(parallel,quietly=TRUE))
     if(!use.parallel)
-      stop("parallel package not available but parallelType set to 1")
+      stop("parallel package not available but parallelType set to 'parallel")
     cl <- parallel:::makeCluster(parallel:::detectCores())
     packFn <- function(packages) {
       for(i in packages)
         library(i, character.only = TRUE)
     }
     parallel:::clusterCall(cl, packFn, ctrl$packages)
+    if(is.null(ctrl$parVar)) ctrl$parVar <- ls()
     parallel:::clusterExport(cl, ctrl$parVar)
     fnPop <- function(params, ...) {
-      parallel:::parApply(cl=cl,params,1,fn,...)
+      #clusterApply(cl, x, fun, ...)
+      parallel:::parApply(cl=cl,x=params,fun=fn, ctrl$parallelArgs, ...)
     }
   }
   else {  ## use regular for loop / apply
@@ -184,7 +232,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
 
   outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), fnMapC, PACKAGE="DEoptim")
 
-  if(ctrl$parallelType == 1)
+  if(ctrl$parallelType == 'parallel')
     parallel:::stopCluster(cl) 
   
   if (length(outC$storepop) > 0) {
