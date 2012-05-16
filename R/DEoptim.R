@@ -4,7 +4,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             storepopfreq = 1,  p = 0.2, c = 0, 
                             ...,
                             reltol, steptol, 
-                            parallelType = c('auto','none','parallel','foreach'),
+                            parallelType = c('none','auto','parallel','foreach'),
                             parallelArgs) 
 { #begin function
   
@@ -64,8 +64,20 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   if(missing(parallelType) | length(parallelType)>1){
       parallelType<-parallelType[1]
   }  
-  
-
+  # handle 'auto' auto-detect
+  if(parallelType='auto'){
+     pkgs<-.packages()
+     rv<-R.version()
+     if('foreach' %in% pkgs){
+         parallelType='foreach'
+     } else if (('parallel' %in% pkgs) ||
+                (rv$major>=2 && rv$minor>=14.2)
+                ){
+         parallelType='parallel'
+     } else {
+         parallelType='none'
+     }
+  }
   #support old deprecated parallelType arguments
   switch(parallelType,
           0 = {
@@ -76,10 +88,9 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
           },
           2 = {
               parallelType='foreach' 
-              # handle deprecated foreachArgs
-   
           }
   )
+  #handle deptrecated parallel arguments, set sensible defaults, etc.
   switch(parallelType,
           foreach = {
               if(missing(parallelArgs) && hasArg(foreachArgs)){

@@ -78,7 +78,8 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
  \item{parallelType}{Defines the type of parallelization to employ, if
    any.
-    \code{none}: The default, this uses \code{DEoptim} one only one core.
+    \code{none}: The default, this uses \code{DEoptim} on only one core.
+    \code{auto}: will attempt to auto-detect \code{foreach}, or \code{parallel}.
     \code{parallel}: This uses all available cores, via the \pkg{parallel}
     package, to run \code{DEoptim}.  
     \code{foreach}: This uses the \pkg{foreach} package for parallelism; see
