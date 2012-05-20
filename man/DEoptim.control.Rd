@@ -86,7 +86,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
     the \code{sandbox} directory in the source code for examples. 
   }
   \item{parallelArgs}{A list of named arguments for the parallel engine.
-    For package \pkg{foreach, the argument \code{i}
+    For package \pkg{foreach}, the argument \code{i}
     is not possible to set here; it is set internally. }
  }
 \value{
