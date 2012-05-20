@@ -5,7 +5,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             ...,
                             reltol, steptol, 
                             parallelType = c('none','auto','parallel','foreach'),
-                            parallelArgs) 
+                            parallelArgs=NULL) 
 { #begin function
   
   #check for bounds  
@@ -65,7 +65,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
       parallelType<-parallelType[1]
   }  
   # handle 'auto' auto-detect
-  if(parallelType='auto'){
+  if(parallelType=='auto'){
      pkgs<-.packages()
      rv<-R.version()
      if('foreach' %in% pkgs){
@@ -80,13 +80,13 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   }
   #support old deprecated parallelType arguments
   switch(parallelType,
-          0 = {
+          '0'= {
               parallelType='none' 
           },
-          1= {
+          '1'= {
               parallelType='parallel' 
           },
-          2 = {
+          '2'= {
               parallelType='foreach' 
           }
   )
