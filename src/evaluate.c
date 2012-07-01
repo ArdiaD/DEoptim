@@ -37,22 +37,17 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env)
    switch(TYPEOF(sexp_fvec)) {
      case INTSXP:
        PROTECT(sexp_fvec = coerceVector(sexp_fvec, REALSXP)); P++;
-       d_result = REAL(sexp_fvec);
-       for(int i=0; i < nr; i++) {
-         if(ISNAN(d_result[i]))
-           error("NaN value of objective function! \nPerhaps adjust the bounds.");
-       }
        break;
      case REALSXP:
-       d_result = REAL(sexp_fvec);
-       for(int i=0; i < nr; i++) {
-         if(ISNAN(d_result[i]))
-           error("NaN value of objective function! \nPerhaps adjust the bounds.");
-       }
        break;
      default:
        error("unsupported objective function return value");
        break;
+   }
+   d_result = REAL(sexp_fvec);
+   for(int i=0; i < nr; i++) {
+     if(ISNAN(d_result[i]))
+       error("NaN value of objective function! \nPerhaps adjust the bounds.");
    }
    UNPROTECT(P);
    return(sexp_fvec);
