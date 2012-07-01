@@ -235,8 +235,6 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         warning("Could not remove ",sum(dups)," duplicates from the mapped ",
                 "population in 5 tries. Evaluating population with duplicates.",
                 call.=FALSE, immediate.=TRUE)
-      ## memcpy fails if mappedPop isn't double (need TYPEOF switch in C?)
-      storage.mode(mappedPop) <- "double"
       mappedPop
     }
   }
