@@ -61,13 +61,13 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   # handle parallel options
     
   #check for a single parallelType
-  if(missing(parallelType) | length(parallelType)>1){
+  if(missing(parallelType) || length(parallelType)>1){
       parallelType<-parallelType[1]
   }  
   # handle 'auto' auto-detect
   if(parallelType=='auto'){
      pkgs<-.packages()
-     rv<-R.version()
+     rv<-R.Version()
      if('foreach' %in% pkgs){
          parallelType='foreach'
      } else if (('parallel' %in% pkgs) ||
@@ -79,17 +79,10 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
      }
   }
   #support old deprecated parallelType arguments
-  switch(parallelType,
-          '0'= {
-              parallelType='none' 
-          },
-          '1'= {
-              parallelType='parallel' 
-          },
-          '2'= {
-              parallelType='foreach' 
-          }
-  )
+  if(is.numeric(parallelType)) {
+    parallelType <- switch(parallelType+1, 'none', 'parallel', 'foreach')
+  }
+
   #handle deptrecated parallel arguments, set sensible defaults, etc.
   switch(parallelType,
           foreach = {
