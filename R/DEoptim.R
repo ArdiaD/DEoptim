@@ -89,9 +89,9 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
               if(missing(parallelArgs) && hasArg(foreachArgs)){
                   parallelArgs<-match.call(expand.dots=TRUE)$foreachArgs
               }   
-              if(is.null(parallelArgs$.packages) && hasArg(packages)){
-                  parallelArgs$.packages<-packages
-              }
+              if(is.null(parallelArgs$.packages) ){
+                  if(hasArg(packages)) parallelArgs$.packages<-match.call(expand.dots=TRUE)$packages
+              } 
           },
           parallel = {
               if(missing(packages) || !hasArg(packages)){
@@ -107,7 +107,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq, p =
        p, c = c, reltol = reltol, steptol = steptol, 
-       parallelType = parallelType, parallelArgs = parallelArgs, ...)
+       parallelType = parallelType, parallelArgs = parallelArgs, ...=match.call(expand.dots = TRUE)$...)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
