@@ -1,8 +1,8 @@
 setwd("~/R/packages/deoptim/pkg/DEoptim/sandbox")
-suppressMessages({
+#suppressMessages({
 library(PerformanceAnalytics)
 library(DEoptim)
-})
+#})
 
 load("10y_returns.rda")
 load("random_portfolios.rda")
@@ -50,9 +50,9 @@ mappingFun <- function(x) {
   x <- round(x,2) # produce some dups
   x/sum(x)
 }
+
 set.seed(1234)
 system.time(out <- DEoptim(fn=obj, lower=lower,
   upper=upper, control=controlDE, fnMap=mappingFun))
 out$optim$iter
 out$optim$bestval
-
