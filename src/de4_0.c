@@ -174,11 +174,9 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   PROTECT(sexp_gta_popP = allocMatrix(REALSXP, i_NP, i_D)); P++; /* FIXME THIS HAD 2x the rows!!! */
   PROTECT(sexp_gta_oldP = allocMatrix(REALSXP, i_NP, i_D)); P++;
   PROTECT(sexp_gta_newP = allocMatrix(REALSXP, i_NP, i_D)); P++;
-  PROTECT(sexp_map_pop  = allocMatrix(REALSXP, i_NP, i_D)); P++;
   double *ngta_popP = REAL(sexp_gta_popP); /* FIXME THIS HAD 2x the rows!!! */
   double *ngta_oldP = REAL(sexp_gta_oldP);
   double *ngta_newP = REAL(sexp_gta_newP);
-  double *nmap_pop  = REAL(sexp_map_pop);
 
   /* Data structures for objective function values associated with
    * parameter vectors */
@@ -263,7 +261,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     }
   }
   PROTECT(sexp_map_pop  = popEvaluate(l_nfeval, sexp_gta_popP, fnMap, rho, 0));
-  memcpy(REAL(sexp_gta_popP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double));
+  memmove(REAL(sexp_gta_popP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
   UNPROTECT(1);  // sexp_map_pop
   PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho, 1));
   ngta_popC = REAL(sexp_gta_popC);
@@ -424,7 +422,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     /* evaluate mutated population */
     if(i_iter > 1) UNPROTECT(1);  // previous iteration's sexp_t_tmpC
     PROTECT(sexp_map_pop = popEvaluate(l_nfeval, sexp_t_tmpP,  fnMap, rho, 0));
-    memcpy(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double));
+    memmove(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
     UNPROTECT(1);  // sexp_map_pop
     PROTECT(sexp_t_tmpC  = popEvaluate(l_nfeval, sexp_t_tmpP, fcall, rho, 1));
     nt_tmpC = REAL(sexp_t_tmpC);
