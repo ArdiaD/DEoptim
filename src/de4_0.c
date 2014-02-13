@@ -108,8 +108,8 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMa
   double *gd_bestvalit = REAL(sexp_bestvalit);
 
   /* ensure lower and upper are double */
-  if(TYPEOF(lower) != REALSXP) PROTECT(lower = coerceVector(lower, REALSXP)); P++;
-  if(TYPEOF(upper) != REALSXP) PROTECT(upper = coerceVector(upper, REALSXP)); P++;
+  if(TYPEOF(lower) != REALSXP) {PROTECT(lower = coerceVector(lower, REALSXP)); P++;}
+  if(TYPEOF(upper) != REALSXP) {PROTECT(upper = coerceVector(upper, REALSXP)); P++;}
   double *d_lower      = REAL(lower);
   double *d_upper      = REAL(upper);
 
