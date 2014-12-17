@@ -21,8 +21,7 @@ double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env)
    return(f_result);
 }
 
-SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, 
-		 int incrementEval)
+SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env)
 {
    SEXP sexp_fvec, fn;
    double *d_result;
@@ -33,8 +32,6 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env,
 
    PROTECT(sexp_fvec = eval(fn, env)); P++;
    int nr = nrows(sexp_fvec);
-   if(incrementEval)
-     (*l_nfeval) += nr;  
    if(nr != nrows(parMat))
      error("objective function result has different length than parameter matrix");
    switch(TYPEOF(sexp_fvec)) {

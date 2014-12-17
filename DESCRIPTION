@@ -1,13 +1,16 @@
 Package: DEoptim
-Version: 2.3-1
+Version: 2.2-2
 Title: Global optimization by Differential Evolution
-Author: David Ardia, Katharine Mullen, Brian Peterson, and Joshua Ulrich, with contributions from Kris Boudt
-Authors@R: c(person("David", "Ardia", role = c("aut")),person("Katharine", "Mullen", role = c("aut", "cre"), email="mullenkate@gmail.com"),person("Brian", "Peterson", role = "aut"),person("Joshua", "Ulrich", role = "aut"))
+Author: David Ardia, Katharine Mullen, Brian Peterson, and Joshua
+        Ulrich, with contributions from Kris Boudt
+Authors@R: c(person("David", "Ardia", role =
+        c("aut")),person("Katharine", "Mullen", role = c("aut", "cre"),
+        email="mullenkate@gmail.com"),person("Brian", "Peterson", role
+        = "aut"),person("Joshua", "Ulrich", role = "aut"))
 Maintainer: Katharine Mullen <mullenkate@gmail.com>
 Description: This package provides the DEoptim function which performs
         global optimization by differential evolution.
 Suggests: foreach
 License: GPL (>= 2)
 Repository: CRAN
-Packaged: 2012-07-01 21:09:15 UTC; kmm
-Date/Publication: 2012-07-01 21:59:57
+

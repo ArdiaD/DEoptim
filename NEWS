@@ -5,9 +5,6 @@ Changes in version 2.2-1
   o Invisible-to-users changes to evaluate.c to fix misuse of isnan
 
 Changes in version 2.2-0
-  o Invisible-to-users changes to evaluate.c to fix misuse of isnan
-
-Changes in version 2.2-0
   o Thanks to Joshua Ulrich and Kris Boudt, parallel operation is possible, 
     using foreach.
   o sandbox directory added, with example parallel code

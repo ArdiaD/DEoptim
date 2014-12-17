@@ -19,8 +19,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   \item{control}{a list of control parameters; see \code{\link{DEoptim.control}}.}
   \item{fnMap}{an optional function that will be run after each population is
     created, but before the population is passed to the objective function. This
-    allows the user to impose integer/cardinality constriants.  See the
-    the sandbox directory of the source code for a simple example. }
+    allows the user to impose integer/cardinality constriants.}
   \item{...}{further arguments to be passed to \code{fn}.}
 }
 \details{
