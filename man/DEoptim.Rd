@@ -300,8 +300,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
           control = DEoptim.control(NP = 50))
  
   ## The below examples shows how the call to DEoptim can be
-  ## parallelized; see the sandbox directory in the source
-  ## code for additional examples.
+  ## parallelized.
   ## Note that if your objective function requires packages to be
   ## loaded or has arguments supplied via \code{...}, these should be
   ## specified using the \code{packages} and \code{parVar} arguments

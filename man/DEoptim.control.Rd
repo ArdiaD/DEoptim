@@ -78,7 +78,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
  \item{parallelType}{Defines the type of parallelization to employ, if
    any.
-    \code{0}: The default, this uses \code{DEoptim} one only one core.
+    \code{0}: The default, this uses \code{DEoptim} on one only one core.
     \code{1}: This uses all available cores, via the \pkg{parallel}
     package, to run \code{DEoptim}.  If \code{parallelType=1}, then the
     \code{packages} argument and the \code{parVar} argument need to
@@ -86,7 +86,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
     variables required in the environment, respectively. 
     \code{2}: This uses the \pkg{foreach} package for parallelism; see
     the \code{sandbox} directory in the source code for examples.  If
-    \code{parallelType=1}, then the \code{foreachArgs} argument can pass
+    \code{parallelType=2}, then the \code{foreachArgs} argument can pass
     the options to be called with \code{foreach}.  
   }
   \item{packages}{Used if  \code{parallelType=1}; a list of

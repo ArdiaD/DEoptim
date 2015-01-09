@@ -1,3 +1,11 @@
+Changes in version 2.2-3
+  o DESCRIPTION updated.
+  o Change to steptol interpretation in C, thanks to Alec Solway.
+  o Change to foreach logic, thanks to Jonathan Owen.
+  o Change to NP setting when initialpop provided, thanks to Tobias KD Weber.
+  o More flexible passing of args to foreach.
+  o Makefile changed to remove references to shell
+
 Changes in version 2.2-2
   o Change to de4_0.c to replace memcpy with memmove
 
