@@ -167,9 +167,9 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
       foreach:::registerDoSEQ()
     }
     args <-  ctrl$parallelArgs
-    fnPop <- function(params, ...) {
-      my_chunksize <- ceiling(NROW(params)/foreach:::getDoParWorkers())
-      my_iter <- iter(params,by="row",chunksize=my_chunksize)
+    fnPop <- function(`*params`, ...) {
+      my_chunksize <- ceiling(NROW(`*params`)/foreach:::getDoParWorkers())
+      my_iter <- iter(`*params`,by="row",chunksize=my_chunksize)
       args$i <- my_iter
       if(is.null(args$.combine)) args$.combine <- c
       args$.export <-c(args$.export,"fn")
@@ -190,24 +190,24 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
     parallel:::clusterCall(cl, packFn, ctrl$packages)
     if(is.null(ctrl$parVar)) ctrl$parVar <- ls()
     parallel:::clusterExport(cl, ctrl$parVar)
-    fnPop <- function(params, ...) {
+    fnPop <- function(`*params`, ...) {
       #clusterApply(cl, x, fun, ...)
-      parallel:::parApply(cl=cl,x=params,fun=fn, ctrl$parallelArgs, ...)
+      parallel:::parApply(cl=cl,x=`*params`,fun=fn, ctrl$parallelArgs, ...)
     }
   }
   else {  ## use regular for loop / apply
-    fnPop <- function(params, ...) {
-      apply(params,1,fn,...)
+    fnPop <- function(`*params`, ...) {
+      apply(`*params`,1,fn,...)
     }
   }
 
   ## Mapping function
   if(is.null(fnMap)) {
-    fnMapC <- function(params,...) params
+    fnMapC <- function(`*params`,...) `*params`
   } else {
-    fnMapC <- function(params,...) {
-      mappedPop <- t(apply(params,1,fnMap))   ## run mapping function
-      if(all(dim(mappedPop) != dim(params)))  ## check results
+    fnMapC <- function(`*params`,...) {
+      mappedPop <- t(apply(`*params`,1,fnMap))   ## run mapping function
+      if(all(dim(mappedPop) != dim(`*params`)))  ## check results
         stop("mapping function did not return an object with ",
              "dim NP x length(upper).")
       dups <- duplicated(mappedPop)  ## check for duplicates
