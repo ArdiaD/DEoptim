@@ -10,7 +10,7 @@
 DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   itermax = 200, CR = 0.5, F = 0.8, trace = TRUE, initialpop = NULL,
   storepopfrom = itermax + 1, storepopfreq = 1, p = 0.2, c = 0, reltol,
-  steptol, parallelType = 0, packages = c(), parVar = c(),
+  steptol, parallelType = 0, cluster = NULL, packages = c(), parVar = c(),
   foreachArgs = list())
 }
 \arguments{
@@ -89,6 +89,9 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
     \code{parallelType=2}, then the \code{foreachArgs} argument can pass
     the options to be called with \code{foreach}.  
   }
+   \item{cluster}{Existing \pkg{parallel} cluster object. If provided, overrides
++  specified \code{parallelType}. Using \code{cluster} allows fine-grained control
++  over the number of used cores and exported data.}
   \item{packages}{Used if  \code{parallelType=1}; a list of
     package names (as strings) that need to be loaded for use by the objective
   function. }
@@ -202,7 +205,7 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio
   Optimization. URL \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{http://journal.r-project.org/2011-1/}.
+  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution.

@@ -49,7 +49,7 @@
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
   \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{http://journal.r-project.org/2011-1/}.
+  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution. 

@@ -2,7 +2,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
                             storepopfreq = 1,  p = 0.2, c = 0,
-                            reltol, steptol, parallelType = 0,
+                            reltol, steptol, parallelType = 0, cluster = NULL,
                             packages = c(), parVar = c(), 
                             foreachArgs = list() ) {
   if (itermax <= 0) {
@@ -68,8 +68,9 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq, p =
        p, c = c, reltol = reltol, steptol = steptol, parallelType =
-       parallelType, packages = packages, parVar = parVar, foreachArgs =
-       foreachArgs)
+           parallelType, cluster = cluster,
+       packages = packages, parVar = parVar, foreachArgs =
+           foreachArgs)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
@@ -121,7 +122,15 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
-  if(ctrl$parallelType == 2) { ## use foreach 
+  if(!is.null(ctrl$cluster)) { ## use provided cluster
+    if(!inherits(ctrl$cluster, "cluster"))
+      stop("cluster is not a 'cluster' class object")
+    parallel::clusterExport(cl, ctrl$parVar)
+      fnPop <- function(params, ...) {
+          parallel::parApply(cl=ctrl$cluster,params,1,fn,...)
+      }
+  }
+  else if(ctrl$parallelType == 2) { ## use foreach
     if(!foreach::getDoParRegistered()) {
       foreach::registerDoSEQ()
     }

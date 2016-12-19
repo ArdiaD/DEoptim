@@ -1,9 +1,10 @@
 Package: DEoptim
-Version: 2.2-3
+Version: 2.2-4
 Title: Global Optimization by Differential Evolution
 Authors@R: c(person("David", "Ardia", role = c("aut")), person("Katharine", "Mullen", role = c("aut", "cre"), email="mullenkate@gmail.com"), person("Brian", "Peterson", role = "aut"), person("Joshua", "Ulrich", role = "aut"), person("Kris", "Boudt", role = "ctb"))
 Description: Implements the differential evolution algorithm for global optimization of a real-valued function of a real-valued parameter vector.
-Suggests: foreach, iterators, parallel
+Suggests: foreach, iterators, colorspace, lattice
+Depends: parallel
 License: GPL (>= 2)
 Repository: CRAN
 
