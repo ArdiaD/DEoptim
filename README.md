@@ -1,2 +1,2 @@
 # DEoptim
-Differential evoluation in R
+Differential evolution in R
