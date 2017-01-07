@@ -1,0 +1,6 @@
+% for the real source, see http://deoptim.r-forge.r-project.org/
+
+% \VignetteIndexEntry{Vignette introducing DEoptim}
+% \VignetteKeywords{global optimization, stochastic optimization, optimization}
+% \VignettePackage{DEoptim}
+
