@@ -174,7 +174,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
       if(is.null(args$.combine)) args$.combine <- c
       args$.export <-c(args$.export,"fn")
       do.call(foreach, args) %dopar% {
-        apply(i,1,fn,...)
+        apply(X = i, MARGIN = 1, FUN = fn, ...)
       }
     }
   }
@@ -197,16 +197,17 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   }
   else {  ## use regular for loop / apply
     fnPop <- function(`*params`, ...) {
-      apply(`*params`,1,fn,...)
+      apply(X = `*params`, MARGIN = 1, FUN = fn, ...)
     }
   }
 
   ## Mapping function
   if(is.null(fnMap)) {
-    fnMapC <- function(`*params`,...) `*params`
+    fnMapC <- function(`*params`,...) { `*params` }
   } else {
     fnMapC <- function(`*params`,...) {
-      mappedPop <- t(apply(`*params`,1,fnMap))   ## run mapping function
+      ## run mapping function
+      mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fnMap))
       if(all(dim(mappedPop) != dim(`*params`)))  ## check results
         stop("mapping function did not return an object with ",
              "dim NP x length(upper).")
@@ -220,7 +221,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         newPop <- matrix(runif(nd*np),ncol=np)
         newPop <- rep(lower,each=nd) + newPop * rep(upper-lower,each=nd)
         ## replace duplicate with _mapped_ random member
-        mappedPop[dups,] <- t(apply(newPop,1,fnMap))
+        mappedPop[dups,] <- t(apply(newPop, MARGIN = 1, FUN = fnMap))
         dups <- duplicated(mappedPop)  ## re-check for duplicates
         tries <- tries + 1
       }
