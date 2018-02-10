@@ -39,12 +39,12 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   distributed with the book \emph{Differential Evolution -- A Practical
   Approach to Global Optimization} by Price, K.V., Storn, R.M., Lampinen
   J.A, Springer-Verlag, 2006, and found on-line at
-  \url{http://www.icsi.berkeley.edu/~storn/}. Since version 2.0-3 the C 
-  implementation dynamically allocates the memory required to store the population, removing limitations on the 
-  number of members in the population and length of the parameter
-  vectors that may be optimized. 
-  Since version 2.2-0, the package allows for parallel operation, 
-  so that the evaluations of the objective function may be 
+  \url{http://www1.icsi.berkeley.edu/~storn/code.html}. Since version
+  2.0-3 the C implementation dynamically allocates the memory required
+  to store the population, removing limitations on the number of members
+  in the population and length of the parameter vectors that may be
+  optimized.  Since version 2.2-0, the package allows for parallel
+  operation, so that the evaluations of the objective function may be
   performed using all available cores.  This is accomplished using either
   the built-in \pkg{parallel} package or the \pkg{foreach} package.  If
   parallel operation is desired, the user should set \code{parallelType}
@@ -216,7 +216,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
   \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{http://journal.r-project.org/2011-1/}.
+  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution. 

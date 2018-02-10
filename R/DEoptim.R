@@ -1,14 +1,11 @@
 DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
                             itermax = 200, CR = 0.5, F = 0.8, trace = TRUE,
                             initialpop = NULL, storepopfrom = itermax + 1,
-                            storepopfreq = 1,  p = 0.2, c = 0, 
-                            ...,
-                            reltol, steptol, 
+                            storepopfreq = 1,  p = 0.2, c = 0,
+                            reltol, steptol,
                             parallelType = c('none','auto','parallel','foreach'),
-                            parallelArgs=NULL) 
-{ #begin function
-  
-  #check for bounds  
+                            cluster = NULL, packages = c(), parVar = c(),
+                            foreachArgs = list(), parallelArgs = NULL) {
   if (itermax <= 0) {
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
@@ -55,15 +52,26 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   if (missing(steptol)) {
     steptol <- itermax
   }
-  
+
+  if(!(is.null(initialpop))) {
+    if(is.na(NP))
+      if(is.matrix(initialpop))
+        NP <- dim(initialpop)[1]
+      else stop("initialpop must be a matrix")
+    else
+      if(NP != dim(initialpop)[1]) {
+        warning("Resetting NP to the number of rows in initialpop")
+        NP <- dim(initialpop)[1]
+      }
+  }
 
   #####################
   # handle parallel options
-    
+
   #check for a single parallelType
   if(missing(parallelType) || length(parallelType)>1){
       parallelType<-parallelType[1]
-  }  
+  }
   # handle 'auto' auto-detect
   if(parallelType=='auto'){
      pkgs<-.packages()
@@ -88,10 +96,10 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
           foreach = {
               if(missing(parallelArgs) && hasArg(foreachArgs)){
                   parallelArgs<-match.call(expand.dots=TRUE)$foreachArgs
-              }   
+              }
               if(is.null(parallelArgs$.packages) ){
                   if(hasArg(packages)) parallelArgs$.packages<-match.call(expand.dots=TRUE)$packages
-              } 
+              }
           },
           parallel = {
               if(missing(packages) || !hasArg(packages)){
@@ -101,13 +109,15 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   )
   # end parallel options
   ######################
-  
-  # format and return  
+
+  # format and return
   list(VTR = VTR, strategy = strategy, NP = NP, itermax = itermax, CR
        = CR, F = F, bs = bs, trace = trace, initialpop = initialpop,
        storepopfrom = storepopfrom, storepopfreq = storepopfreq, p =
-       p, c = c, reltol = reltol, steptol = steptol, 
-       parallelType = parallelType, parallelArgs = parallelArgs, ...=match.call(expand.dots = TRUE)$...)
+       p, c = c, reltol = reltol, steptol = steptol,
+       parallelType = parallelType, cluster = cluster,
+       packages = packages, parVar = parVar, foreachArgs = foreachArgs,
+       parallelArgs = parallelArgs)
 }
 
 DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
@@ -159,40 +169,55 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
-  if(ctrl$parallelType == 'foreach') { ## use foreach 
+  if(!is.null(ctrl$cluster)) { ## use provided cluster
+    if(!inherits(ctrl$cluster, "cluster"))
+      stop("cluster is not a 'cluster' class object")
+    parallel::clusterExport(cl, ctrl$parVar)
+      fnPop <- function(`*params`, ...) {
+          parallel::parApply(cl=ctrl$cluster,X=`*params`,MARGIN=1,FUN=fn,ctrl$parallelArgs,...)
+      }
+  }
+  else if(ctrl$parallelType == "foreach") { ## use foreach
     use.foreach <- suppressMessages(require(foreach,quietly=TRUE))
     if(!use.foreach)
-      stop("foreach package not available but parallelType set to 2")
-    if(!foreach:::getDoParRegistered()) {
-      foreach:::registerDoSEQ()
+      stop("foreach package not available but parallelType set to 'foreach'")
+    if(!foreach::getDoParRegistered()) {
+      foreach::registerDoSEQ()
     }
-    args <-  ctrl$parallelArgs
+    args <-  ctrl$foreachArgs
     fnPop <- function(`*params`, ...) {
-      my_chunksize <- ceiling(NROW(`*params`)/foreach:::getDoParWorkers())
+      my_chunksize <- ceiling(NROW(`*params`)/foreach::getDoParWorkers())
       my_iter <- iter(`*params`,by="row",chunksize=my_chunksize)
       args$i <- my_iter
       if(is.null(args$.combine)) args$.combine <- c
-      args$.export <-c(args$.export,"fn")
-      do.call(foreach, args) %dopar% {
-        apply(X = i, MARGIN = 1, FUN = fn, ...)
-      }
+      if (!is.null(args$.export))
+        args$.export = c(args$.export, "fn")
+      else
+        args$.export = "fn"
+      if (is.null(args$.errorhandling))
+        args$.errorhandling = c('stop', 'remove', 'pass')
+      if (is.null(args$.verbose))
+        args$.verbose = FALSE
+      if (is.null(args$.inorder))
+        args$.inorder = TRUE
+      if (is.null(args$.multicombine))
+        args$.multicombine = FALSE
+
+      foreach::"%dopar%"(do.call(foreach::foreach, args), apply(X = i, MARGIN = 1, FUN = fn, ...))
+
     }
   }
-  else if(ctrl$parallelType == 'parallel'){ ## use parallel 
-    use.parallel <- suppressMessages(require(parallel,quietly=TRUE))
-    if(!use.parallel)
-      stop("parallel package not available but parallelType set to 'parallel")
-    cl <- parallel:::makeCluster(parallel:::detectCores())
+  else if(ctrl$parallelType == 'parallel'){ ## use parallel
+    cl <- parallel::makeCluster(parallel::detectCores())
     packFn <- function(packages) {
       for(i in packages)
         library(i, character.only = TRUE)
     }
-    parallel:::clusterCall(cl, packFn, ctrl$packages)
+    parallel::clusterCall(cl, packFn, ctrl$packages)
     if(is.null(ctrl$parVar)) ctrl$parVar <- ls()
-    parallel:::clusterExport(cl, ctrl$parVar)
+    parallel::clusterExport(cl, ctrl$parVar)
     fnPop <- function(`*params`, ...) {
-      #clusterApply(cl, x, fun, ...)
-      parallel:::parApply(cl=cl,x=`*params`,fun=fn, ctrl$parallelArgs, ...)
+      parallel::parApply(cl=cl,X=`*params`,MARGIN=1,FUN=fn,...)
     }
   }
   else {  ## use regular for loop / apply
@@ -236,7 +261,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), fnMapC, PACKAGE="DEoptim")
 
   if(ctrl$parallelType == 'parallel')
-    parallel:::stopCluster(cl) 
+    parallel::stopCluster(cl)
   
   if (length(outC$storepop) > 0) {
     nstorepop <- floor((outC$iter - ctrl$storepopfrom) / ctrl$storepopfreq)

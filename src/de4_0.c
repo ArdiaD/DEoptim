@@ -277,8 +277,8 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   }
 
   /*---assign pointers to current ("old") population---*/
-  memcpy(REAL(sexp_gta_oldP), REAL(sexp_gta_popP), i_NP * i_D * sizeof(double));
-  memcpy(REAL(sexp_gta_oldC), REAL(sexp_gta_popC), i_NP * sizeof(double));
+  memmove(REAL(sexp_gta_oldP), REAL(sexp_gta_popP), i_NP * i_D * sizeof(double));
+  memmove(REAL(sexp_gta_oldC), REAL(sexp_gta_popC), i_NP * sizeof(double));
   UNPROTECT(1);  // sexp_gta_popC
 
   /*------Iteration loop--------------------------------------------*/
@@ -533,12 +533,11 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     /*if( i_iter % 10000 == 999 ) R_CheckUserInterrupt();*/
 
     /* check relative tolerance (as in src/main/optim.c) */
-    /* kmm: not sure where the above is, but was not working as
-       advertised in help file; changed 
-     */ 
-    if( fabs(t_bestC - gd_bestvalit[i_iter-1]) <
+
+
+    if( gd_bestvalit[i_iter-1] -  t_bestC <
         (d_reltol * (fabs(gd_bestvalit[i_iter-1]) + d_reltol))) {
-      i_iter_tol++;
+	i_iter_tol++;
     } else {
       i_iter_tol = 0;
     }

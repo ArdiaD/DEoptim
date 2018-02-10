@@ -1,3 +1,24 @@
+Changes in version 2.2-4
+  o Vignette source code included in package.
+  o New option 'cluster' allows passing existing parallel cluster, using
+    code by Alexey Stukalov.
+  o As pointed out by Jason Thorpe: "paralell:::.onLoad() makes a call
+    to stats::runif(1L) depending on whether or not
+    Sys.getenv("R_PARALLEL_PORT") returns an integer, which appears to
+    be platform dependent.  The result of this bug is that the return
+    value of DEoptim() will differ by platform the first time it is
+    called, even when taking care to call set.seed() prior to calling
+    DEoptim()."  We now require 'parallel' (to ensure it is loaded)
+    to avoid this behaviour.
+
+Changes in version 2.2-3
+  o DESCRIPTION updated.
+  o Change to steptol interpretation in C, thanks to Alec Solway.
+  o Change to foreach logic, thanks to Jonathan Owen.
+  o Change to NP setting when initialpop provided, thanks to Tobias KD Weber.
+  o More flexible passing of args to foreach.
+  o Makefile changed to remove references to shell
+
 Changes in version 2.2-2
   o Change to de4_0.c to replace memcpy with memmove
 

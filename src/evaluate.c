@@ -9,7 +9,7 @@ double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env)
    double f_result;
 
    PROTECT(fn = lang3(fcall, par, R_DotsSymbol));
-   (*l_nfeval)++;  /* increment function evaluation count */
+      (*l_nfeval)++;  /* increment function evaluation count */
 
    PROTECT(sexp_fvec = eval(fn, env));
    f_result = NUMERIC_POINTER(sexp_fvec)[0];
@@ -21,7 +21,7 @@ double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env)
    return(f_result);
 }
 
-SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, 
+SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env,
 		 int incrementEval)
 {
    SEXP sexp_fvec, fn;
@@ -29,11 +29,11 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env,
    int P = 0;
 
    PROTECT(fn = lang3(fcall, parMat, R_DotsSymbol)); P++;
- 
+
    PROTECT(sexp_fvec = eval(fn, env)); P++;
    int nr = nrows(sexp_fvec);
    if(incrementEval)
-     (*l_nfeval) += nr;  
+     (*l_nfeval) += nr;
    if(nr != nrows(parMat))
      error("objective function result has different length than parameter matrix");
    switch(TYPEOF(sexp_fvec)) {

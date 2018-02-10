@@ -12,7 +12,7 @@ citEntry(entry = "manual",
                          as.person("Joshua Ulrich")),
      year = year,
 	 note = vers,
-	 url = "http://CRAN.R-project.org/package=DEoptim",
+	 url = "https://CRAN.R-project.org/package=DEoptim",
 	 textVersion =
          paste("David Ardia, Katharine M. Mullen, Brian G. Peterson, Joshua Ulrich (", year,"). ",
                "'DEoptim': Differential Evolution in 'R'. ", vers, ".", sep = "")
@@ -50,12 +50,12 @@ citEntry(entry = "article",
          volume       = "3",
          number       = "1",
          pages        = "27--34",
-         url          = "http://journal.r-project.org/archive/2011-1/2011-1_index.html",
+         url          = "https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf",
          textVersion = 
          paste("Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2010).",
                "Differential Evolution with 'DEoptim': An Application to Non-Convex Portfolio Optimization.",
                "The R Journal, 3(1), 27-34.",
-               "URL http://journal.r-project.org/archive/2011-1/2011-1_index.html.")
+               "URL https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf")
 )
 
 citEntry(entry = "article",
