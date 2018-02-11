@@ -167,10 +167,6 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 #define URN_DEPTH  5   /* 4 + one index to avoid */
 
   int P=0;
-  /* initialize parameter vector to pass to evaluate function */
-  SEXP par;
-  PROTECT(par = NEW_NUMERIC(i_D)); P++;
-  double *d_par = REAL(par);
 
   /* Data structures for parameter vectors */
   SEXP sexp_gta_popP, sexp_gta_oldP, sexp_gta_newP, sexp_map_pop;
@@ -191,13 +187,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   double *ngta_oldC = REAL(sexp_gta_oldC);
   double *ngta_newC = REAL(sexp_gta_newC);
 
-  double *gta_popC = (double *)R_alloc(i_NP*2,sizeof(double));
-  double *gta_oldC = (double *)R_alloc(i_NP,sizeof(double));
-  double *gta_newC = (double *)R_alloc(i_NP,sizeof(double));
-
   double *t_bestitP = (double *)R_alloc(1,sizeof(double) * i_D);
-  double *t_tmpP = (double *)R_alloc(1,sizeof(double) * i_D);
-  double *tempP = (double *)R_alloc(1,sizeof(double) * i_D);
 
   SEXP sexp_t_tmpP, sexp_t_tmpC;
   PROTECT(sexp_t_tmpP = allocMatrix(REALSXP, i_NP, i_D)); P++;
@@ -210,14 +200,11 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
   int ia_urn2[URN_DEPTH];
   int ia_urnTemp[i_NP];
-  int i_nstorepop, i_xav;
-  i_nstorepop = ceil((i_itermax - i_storepopfrom) / i_storepopfreq);
-
-  int popcnt, bestacnt, same; /* lazy cnters */
+  int popcnt, bestacnt; /* lazy cnters */
 
   double d_jitter, d_dither;
 
-  double t_tmpC, tmp_best, t_bestC;
+  double t_bestC;
 
   double **initialpop = (double **)R_alloc(i_NP,sizeof(double *));
   for (int i = 0; i < i_NP; i++)
@@ -227,7 +214,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   int i_pbest;
   int p_NP = round(d_pPct * i_NP);  /* choose at least two best solutions */
       p_NP = p_NP < 2 ? 2 : p_NP;
-  int sortIndex[i_NP];              /* sorted values of gta_oldC */
+  int sortIndex[i_NP];              /* sorted values of ngta_oldC */
   for(i = 0; i < i_NP; i++) sortIndex[i] = i;
   //double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = 0.5, meanF = 0.5;
   double goodCR = 0, goodF = 0, goodF2 = 0, meanCR = d_cross, meanF = d_weight;
@@ -268,8 +255,10 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   UNPROTECT(1);  // sexp_map_pop
   PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho, 1));
   ngta_popC = REAL(sexp_gta_popC);
-  for (i = 0; i < i_NP; i++) {
-    if (i == 0 || ngta_popC[i] <= t_bestC) {
+
+  t_bestC = ngta_popC[0];
+  for (i = 1; i < i_NP; i++) {
+    if (ngta_popC[i] <= t_bestC) {
       t_bestC = ngta_popC[i];
       for (j = 0; j < i_D; j++)
         gt_bestP[j]=ngta_popP[i+i_NP*j];
@@ -285,7 +274,6 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   int i_iter = 0;
   popcnt = 0;
   bestacnt = 0;
-  i_xav = 1;
   int i_iter_tol = 0;
 
   while ((i_iter < i_itermax) && (t_bestC > VTR) && (i_iter_tol <= i_steptol))
@@ -319,7 +307,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
     /*---DE/current-to-p-best/1 ----------------------------------------------*/
     if (i_strategy == 6) {
-      /* create a copy of gta_oldC to avoid changing it */
+      /* create a copy of ngta_oldC to avoid changing it */
       double temp_oldC[i_NP];
       for(j = 0; j < i_NP; j++) temp_oldC[j] = ngta_oldC[j];
 
@@ -330,7 +318,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     /*----start of loop through ensemble------------------------*/
     for (i = 0; i < i_NP; i++) {
 
-      /*t_tmpP is the vector to mutate and eventually select*/
+      /*nt_tmpP is the vector to mutate and eventually select*/
       for (j = 0; j < i_D; j++)
         nt_tmpP[i+i_NP*j] = ngta_oldP[i+i_NP*j];
       nt_tmpC[i] = ngta_oldC[i];
@@ -421,7 +409,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
     } /* NEW End mutation loop through ensemble */
 
-    /*------Trial mutation now in t_tmpP-----------------*/
+    /*------Trial mutation now in nt_tmpP-----------------*/
     /* evaluate mutated population */
     PROTECT(sexp_map_pop = popEvaluate(l_nfeval, sexp_t_tmpP,  fnMap, rho, 0));
     memmove(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
