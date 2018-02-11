@@ -248,9 +248,11 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
         ngta_popP[i+i_NP*j] = initialpop[i][j];
     }
   }
-  PROTECT(sexp_map_pop  = popEvaluate(l_nfeval, sexp_gta_popP, fnMap, rho, 0));
-  memmove(REAL(sexp_gta_popP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
-  UNPROTECT(1);  // sexp_map_pop
+  if(!isNull(fnMap)) {
+    PROTECT(sexp_map_pop  = popEvaluate(l_nfeval, sexp_gta_popP, fnMap, rho, 0));
+    memmove(REAL(sexp_gta_popP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
+    UNPROTECT(1);  // sexp_map_pop
+  }
   PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho, 1));
   ngta_popC = REAL(sexp_gta_popC);
 
@@ -408,9 +410,11 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
     /*------Trial mutation now in nt_tmpP-----------------*/
     /* evaluate mutated population */
-    PROTECT(sexp_map_pop = popEvaluate(l_nfeval, sexp_t_tmpP,  fnMap, rho, 0));
-    memmove(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
-    UNPROTECT(1);  // sexp_map_pop
+    if(!isNull(fnMap)) {
+      PROTECT(sexp_map_pop = popEvaluate(l_nfeval, sexp_t_tmpP,  fnMap, rho, 0));
+      memmove(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
+      UNPROTECT(1);  // sexp_map_pop
+    }
     PROTECT(sexp_t_tmpC  = popEvaluate(l_nfeval, sexp_t_tmpP, fcall, rho, 1));
     double *nt_tmpC = REAL(sexp_t_tmpC);
 

@@ -227,9 +227,8 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   }
 
   ## Mapping function
-  if(is.null(fnMap)) {
-    fnMapC <- function(`*params`,...) { `*params` }
-  } else {
+  fnMapC <- NULL
+  if(!is.null(fnMap)) {
     fnMapC <- function(`*params`,...) {
       ## run mapping function
       mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fnMap))
