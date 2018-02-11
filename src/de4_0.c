@@ -191,9 +191,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
   SEXP sexp_t_tmpP, sexp_t_tmpC;
   PROTECT(sexp_t_tmpP = allocMatrix(REALSXP, i_NP, i_D)); P++;
-  PROTECT(sexp_t_tmpC = allocVector(REALSXP, i_NP)); P++;
   double *nt_tmpP = REAL(sexp_t_tmpP);
-  double *nt_tmpC = REAL(sexp_t_tmpC);
 
   int i, j, k;  /* counting variables */
   int i_r1, i_r2, i_r3;  /* placeholders for random indexes */
@@ -321,7 +319,6 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
       /*nt_tmpP is the vector to mutate and eventually select*/
       for (j = 0; j < i_D; j++)
         nt_tmpP[i+i_NP*j] = ngta_oldP[i+i_NP*j];
-      nt_tmpC[i] = ngta_oldC[i];
 
       permute(ia_urn2, URN_DEPTH, i_NP, i, ia_urnTemp); /* Pick 4 random and distinct */
 
@@ -415,7 +412,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
     memmove(REAL(sexp_t_tmpP), REAL(sexp_map_pop), i_NP * i_D * sizeof(double)); // valgrind reports memory overlap here
     UNPROTECT(1);  // sexp_map_pop
     PROTECT(sexp_t_tmpC  = popEvaluate(l_nfeval, sexp_t_tmpP, fcall, rho, 1));
-    nt_tmpC = REAL(sexp_t_tmpC);
+    double *nt_tmpC = REAL(sexp_t_tmpC);
 
     /* compare old pop with mutated pop */
     for (i = 0; i < i_NP; i++) {
