@@ -257,7 +257,17 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
     }
   }
 
-  outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, new.env(), fnMapC, PACKAGE="DEoptim")
+  env <- new.env()
+  if(inherits(fn, "NativeSymbolInfo"))
+    fn <- fn$address
+  if(inherits(fn, "NativeSymbol")) {
+    fnPop <- fn
+    dotargs <- substitute(alist(...))
+    dotargs <- lapply(dotargs[-1L], eval, parent.frame())
+    list2env(dotargs, env)  # updates env by reference
+  }
+
+  outC <- .Call("DEoptimC", lower, upper, fnPop, ctrl, env, fnMapC, PACKAGE="DEoptim")
 
   if(ctrl$parallelType == 'parallel')
     parallel::stopCluster(cl)

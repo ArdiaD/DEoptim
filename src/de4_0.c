@@ -50,8 +50,11 @@ SEXP DEoptimC(SEXP lower, SEXP upper, SEXP fn, SEXP control, SEXP rho, SEXP fnMa
 {
   int i, j, P=0;
 
-  if (!isFunction(fn))
-    error("fn is not a function!");
+  if (!isFunction(fn)) {
+    if (TYPEOF(fn) != EXTPTRSXP) {
+      error("fn must be either a function or external pointer!");
+    }
+  }
   if (!isEnvironment(rho))
     error("rho is not an environment!");
 
