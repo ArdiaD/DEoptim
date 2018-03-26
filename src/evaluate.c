@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rdefines.h>
+#include "deoptim.h"
 
 /*------objective function---------------------------------------*/
 
@@ -21,7 +22,6 @@ double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env)
    return(f_result);
 }
 
-typedef SEXP (*func_ptr)(SEXP, SEXP);
 SEXP genrose(SEXP x_, SEXP e_)
 {
   double *x = REAL(x_);
@@ -66,9 +66,25 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env,
      return parMat;
 
    if (TYPEOF(fcall) == EXTPTRSXP) {
-     func_ptr fptr = NULL;
-     fptr = (func_ptr)EXTPTR_PTR(fcall);
-     PROTECT(sexp_fvec = fptr(parMat, env)); P++;
+     optim_fnptr fptr = NULL;
+     fptr = (optim_fnptr)EXTPTR_PTR(fcall);
+     //PROTECT(sexp_fvec = fptr(parMat, env)); P++;
+
+     int nr = nrows(parMat);
+     int nc = ncols(parMat);
+
+     sexp_fvec = PROTECT(allocVector(REALSXP, nr)); P++;
+     SEXP rowpars = PROTECT(allocVector(REALSXP, nc)); P++;
+     double *pm = REAL(parMat);
+     double *rp = REAL(rowpars);
+     double *fv = REAL(sexp_fvec);
+     for (int i = 0; i < nr; i++) {
+       for (int j = 0; j < nc; j++) {
+         rp[j] = pm[i + j*nc];
+       }
+       fv[i] = asReal(fptr(rowpars, env));
+     }
+
    } else {
      PROTECT(fn = lang3(fcall, parMat, R_DotsSymbol)); P++;
      PROTECT(sexp_fvec = eval(fn, env)); P++;
