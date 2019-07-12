@@ -73,7 +73,7 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
            foreachArgs)
 }
 
-DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
+DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ..., fnPop = NULL,
                     fnMap=NULL) {
   if (length(lower) != length(upper))
     stop("'lower' and 'upper' are not of same length")
@@ -122,6 +122,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   ctrl$trace <- as.numeric(ctrl$trace)
   ctrl$specinitialpop <- as.numeric(ctrl$specinitialpop)
   ctrl$initialpop <- as.numeric(ctrl$initialpop)
+  if (is.null(fnPop)) {
   if(!is.null(ctrl$cluster)) { ## use provided cluster
     if(!inherits(ctrl$cluster, "cluster"))
       stop("cluster is not a 'cluster' class object")
@@ -173,6 +174,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
     fnPop <- function(params, ...) {
       apply(params,1,fn,...)
     }
+  }
   }
 
   ## Mapping function
