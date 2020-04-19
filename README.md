@@ -15,7 +15,20 @@ The latest stable version of `DEoptim` is available at 'https://cran.r-project.o
 
 The latest development version of `DEoptim` is available at 'https://github.com/ArdiaD/DEoptim'.
 
-Please cite `DEoptim` in publications:
+## Please cite the package in publications!
+
+By using `DEoptim` you agree to the following rules: 
+
+1) You must cite Ardia et al. (2019) in working papers and published papers that use `DEoptim`.
+2) You must place the following URL in a footnote to help others find `DEoptim`: https://CRAN.R-project.org/package=DEoptim. 
+3) You assume all risk for the use of `DEoptim`.
+
+Mullen, K., Ardia, D., Gil, D., Windover, D., Cline, J. (2011).  
+DEoptim: An R package for global optimization by Differential Evolution.  
+_Journal of Statistical Software_ **40**(6), pp.1-26.  
+http://dx.doi.org/10.18637/jss.v040.i06  
+
+## Other references
 
 Ardia, D., Mullen, K., Peterson, B.G., Ulrich, J. (20xx).  
 _DEoptim: Differential Evolution in R_.  
@@ -25,8 +38,3 @@ Ardia, D., Boudt, K., Carl, P., Mullen, K., Peterson, B.G. (2010).
 Differential Evolution with DEoptim: An application to non-convex portfolio optimization.  
 _R Journal_ **3**(1), pp.27-34.  
 https://journal.r-project.org/archive/2011-1/  
-
-Mullen, K., Ardia, D., Gil, D., Windover, D., Cline, J. (2011).  
-DEoptim: An R package for global optimization by Differential Evolution.  
-_Journal of Statistical Software_ **40**(6), pp.1-26.  
-http://dx.doi.org/10.18637/jss.v040.i06  
