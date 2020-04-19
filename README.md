@@ -10,9 +10,9 @@
 real-valued parameter vector. The implementation of Differential Evolution in DEoptim interfaces with C
 code for efficiency.  Moreover, the package is self-contained and does not depend on any other packages.
 
-The latest stable version of `DEoptim` is available at 'https://cran.r-project.org/package=DEoptim'.
+The latest stable version of `DEoptim` is available at https://cran.r-project.org/package=DEoptim.
 
-The latest development version of `DEoptim` is available at 'https://github.com/ArdiaD/DEoptim'.
+The latest development version of `DEoptim` is available at https://github.com/ArdiaD/DEoptim.
 
 ## Please cite the package in publications!
 
