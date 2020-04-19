@@ -1,10 +1,9 @@
 # DEoptim
 
+[![JSS](https://img.shields.io/badge/JSS-10.18637%2Fjss.v040.i06-brightgreen)](https://doi.org/10.18637/jss.v040.i06)
 [![CRAN](http://www.r-pkg.org/badges/version/DEoptim)](https://cran.r-project.org/package=DEoptim) 
 [![Downloads](http://cranlogs.r-pkg.org/badges/DEoptim?color=brightgreen)](http://www.r-pkg.org/pkg/DEoptim)
 [![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/DEoptim?color=brightgreen)](http://www.r-pkg.org/pkg/DEoptim)
-[![Pending Pull-Requests](http://githubbadges.herokuapp.com/ArdiaD/DEoptim/pulls.svg?style=flat)](https://github.com/ArdiaD/DEoptim/pulls)
-[![Github Issues](http://githubbadges.herokuapp.com/ArdiaD/DEoptim/issues.svg)](https://github.com/ArdiaD/DEoptim/issues)
 
 `DEoptim` (Ardia et al., 20xx) implements the Differential Evolution algorithm for global optimization of a real-valued function of a
 real-valued parameter vector. The implementation of Differential Evolution in DEoptim interfaces with C
