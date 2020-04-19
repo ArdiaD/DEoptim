@@ -25,7 +25,7 @@ By using `DEoptim` you agree to the following rules:
 Mullen, K., Ardia, D., Gil, D., Windover, D., Cline, J. (2011).  
 DEoptim: An R package for global optimization by Differential Evolution.  
 _Journal of Statistical Software_ **40**(6), pp.1-26.  
-http://dx.doi.org/10.18637/jss.v040.i06  
+https://doi.org//10.18637/jss.v040.i06  
 
 ## Other references
 
