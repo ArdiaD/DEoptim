@@ -1,5 +1,4 @@
 # DEoptim
-Differential evolution in R
 
 [![CRAN](http://www.r-pkg.org/badges/version/DEoptim)](https://cran.r-project.org/package=DEoptim) 
 [![Downloads](http://cranlogs.r-pkg.org/badges/DEoptim?color=brightgreen)](http://www.r-pkg.org/pkg/DEoptim)
@@ -19,7 +18,7 @@ The latest development version of `DEoptim` is available at 'https://github.com/
 
 By using `DEoptim` you agree to the following rules: 
 
-1) You must cite Ardia et al. (2019) in working papers and published papers that use `DEoptim`.
+1) You must cite Mullen et al. (2011) in working papers and published papers that use `DEoptim`.
 2) You must place the following URL in a footnote to help others find `DEoptim`: https://CRAN.R-project.org/package=DEoptim. 
 3) You assume all risk for the use of `DEoptim`.
 
