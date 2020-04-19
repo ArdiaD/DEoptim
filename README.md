@@ -31,7 +31,7 @@ https://doi.org//10.18637/jss.v040.i06
 
 Ardia, D., Mullen, K., Peterson, B.G., Ulrich, J. (20xx).  
 _DEoptim: Differential Evolution in R_.  
-R package 
+https://CRAN.R-project.org/package=DEoptim 
 
 Ardia, D., Boudt, K., Carl, P., Mullen, K., Peterson, B.G. (2010).  
 Differential Evolution with DEoptim: An application to non-convex portfolio optimization.  
