@@ -36,4 +36,4 @@ R package
 Ardia, D., Boudt, K., Carl, P., Mullen, K., Peterson, B.G. (2010).  
 Differential Evolution with DEoptim: An application to non-convex portfolio optimization.  
 _R Journal_ **3**(1), pp.27-34.  
-https://journal.r-project.org/archive/2011-1/  
+https://doi.org/10.32614/RJ-2011-005
