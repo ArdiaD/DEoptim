@@ -10,9 +10,8 @@
 DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   itermax = 200, CR = 0.5, F = 0.8, trace = TRUE, initialpop = NULL,
   storepopfrom = itermax + 1, storepopfreq = 1, p = 0.2, c = 0, reltol,
-  steptol, parallelType = c("none", "auto", "parallel", "foreach"),
-  cluster = NULL, packages = c(), parVar = c(), foreachArgs = list(),
-  parallelArgs = NULL)
+  steptol, parallelType = 0, cluster = NULL, packages = c(), parVar = c(),
+  foreachArgs = list())
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process
@@ -79,31 +78,32 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
  \item{parallelType}{Defines the type of parallelization to employ, if
    any.
-    \code{none}: The default, this uses \code{DEoptim} on only one core.
-    \code{auto}: will attempt to auto-detect \code{foreach}, or \code{parallel}.
-    \code{parallel}: This uses all available cores, via the \pkg{parallel}
-    package, to run \code{DEoptim}.  
-    \code{foreach}: This uses the \pkg{foreach} package for parallelism; see
-    the \code{sandbox} directory in the source code for examples. 
+    \code{0}: The default, this uses \code{DEoptim} on one only one core.
+    \code{1}: This uses all available cores, via the \pkg{parallel}
+    package, to run \code{DEoptim}.  If \code{parallelType=1}, then the
+    \code{packages} argument and the \code{parVar} argument need to
+    specify the packages required by the objective function and the
+    variables required in the environment, respectively. 
+    \code{2}: This uses the \pkg{foreach} package for parallelism; see
+    the \code{sandbox} directory in the source code for examples.  If
+    \code{parallelType=2}, then the \code{foreachArgs} argument can pass
+    the options to be called with \code{foreach}.  
   }
-  \item{cluster}{Existing \pkg{parallel} cluster object. If provided, overrides
-  specified \code{parallelType}. Using \code{cluster} allows fine-grained control
-  over the number of used cores and exported data.}
+   \item{cluster}{Existing \pkg{parallel} cluster object. If provided, overrides
++  specified \code{parallelType}. Using \code{cluster} allows fine-grained control
++  over the number of used cores and exported data.}
   \item{packages}{Used if  \code{parallelType=1}; a list of
     package names (as strings) that need to be loaded for use by the objective
   function. }
 \item{parVar}{Used if  \code{parallelType=1};  a list of variable names
   (as strings) that need to exist in the environment for use by the
   objective function or are used as arguments by the objective
-  function. }
+  function. }  
   \item{foreachArgs}{A list of named arguments for the \code{foreach}
     function from the
     package \pkg{foreach}.  The arguments \code{i}, \code{.combine} and
     \code{.export} are not possible to set here; they are set
     internally. }
-  \item{parallelArgs}{A list of named arguments for the parallel engine.
-      For package \pkg{foreach}, the argument \code{i}
-      is not possible to set here; it is set internally. }
  }
 \value{
   The default value of \code{control} is the return value of 
@@ -203,19 +203,19 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
 }
 \references{
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
-  Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio
-  Optimization. URL \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
+  Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
+  \emph{R Journal}, 3(1), 27-34. 
+  \doi{10.32614/RJ-2011-005}
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
-  Jump-Diffusion Calibration using Differential Evolution.
-  Wilmott Magazine, 55 (September), 76-79.
-  URL \url{http://www.wilmott.com}.
-  
-  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
-  J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
-  Differential Evolution. \emph{Journal of Statistical Software}, 40(6), 1-26.
-  URL \url{http://www.jstatsoft.org/v40/i06/}.
+  Jump-Diffusion Calibration using Differential Evolution. 
+  \emph{Wilmott Magazine}, 55 (September), 76-79.
+  \doi{10.1002/wilm.10034}
+
+  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,J. (2011). 
+  \pkg{DEoptim:} An R Package for Global Optimization by Differential Evolution. 
+  \emph{Journal of Statistical Software}, 40(6), 1-26.
+  \doi{10.18637/jss.v040.i06}
   
   Price, K.V., Storn, R.M., Lampinen J.A. (2006)
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.

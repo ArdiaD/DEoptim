@@ -48,18 +48,18 @@
 \references{
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
-  \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
+  \emph{R Journal}, 3(1), 27-34. 
+  \doi{10.32614/RJ-2011-005}
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution. 
   \emph{Wilmott Magazine}, 55 (September), 76-79.
-  URL \url{http://www.wilmott.com}.
+  \doi{10.1002/wilm.10034}
 
-  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
-  J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
-  Differential Evolution. \emph{Journal of Statistical Software}, 40(6), 1-26.
-  URL \url{http://www.jstatsoft.org/v40/i06/}.
+  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,J. (2011). 
+  \pkg{DEoptim:} An R Package for Global Optimization by Differential Evolution. 
+  \emph{Journal of Statistical Software}, 40(6), 1-26.
+  \doi{10.18637/jss.v040.i06}
 }
 \examples{
   ## Rosenbrock Banana function

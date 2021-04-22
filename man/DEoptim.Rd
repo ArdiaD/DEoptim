@@ -19,8 +19,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   \item{control}{a list of control parameters; see \code{\link{DEoptim.control}}.}
   \item{fnMap}{an optional function that will be run after each population is
     created, but before the population is passed to the objective function. This
-    allows the user to impose integer/cardinality constriants.  See the
-    the sandbox directory of the source code for a simple example. }
+    allows the user to impose integer/cardinality constriants.}
   \item{...}{further arguments to be passed to \code{fn}.}
 }
 \details{
@@ -44,7 +43,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   to store the population, removing limitations on the number of members
   in the population and length of the parameter vectors that may be
   optimized.  Since version 2.2-0, the package allows for parallel
-  operation, so that the evaluations of the objective function may be
+  operation, so that the evaluations of the objective function may be 
   performed using all available cores.  This is accomplished using either
   the built-in \pkg{parallel} package or the \pkg{foreach} package.  If
   parallel operation is desired, the user should set \code{parallelType}
@@ -211,27 +210,26 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
 }
 \references{
   Differential Evolution homepage:
-  URL \url{http://www.icsi.berkeley.edu/~storn/code.html}.
+  \url{http://www.icsi.berkeley.edu/~storn/code.html}.
 
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
-  \emph{The R Journal}, 3(1), 27-34. 
-  URL \url{https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Ardia~et~al.pdf}.
+  \emph{R Journal}, 3(1), 27-34. 
+  \doi{10.32614/RJ-2011-005}
 
   Ardia, D., Ospina Arango, J.D., Giraldo Gomez, N.D. (2011)
   Jump-Diffusion Calibration using Differential Evolution. 
   \emph{Wilmott Magazine}, 55 (September), 76-79.
-  URL \url{http://www.wilmott.com}.
+  \doi{10.1002/wilm.10034}
   
   Mitchell, M. (1998) 
   \emph{An Introduction to Genetic Algorithms}.
   The MIT Press. ISBN 0262631857.
 
-  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,
-  J. (2011). \pkg{DEoptim:} An R Package for Global Optimization by
-  Differential Evolution. 
+  Mullen, K.M, Ardia, D., Gil, D., Windover, D., Cline,J. (2011). 
+  \pkg{DEoptim:} An R Package for Global Optimization by Differential Evolution. 
   \emph{Journal of Statistical Software}, 40(6), 1-26.
-  URL \url{http://www.jstatsoft.org/v40/i06/}.
+  \doi{10.18637/jss.v040.i06}
 
   Price, K.V., Storn, R.M., Lampinen J.A. (2006)
   \emph{Differential Evolution - A Practical Approach to Global Optimization}.
@@ -301,8 +299,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
           control = DEoptim.control(NP = 50))
  
   ## The below examples shows how the call to DEoptim can be
-  ## parallelized; see the sandbox directory in the source
-  ## code for additional examples.
+  ## parallelized.
   ## Note that if your objective function requires packages to be
   ## loaded or has arguments supplied via \code{...}, these should be
   ## specified using the \code{packages} and \code{parVar} arguments

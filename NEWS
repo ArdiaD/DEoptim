@@ -1,6 +1,20 @@
+Changes in version 2.2-6
+  o README modified
+  o DESCRIPTION modified
+  o References updated
+Changes in version 2.2-5 
+  o Used tools::package_native_routine_registration_skeleton(".") to create 
+    src/DEoptim_init.c 
+  o In NAMESPACE, changed useDynLib(DEoptim) to useDynLib(DEoptim,
+    .registration = TRUE))
+  o removed unused variables from de4_0.c:  tmp_best, t_tmpC, same,
+    i_xav, i_nstorepop, tempP, gta_newC, gta_oldC, popC, d_par
+  o definition of popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall,
+    SEXP env)  changed to include a 5th integer argument, to remove warning
+    about type mismatch with previous definition
 Changes in version 2.2-4
   o Vignette source code included in package.
-  o New option 'cluster' allows passing existing parallel cluster, using
+  o New option 'cluster' allows passing existing parallel cluster, using 
     code by Alexey Stukalov.
   o As pointed out by Jason Thorpe: "paralell:::.onLoad() makes a call
     to stats::runif(1L) depending on whether or not
@@ -10,15 +24,13 @@ Changes in version 2.2-4
     called, even when taking care to call set.seed() prior to calling
     DEoptim()."  We now require 'parallel' (to ensure it is loaded)
     to avoid this behaviour.
-
 Changes in version 2.2-3
-  o DESCRIPTION updated.
+  o DESCRIPTION updated. 
   o Change to steptol interpretation in C, thanks to Alec Solway.
   o Change to foreach logic, thanks to Jonathan Owen.
   o Change to NP setting when initialpop provided, thanks to Tobias KD Weber.
-  o More flexible passing of args to foreach.
+  o More flexible passing of args to foreach. 
   o Makefile changed to remove references to shell
-
 Changes in version 2.2-2
   o Change to de4_0.c to replace memcpy with memmove
 
