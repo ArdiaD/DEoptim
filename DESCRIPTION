@@ -14,14 +14,5 @@ BugReports: https://github.com/ArdiaD/DEoptim/issues
 URL: https://github.com/ArdiaD/DEoptim
 License: GPL (>= 2)
 Repository: CRAN
-Author: David Ardia [aut],
-  Katharine Mullen [aut, cre],
-  Brian Peterson [aut],
-  Joshua Ulrich [aut],
-  Kris Boudt [ctb]
 Maintainer: Katharine Mullen <mullenkate@gmail.com>
 NeedsCompilation: yes
-
-
-
-

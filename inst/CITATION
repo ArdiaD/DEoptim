@@ -16,7 +16,7 @@ citEntry(entry = "article",
   volume       = "40",
   number       = "6",
   pages        = "1--26",
-  doi          = "10.18637/jss.v040.i06,
+  doi          = "10.18637/jss.v040.i06",
   textVersion  =
   paste("Katharine Mullen, David Ardia, David Gil, Donald Windover, James Cline (2011).",
         "'DEoptim': An R Package for Global Optimization by Differential Evolution.",

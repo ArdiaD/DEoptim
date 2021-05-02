@@ -37,8 +37,7 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   Visual C++ v5.0 implementation of the Differential Evolution algorithm
   distributed with the book \emph{Differential Evolution -- A Practical
   Approach to Global Optimization} by Price, K.V., Storn, R.M., Lampinen
-  J.A, Springer-Verlag, 2006, and found on-line at
-  \url{http://www1.icsi.berkeley.edu/~storn/code.html}. Since version
+  J.A, Springer-Verlag, 2006. Since version
   2.0-3 the C implementation dynamically allocates the memory required
   to store the population, removing limitations on the number of members
   in the population and length of the parameter vectors that may be
@@ -209,9 +208,6 @@ DEoptim(fn, lower, upper, control = DEoptim.control(), ..., fnMap=NULL)
   the reader to Storn and Price (1997) and Price et al. (2006).
 }
 \references{
-  Differential Evolution homepage:
-  \url{http://www.icsi.berkeley.edu/~storn/code.html}.
-
   Ardia, D., Boudt, K., Carl, P., Mullen, K.M., Peterson, B.G. (2011)
   Differential Evolution with \pkg{DEoptim}. An Application to Non-Convex Portfolio Optimization. 
   \emph{R Journal}, 3(1), 27-34. 
