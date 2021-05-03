@@ -4,13 +4,9 @@
 real-valued parameter vector. The implementation of Differential Evolution in DEoptim interfaces with C
 code for efficiency.  Moreover, the package is self-contained and does not depend on any other packages.
 
-## Please cite the package in publications!
+## Please cite [Mullen et al. (2011)](https://doi.org//10.18637/jss.v040.i06) in working papers and published papers that use `DEoptim`.
 
-By using `DEoptim` you agree to the following rules: 
-
-1) You must cite [Mullen et al. (2011)](https://doi.org//10.18637/jss.v040.i06) in working papers and published papers that use `DEoptim`.
-2) You must place the following URL in a footnote to help others find `DEoptim`: [https://CRAN.R-project.org/package=DEoptim](https://CRAN.R-project.org/package=DEoptim). 
-3) You assume all risk for the use of `DEoptim`.
+## Papers discussing the package and its applications:  
 
 Mullen, K., Ardia, D., Gil, D., Windover, D., Cline, J. (2011).  
 DEoptim: An R package for global optimization by Differential Evolution.  
