@@ -76,7 +76,7 @@ timeALLCORES1 <- system.time(out2 <- DEoptim(fn=obj, lower=lower, upper=upper,
 #############################################################################
 
 ## Find out how many CPUs are available on the local machine 
-nC <- detectCores() 
+nC <- parallelly::availableCores() 
 
 ## Get ready to evaluate on all these cores 
 cl <- makeSOCKcluster(nC)

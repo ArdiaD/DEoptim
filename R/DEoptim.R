@@ -157,7 +157,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         }
     }
     else if(ctrl$parallelType == 1){ ## use parallel 
-        cl <- parallel::makeCluster(parallel::detectCores())
+        cl <- parallel::makeCluster(availableCores())
         packFn <- function(packages) {
             for(i in packages)
                 library(i, character.only = TRUE)
