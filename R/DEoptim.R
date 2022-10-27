@@ -139,7 +139,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
             my_chunksize <- ceiling(NROW(params)/foreach::getDoParWorkers())
             my_iter <- iterators::iter(params,by="row",chunksize=my_chunksize)
             args$i <- my_iter
-            args$.combine <- c
+            if(is.null(args$.combine)) args$.combine <- c
             if (!is.null(args$.export))
                 args$.export = c(args$.export, "fn")
             else
