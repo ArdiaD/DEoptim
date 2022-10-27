@@ -40,7 +40,7 @@ void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
            double d_reltol, int i_steptol, SEXP fnMap);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
-double evaluate(long *l_nfeval, SEXP par, SEXP fcall, SEXP env);
+double evaluate(long *l_nfeval, SEXP fcall, SEXP env);
 SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, int incrementEval);
 
 
@@ -167,9 +167,6 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 #define URN_DEPTH  5   /* 4 + one index to avoid */
 
   int P=0;
-  /* initialize parameter vector to pass to evaluate function */
-  SEXP par;
-  PROTECT(par = NEW_NUMERIC(i_D)); P++;
   
   /* Data structures for parameter vectors */
   SEXP sexp_gta_popP, sexp_gta_oldP, sexp_gta_newP, sexp_map_pop;
