@@ -127,7 +127,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
             stop("cluster is not a 'cluster' class object")
         parallel::clusterExport(ctrl$cluster, ctrl$parVar)
         fnPop <- function(`*params`, ...) {
-            parallel::parApply(cl=ctrl$cluster,`*params`,1,fn,...)
+            parallel::parApply(cl=ctrl$cluster,X=`*params`,MARGIN=1,FUN=fn,...)
         }
     }
     else if(ctrl$parallelType == 2) { ## use foreach 
@@ -152,7 +152,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
                 args$.inorder = TRUE
             if (is.null(args$.multicombine))
                 args$.multicombine = FALSE
-            foreach::"%dopar%"(do.call(foreach::foreach, args), apply(i,1,fn,...))
+            foreach::"%dopar%"(do.call(foreach::foreach, args), apply(X=i,MARGIN=1,FUN=fn,...))
       
         }
     }
@@ -165,7 +165,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         parallel::clusterCall(cl, packFn, ctrl$packages)
         parallel::clusterExport(cl, ctrl$parVar)
         fnPop <- function(`*params`, ...) {
-            parallel::parApply(cl=cl,`*params`,1,fn,...)
+            parallel::parApply(cl=cl,X=`*params`,MARGIN=1,FUN=fn,...)
         }
     }
     else {  ## use regular for loop / apply
@@ -177,8 +177,9 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   ## Mapping function
   fnMapC <- NULL
   if(!is.null(fnMap)) {   
-        fnMapC <- function(`*params`,...) {
-            mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fn, ...))   ## run mapping function
+    fnMapC <- function(`*params`,...) {
+            ## run mapping function
+            mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fnMap, ...))
             if(all(dim(mappedPop) != dim(`*params`)))  ## check results
                 stop("mapping function did not return an object with ",
                      "dim NP x length(upper).")
