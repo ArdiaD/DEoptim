@@ -163,7 +163,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
                 library(i, character.only = TRUE)
         }
         parallel::clusterCall(cl, packFn, ctrl$packages)
-        parallel::clusterExport(cl, ctrl$parVar)
+        parallel::clusterExport(ctrl$cluster, ctrl$parVar)
         fnPop <- function(params, ...) {
             parallel::parApply(cl=cl,params,1,fn,...)
         }
