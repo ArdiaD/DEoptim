@@ -126,8 +126,8 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         if(!inherits(ctrl$cluster, "cluster"))
             stop("cluster is not a 'cluster' class object")
         parallel::clusterExport(cl, ctrl$parVar)
-        fnPop <- function(params, ...) {
-            parallel::parApply(cl=ctrl$cluster,params,1,fn,...)
+        fnPop <- function(`*params`, ...) {
+            parallel::parApply(cl=ctrl$cluster,`*params`,1,fn,...)
         }
     }
     else if(ctrl$parallelType == 2) { ## use foreach 
@@ -135,9 +135,9 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
             foreach::registerDoSEQ()
         }
         args <-  ctrl$foreachArgs
-        fnPop <- function(params, ...) {
-            my_chunksize <- ceiling(NROW(params)/foreach::getDoParWorkers())
-            my_iter <- iterators::iter(params,by="row",chunksize=my_chunksize)
+        fnPop <- function(`*params`, ...) {
+            my_chunksize <- ceiling(NROW(`*params`)/foreach::getDoParWorkers())
+            my_iter <- iterators::iter(`*params`,by="row",chunksize=my_chunksize)
             args$i <- my_iter
             if(is.null(args$.combine)) args$.combine <- c
             if (!is.null(args$.export))
@@ -164,12 +164,12 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         }
         parallel::clusterCall(cl, packFn, ctrl$packages)
         parallel::clusterExport(ctrl$cluster, ctrl$parVar)
-        fnPop <- function(params, ...) {
-            parallel::parApply(cl=cl,params,1,fn,...)
+        fnPop <- function(`*params`, ...) {
+            parallel::parApply(cl=cl,`*params`,1,fn,...)
         }
     }
     else {  ## use regular for loop / apply
-        fnPop <- function(params, ...) {
+        fnPop <- function(`*params`, ...) {
             apply(X = i, MARGIN = 1, FUN = fn, ...)
         }
     }
@@ -179,7 +179,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   if(!is.null(fnMap)) {   
         fnMapC <- function(`*params`,...) {
             mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fn, ...))   ## run mapping function
-            if(all(dim(mappedPop) != dim(params)))  ## check results
+            if(all(dim(mappedPop) != dim(`*params`)))  ## check results
                 stop("mapping function did not return an object with ",
                      "dim NP x length(upper).")
             dups <- duplicated(mappedPop)  ## check for duplicates
