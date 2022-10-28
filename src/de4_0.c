@@ -40,7 +40,6 @@ void devol(double VTR, double d_weight, double fcross, int i_bs_flag,
            int *gi_iter, double d_pPct, double d_c, long *l_nfeval,
            double d_reltol, int i_steptol, SEXP fnMap);
 void permute(int ia_urn2[], int i_urn2_depth, int i_NP, int i_avoid, int ia_urn1[]);
-double evaluate(long *l_nfeval, SEXP fcall, SEXP env);
 SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, int incrementEval);
 
 
