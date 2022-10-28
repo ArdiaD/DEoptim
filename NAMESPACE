@@ -6,5 +6,6 @@ importFrom("grDevices", "devAskNewPage")
 importFrom("graphics", "abline", "matplot", "par", "plot", "plot.new")
 importFrom("stats", "runif")
 importFrom("parallel", "clusterExport", "parApply", "makeCluster",
-           "clusterCall", "detectCores", "stopCluster")
+           "clusterCall", "stopCluster")
+importFrom("parallelly", "availableCores")
 

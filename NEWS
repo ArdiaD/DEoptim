@@ -1,3 +1,6 @@
+Changes in version 2.2-6-9000
+  o Using parallelly::availableCores() instead of parallel::detectCores()
+  
 Changes in version 2.2-6
   o README modified
   o DESCRIPTION modified
@@ -16,7 +19,7 @@ Changes in version 2.2-4
   o Vignette source code included in package.
   o New option 'cluster' allows passing existing parallel cluster, using 
     code by Alexey Stukalov.
-  o As pointed out by Jason Thorpe: "paralell:::.onLoad() makes a call
+  o As pointed out by Jason Thorpe: "parallel:::.onLoad() makes a call
     to stats::runif(1L) depending on whether or not
     Sys.getenv("R_PARALLEL_PORT") returns an integer, which appears to
     be platform dependent.  The result of this bug is that the return
