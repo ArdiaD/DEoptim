@@ -170,7 +170,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
     }
     else {  ## use regular for loop / apply
         fnPop <- function(`*params`, ...) {
-            apply(X = i, MARGIN = 1, FUN = fn, ...)
+            apply(X = `*params`, MARGIN = 1, FUN = fn, ...)
         }
     }
     
