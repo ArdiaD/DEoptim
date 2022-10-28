@@ -29,8 +29,9 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, int incremen
 
    if (isNull(fcall))
     return parMat;
-      (*l_nfeval)++;  /* increment function evaluation count */
 
+   if(incrementEval)
+     (*l_nfeval) += nr;  
    PROTECT(sexp_fvec = eval(fn, env)); P++;
    int nr = nrows(sexp_fvec);
    if(nr != nrows(parMat))
