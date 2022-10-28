@@ -446,6 +446,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
 
       }
     } /* End mutation loop through ensemble */
+    UNPROTECT(1);  // sexp_t_tmpC
    
     if (d_c > 0) { /* calculate new meanCR and meanF */
       meanCR = (1-d_c)*meanCR + d_c*goodCR;
@@ -545,7 +546,7 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   *gt_bestC = t_bestC;
 
   PutRNGstate();
-  UNPROTECT(P+1);
+  UNPROTECT(P);
 
 }
 
