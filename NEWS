@@ -1,6 +1,26 @@
-Changes in version 2.2-6-9000
-  o Using parallelly::availableCores() instead of parallel::detectCores()
-  
+Changes in version 2.2-7
+  o Added if(is.null(args$.combine)) args$.combine <- c to DEoptim.R to allow
+    for optional custom .combine
+  o Set default mapping function to NULL; This improves performance by
+    allowing us to avoid one R call during the optimization if there is no
+    mapping function.
+  o Remove unused variable par in de4_0.c o Remove unnecessary
+    allocation of sexp_t_tmpC, sexp_gta_oldC in de4_0.c that led to
+    stack imbalance, potential crash.
+  o Update comments in de4_0.c to reflect variable names that were
+    changed when objects were converted from arrays to SEXPs.
+  o Refactor the loop that populates t_bestC from the initial
+    population, so there's no longer the potential for t_bestC to be
+    uninitialized.
+  o Fix call to parallel::clusterExport
+  o Use full names to avoid partial matching; Partial argument name
+    matching could cause confusing errors if the user's objective
+    function contains arguments similar to the MARGIN and FUN
+    arguments in apply().
+  o Added tests/ directory; tests.R now tests for problems in
+    arguement names
+  o Import from parallelly package; use parallelly::availableCores() instead of
+    parallel::detectCores() in extension suggested by Henrik Bengtsson 
 Changes in version 2.2-6
   o README modified
   o DESCRIPTION modified
