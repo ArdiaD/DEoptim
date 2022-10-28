@@ -26,9 +26,11 @@ SEXP popEvaluate(long *l_nfeval, SEXP parMat, SEXP fcall, SEXP env, int incremen
    SEXP sexp_fvec, fn;
    double *d_result;
    int P = 0;
+   int nr;
 
    if (isNull(fcall))
     return parMat;
+   PROTECT(fn = lang3(fcall, parMat, R_DotsSymbol)); P++;
    PROTECT(sexp_fvec = eval(fn, env)); P++;
    int nr = nrows(sexp_fvec);
    if(incrementEval)
