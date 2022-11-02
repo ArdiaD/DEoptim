@@ -15,6 +15,6 @@ lower <- c(-10, -10)
 upper <- -lower
 
 set.seed(21)
-deCtrl <- DEoptim.control(trace = FALSE), parallelType = "parallel")
+deCtrl <- DEoptim.control(trace = FALSE, parallelType = "parallel")
 deopt <- DEoptim(RosenbrockPartialMatch, lower, upper, deCtrl,
                  p = NULL, M = NULL, F = NULL)
