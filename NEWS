@@ -4,9 +4,9 @@ Changes in version 2.2-7
   o Set default mapping function to NULL; This improves performance by
     allowing us to avoid one R call during the optimization if there is no
     mapping function.
-  o Remove unused variable par in de4_0.c o Remove unnecessary
-    allocation of sexp_t_tmpC, sexp_gta_oldC in de4_0.c that led to
-    stack imbalance, potential crash.
+  o Remove unused variable par in de4_0.c
+  o Remove unnecessary allocation of sexp_t_tmpC, sexp_gta_oldC in
+    de4_0.c that led to stack imbalance, potential crash.
   o Update comments in de4_0.c to reflect variable names that were
     changed when objects were converted from arrays to SEXPs.
   o Refactor the loop that populates t_bestC from the initial
@@ -19,8 +19,14 @@ Changes in version 2.2-7
     arguments in apply().
   o Added tests/ directory; tests.R now tests for problems in
     arguement names
-  o Import from parallelly package; use parallelly::availableCores() instead of
-    parallel::detectCores() in extension suggested by Henrik Bengtsson 
+  o Import from parallelly package; use parallelly::availableCores()
+    instead of parallel::detectCores() in extension suggested by
+    Henrik Bengtsson
+  o The 'parallelType' argument to DEoptim.control() now may be
+    specified using numeric values (as before), or using "none",
+    "auto", "parallel", or "foreach"; "none" corresponds to the
+    numeric value 0, "parallel" with 1, and "foreach" with 2; "auto"
+    will attempt to decide which package to use
 Changes in version 2.2-6
   o README modified
   o DESCRIPTION modified
