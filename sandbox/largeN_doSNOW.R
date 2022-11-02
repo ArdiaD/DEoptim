@@ -44,7 +44,7 @@ obj <- function(w) {
 
 controlDE <- list(NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
                   reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
-                  parallelType = 0)
+                  parallelType = 'none')
 
 ## Call DEoptim using only one CPU
 set.seed(1234)
@@ -62,7 +62,7 @@ out1$optim$bestval
 
 controlDE1 <- list(NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
                    reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
-                   parallelType = 1, 
+                   parallelType = 'parallel', 
                    packages = list("PerformanceAnalytics"),
                    parVar = list("mu", "sigma", "m3", "m4"))
 
@@ -93,7 +93,7 @@ registerDoSNOW(cl)
 controlDE <- list(
                   NP = nrow(rp), initialpop = rp, trace = 1, itermax = 5,
                   reltol = 0.000001, steptol = 150, c = 0.4, strategy = 6,
-                  parallelType = 2)
+                  parallelType = 'foreach')
 
 ## Call DEoptim using all available cores 
 ## *do not* pass mu, sigma, m3, m4 
@@ -107,5 +107,3 @@ stopCluster(cl)
 timeONECORE
 timeALLCORES1
 timeALLCORES2
-
-

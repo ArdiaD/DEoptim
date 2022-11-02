@@ -10,7 +10,7 @@ Description: Implements the Differential Evolution algorithm for global optimiza
       of a real-valued parameter vector as described in Mullen et al. (2011) <doi:10.18637/jss.v040.i06>.
 Suggests: foreach, iterators, colorspace, lattice
 Depends: parallel
-Imports: parallelly
+Imports: parallelly, methods
 BugReports: https://github.com/ArdiaD/DEoptim/issues
 URL: https://github.com/ArdiaD/DEoptim
 License: GPL (>= 2)

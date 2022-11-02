@@ -10,8 +10,9 @@
 DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
   itermax = 200, CR = 0.5, F = 0.8, trace = TRUE, initialpop = NULL,
   storepopfrom = itermax + 1, storepopfreq = 1, p = 0.2, c = 0, reltol,
-  steptol, parallelType = 0, cluster = NULL, packages = c(), parVar = c(),
-  foreachArgs = list())
+  steptol, parallelType = c("none", "auto", "parallel", "foreach"),
+  cluster = NULL, packages = c(), parVar = c(),
+  foreachArgs = list(), parallelArgs = NULL)
 }
 \arguments{
    \item{VTR}{the value to be reached. The optimization process
@@ -78,24 +79,20 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
  \item{steptol}{see \code{reltol}. Defaults to \code{itermax}.}
  \item{parallelType}{Defines the type of parallelization to employ, if
    any.
-    \code{0}: The default, this uses \code{DEoptim} on one only one core.
-    \code{1}: This uses all available cores, via the \pkg{parallel}
-    package, to run \code{DEoptim}.  If \code{parallelType=1}, then the
-    \code{packages} argument and the \code{parVar} argument need to
-    specify the packages required by the objective function and the
-    variables required in the environment, respectively. 
-    \code{2}: This uses the \pkg{foreach} package for parallelism; see
-    the \code{sandbox} directory in the source code for examples.  If
-    \code{parallelType=2}, then the \code{foreachArgs} argument can pass
-    the options to be called with \code{foreach}.  
+    \code{none}: The default, this uses \code{DEoptim} on only one core.
+     \code{auto}: will attempt to auto-detect \code{foreach}, or \code{parallel}.
+     \code{parallel}: This uses all available cores, via the \pkg{parallel}
+     package, to run \code{DEoptim}.  
+     \code{foreach}: This uses the \pkg{foreach} package for parallelism; see
+     the \code{sandbox} directory in the source code for examples. 
   }
    \item{cluster}{Existing \pkg{parallel} cluster object. If provided, overrides
 +  specified \code{parallelType}. Using \code{cluster} allows fine-grained control
 +  over the number of used cores and exported data.}
-  \item{packages}{Used if  \code{parallelType=1}; a list of
+  \item{packages}{Used if  \code{parallelType='parallel'}; a list of
     package names (as strings) that need to be loaded for use by the objective
   function. }
-\item{parVar}{Used if  \code{parallelType=1};  a list of variable names
+\item{parVar}{Used if  \code{parallelType='parallel'};  a list of variable names
   (as strings) that need to exist in the environment for use by the
   objective function or are used as arguments by the objective
   function. }  
@@ -104,6 +101,9 @@ DEoptim.control(VTR = -Inf, strategy = 2, bs = FALSE, NP = NA,
     package \pkg{foreach}.  The arguments \code{i}, \code{.combine} and
     \code{.export} are not possible to set here; they are set
     internally. }
+ \item{parallelArgs}{A list of named arguments for the parallel engine.
+  For package \pkg{foreach}, the argument \code{i} is not possible to
+  set here; it is set internally. }
  }
 \value{
   The default value of \code{control} is the return value of 
@@ -240,4 +240,3 @@ DEoptim.control(NP = 20, itermax = 100, trace = FALSE)
 }
 \keyword{nonlinear}
 \keyword{optimize}
-
