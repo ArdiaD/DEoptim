@@ -6,7 +6,9 @@ Authors@R: c(person("David", "Ardia", role = c("aut"), email = "david.ardia.ch@g
              person("Brian", "Peterson", role = "aut"), 
              person("Joshua", "Ulrich", role = "aut"), 
              person("Kris", "Boudt", role = "ctb"))
-Description: Implements the Differential Evolution algorithm for global optimization of a real-valued function of a real-valued parameter vector as described in Mullen et al. (2011) <doi:10.18637/jss.v040.i06>.
+Description: Implements the Differential Evolution algorithm for global
+    optimization of a real-valued function of a real-valued parameter
+    vector as described in Mullen et al. (2011) <doi:10.18637/jss.v040.i06>.
 Suggests: foreach, iterators, colorspace, lattice
 Depends: parallel
 Imports: parallelly, methods
