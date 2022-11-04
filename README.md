@@ -1,9 +1,9 @@
 # DEoptim
-[![CRAN](https://www.r-pkg.org/badges/version/DEoptim)](https://cran.r-project.org/package=DEoptim) 
+[![CRAN](https://www.r-pkg.org/badges/version/DEoptim)](https://cran.r-project.org/package=DEoptim)
 [![Downloads](https://cranlogs.r-pkg.org/badges/DEoptim?color=brightgreen)](https://www.r-pkg.org/pkg/DEoptim)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/DEoptim?color=brightgreen)](https://www.r-pkg.org/pkg/DEoptim)
 
-`DEoptim` ([Ardia et al., 20xx](https://CRAN.R-project.org/package=DEoptim )) implements the Differential Evolution algorithm for global optimization of a real-valued function of a real-valued parameter vector. The implementation of Differential Evolution in DEoptim interfaces with C
+`DEoptim` ([Ardia et al., 20xx](https://CRAN.R-project.org/package=DEoptim)) implements the Differential Evolution algorithm for global optimization of a real-valued function of a real-valued parameter vector. The implementation of Differential Evolution in DEoptim interfaces with C
 code for efficiency.  
 
 The latest stable version of `DEoptim` is available at [https://cran.r-project.org/package=DEoptim](https://cran.r-project.org/package=DEoptim).
