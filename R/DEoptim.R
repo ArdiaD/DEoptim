@@ -173,9 +173,13 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         if(!inherits(ctrl$cluster, "cluster"))
             stop("cluster is not a 'cluster' class object")
         parallel::clusterExport(ctrl$cluster, ctrl$parVar)
-        fnPop <- function(`*params`, ...) {
-            parallel::parApply(cl=ctrl$cluster,X=`*params`,MARGIN=1,
-	    FUN=fn,ctrl$parallelArgs,...)
+        if(!is.null(ctrl$parallelArgs))
+          fnPop <- function(`*params`, ...) {
+            parallel::parApply(cl=ctrl$cluster,X=`*params`,MARGIN=1,FUN=fn,ctrl$parallelArgs,...)
+        }
+	      else
+	        fnPop <- function(`*params`, ...) {
+            parallel::parApply(cl=ctrl$cluster,X=`*params`,MARGIN=1,FUN=fn,...)
         }
     }
     else if(ctrl$parallelType == 'foreach') { ## use foreach
