@@ -235,7 +235,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
   if(!is.null(fnMap)) {   
     fnMapC <- function(`*params`,...) {
             ## run mapping function
-            mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fnMap, ...))
+            mappedPop <- t(apply(X = `*params`, MARGIN = 1, FUN = fnMap))
             if(all(dim(mappedPop) != dim(`*params`)))  ## check results
                 stop("mapping function did not return an object with ",
                      "dim NP x length(upper).")
