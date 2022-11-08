@@ -255,9 +255,8 @@ void devol(double VTR, double d_weight, double d_cross, int i_bs_flag,
   }
   PROTECT(sexp_gta_popC = popEvaluate(l_nfeval, sexp_gta_popP,  fcall, rho, 1));
   ngta_popC = REAL(sexp_gta_popC);
-  t_bestC = ngta_popC[0];
-  for (i = 1; i < i_NP; i++) {
-    if (ngta_popC[i] <= t_bestC) {
+  for (i = 0; i < i_NP; i++) {
+    if (i == 0 || ngta_popC[i] <= t_bestC) {
       t_bestC = ngta_popC[i];
       for (j = 0; j < i_D; j++)
         gt_bestP[j]=ngta_popP[i+i_NP*j];
