@@ -7,6 +7,5 @@ importFrom("graphics", "abline", "matplot", "par", "plot", "plot.new")
 importFrom("stats", "runif")
 importFrom("parallel", "clusterExport", "parApply", "makeCluster",
            "clusterCall", "stopCluster")
-importFrom("parallelly", "availableCores")
 importFrom("methods", "hasArg")
 importFrom("utils", "installed.packages")

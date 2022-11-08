@@ -9,9 +9,9 @@ Authors@R: c(person("David", "Ardia", role = c("aut"), email = "david.ardia.ch@g
 Description: Implements the Differential Evolution algorithm for global
     optimization of a real-valued function of a real-valued parameter
     vector as described in Mullen et al. (2011) <doi:10.18637/jss.v040.i06>.
-Suggests: foreach, iterators, colorspace, lattice
+Suggests: foreach, iterators, colorspace, lattice, parallelly
 Depends: parallel
-Imports: parallelly, methods
+Imports: methods
 BugReports: https://github.com/ArdiaD/DEoptim/issues
 URL: https://github.com/ArdiaD/DEoptim
 License: GPL (>= 2)
