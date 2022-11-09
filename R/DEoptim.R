@@ -11,15 +11,15 @@ DEoptim.control <- function(VTR = -Inf, strategy = 2, bs = FALSE, NP =
     warning("'itermax' <= 0; set to default value 200\n", immediate. = TRUE)
     itermax <- 200
   }
-  if (F < 0 | F > 2) {
+  if (F < 0 || F > 2) {
     warning("'F' not in [0,2]; set to default value 0.8\n", immediate. = TRUE)
     F <- 0.8
   }
-  if (CR < 0 | CR > 1) {
+  if (CR < 0 || CR > 1) {
     warning("'CR' not in [0,1]; set to default value 0.5\n", immediate. = TRUE)
     CR <- 0.5
   }
-  if (strategy < 1 | strategy > 6) {
+  if (strategy < 1 || strategy > 6) {
     warning("'strategy' not in {1,...,6}; set to default value 2\n",
             immediate. = TRUE)
     strategy <- 2
@@ -140,7 +140,7 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         warning("you set a component of 'upper' to '-Inf'. May imply 'NaN' results", immediate. = TRUE)
     if (!is.null(names(lower)))
         nam <- names(lower)
-    else if (!is.null(names(upper)) & is.null(names(lower)))
+    else if (!is.null(names(upper)) && is.null(names(lower)))
         nam <- names(upper)
     else
         nam <- paste("par", 1:length(lower), sep = "")
