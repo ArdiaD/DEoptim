@@ -212,6 +212,10 @@ DEoptim <- function(fn, lower, upper, control = DEoptim.control(), ...,
         }
     }
     else if(ctrl$parallelType == 'parallel'){ ## use parallel 
+        if (!requireNamespace("parallelly", quietly = TRUE)) {
+          stop("the parallelly package is required for parallelType = 'parallel'\n",
+               "please install it via install.packages('parallelly')")
+        }
         cl <- parallel::makeCluster(parallelly::availableCores())
         packFn <- function(packages) {
             for(i in packages)
