@@ -1,3 +1,6 @@
+Changes in version 2.2-8
+  o Fixed uninitialized variable issue found via valgrind. Thanks to Prof
+    Ripley for the report.
 Changes in version 2.2-7
   o Added if(is.null(args$.combine)) args$.combine <- c to DEoptim.R to allow
     for optional custom .combine

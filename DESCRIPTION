@@ -1,5 +1,5 @@
 Package: DEoptim
-Version: 2.2-7
+Version: 2.2-8
 Title: Global Optimization by Differential Evolution
 Authors@R: c(person("David", "Ardia", role = c("aut"), email = "david.ardia.ch@gmail.com", comment = c(ORCID = "0000-0003-2823-782X")), 
              person("Katharine", "Mullen", role = c("aut", "cre"), email="mullenkate@gmail.com"), 
